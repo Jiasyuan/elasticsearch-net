@@ -2,9 +2,10 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Linq;
 using Elastic.Elasticsearch.Xunit.XunitPlumbing;
+using Elastic.Transport;
 using Elasticsearch.Net;
 using FluentAssertions;
 using Nest;
@@ -194,7 +195,6 @@ namespace Tests.Document.Multiple.UpdateByQuery
 			var failure = response.Failures.First();
 
 			failure.Index.Should().NotBeNullOrWhiteSpace();
-			failure.Type.Should().NotBeNullOrWhiteSpace();
 			failure.Status.Should().Be(409);
 			failure.Id.Should().NotBeNullOrWhiteSpace();
 

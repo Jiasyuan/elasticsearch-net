@@ -2,11 +2,12 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Security.Cryptography.X509Certificates;
- using Elastic.Elasticsearch.Ephemeral;
- using Elastic.Elasticsearch.Xunit;
- using Elasticsearch.Net;
+using Elastic.Elasticsearch.Ephemeral;
+using Elastic.Elasticsearch.Xunit;
+using Elastic.Transport;
+using Elasticsearch.Net;
 using Nest;
 using Tests.Core.Client.Settings;
 

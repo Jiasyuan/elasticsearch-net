@@ -2,19 +2,24 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Elastic.Elasticsearch.Xunit.XunitPlumbing;
-using Elasticsearch.Net;
+using Elastic.Transport;
 using FluentAssertions;
 using Nest;
 using System.Runtime.Serialization;
-using Elasticsearch.Net.VirtualizedCluster;
-using Elasticsearch.Net.VirtualizedCluster.Providers;
+using Elastic.Transport.Products;
+using Elastic.Transport.Products.Elasticsearch;
+using Elasticsearch.Net;
+using Elastic.Transport.VirtualizedCluster;
+using Elastic.Transport.VirtualizedCluster.Components;
+using Elastic.Transport.VirtualizedCluster.Products.Elasticsearch;
+using Elastic.Transport.VirtualizedCluster.Providers;
 using Tests.Core.Client;
 using Tests.Core.Client.Settings;
 using Tests.Framework;
@@ -42,7 +47,8 @@ namespace Tests.ClientConcepts.ConnectionPooling.BuildingBlocks
 				settings,
 				DateTimeProvider.Default,
 				new RecyclableMemoryStreamFactory(),
-				new SearchRequestParameters());
+				new SearchRequestParameters()
+			);
 
 			pipeline.GetType().Should().Implement<IDisposable>();
 
@@ -54,7 +60,8 @@ namespace Tests.ClientConcepts.ConnectionPooling.BuildingBlocks
 				settings,
 				DateTimeProvider.Default, //<1> An <<date-time-providers,`IDateTimeProvider`>> implementation
 				new RecyclableMemoryStreamFactory(),
-				new SearchRequestParameters());
+				new SearchRequestParameters()
+			);
 
 			requestPipeline.Should().BeOfType<RequestPipeline>();
 			requestPipeline.GetType().Should().Implement<IDisposable>();
@@ -67,7 +74,8 @@ namespace Tests.ClientConcepts.ConnectionPooling.BuildingBlocks
 				settings,
 				requestPipelineFactory,
 				DateTimeProvider.Default,
-				new RecyclableMemoryStreamFactory());
+				new RecyclableMemoryStreamFactory()
+			);
 
 			var client = new ElasticClient(transport);
 		}

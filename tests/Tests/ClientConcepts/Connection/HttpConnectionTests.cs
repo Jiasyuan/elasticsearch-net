@@ -2,18 +2,19 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿#if DOTNETCORE
+#if DOTNETCORE
 using System;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Elastic.Elasticsearch.Xunit.XunitPlumbing;
+using Elastic.Transport;
 using Elasticsearch.Net;
 using Nest;
 using Tests.Core.ManagedElasticsearch;
 using Tests.Core.ManagedElasticsearch.Clusters;
-using HttpMethod = Elasticsearch.Net.HttpMethod;
+using HttpMethod = Elastic.Transport.HttpMethod;
 using FluentAssertions;
 
 namespace Tests.ClientConcepts.Connection
@@ -104,7 +105,7 @@ namespace Tests.ClientConcepts.Connection
 			var node = Client.ConnectionSettings.ConnectionPool.Nodes.First();
 			var connectionSettings = new ConnectionSettings(node.Uri)
 				.RequestTimeout(requestTimeout)
-				.DnsRefreshTimeout(dnsRefreshTimeout ?? ConnectionConfiguration.DefaultDnsRefreshTimeout)
+				.DnsRefreshTimeout(dnsRefreshTimeout ?? TransportConfiguration.DefaultDnsRefreshTimeout)
 				.DisableAutomaticProxyDetection(disableAutomaticProxyDetection)
 				.TransferEncodingChunked(transferEncodingChunked)
 				.EnableHttpCompression(httpCompression);

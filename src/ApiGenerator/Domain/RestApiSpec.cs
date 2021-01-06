@@ -2,7 +2,7 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -31,9 +31,10 @@ namespace ApiGenerator.Domain
 
 		public ImmutableSortedDictionary<string, ReadOnlyCollection<ApiEndpoint>> EndpointsPerNamespaceHighLevel =>
 			Endpoints.Values
-				.Where(v => !CodeConfiguration.IgnoredApisHighLevel.Contains(v.FileName))
+				.Where(v => !CodeConfiguration.IgnoreHighLevelApi(v.FileName))
 				.GroupBy(e => e.CsharpNames.Namespace)
 				.ToImmutableSortedDictionary(kv => kv.Key, kv => kv.ToList().AsReadOnly());
+
 
 		private IEnumerable<EnumDescription> _enumDescriptions;
 		public IEnumerable<EnumDescription> EnumsInTheSpec

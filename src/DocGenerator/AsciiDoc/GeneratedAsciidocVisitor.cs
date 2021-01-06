@@ -2,7 +2,7 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,6 +11,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using AsciiDocNet;
 using DocGenerator.XmlDocs;
+using Elastic.Transport;
 using Elasticsearch.Net;
 using Microsoft.CodeAnalysis;
 using Nest;
@@ -197,7 +198,7 @@ namespace DocGenerator.AsciiDoc
 
 			// Replace tabs with spaces and remove C# comment escaping from callouts
 			// (elastic docs generation does not like this callout format)
-			source.Text = Regex.Replace(source.Text.Replace("\t", "    "), @"//[ \t]*\<(\d+)\>.*", "<$1>");
+			source.Text = Regex.Replace(source.Text.Replace("\t", "    "), @"//[ \t]*\<(\d+)\>[^\r\n]*", "<$1>");
 
 			base.VisitSource(source);
 		}
@@ -266,6 +267,11 @@ namespace DocGenerator.AsciiDoc
 					assembly = typeof(ElasticLowLevelClient).Assembly;
 					assemblyNamespace = typeof(ElasticLowLevelClient).Namespace;
 					break;
+				case "elastic.transport":
+					xmlDocsFile = Path.GetFullPath(XmlFile("Elastic.Transport"));
+					assembly = typeof(CloudConnectionPool).Assembly;
+					assemblyNamespace = typeof(CloudConnectionPool).Namespace;
+					break;
 				default:
 					xmlDocsFile = Path.GetFullPath(XmlFile("Nest"));
 					assembly = typeof(ElasticClient).Assembly;
@@ -310,7 +316,11 @@ namespace DocGenerator.AsciiDoc
 			if (visitor.LabeledListItems.Any())
 			{
 				var labeledList = new LabeledList();
-				foreach (var item in visitor.LabeledListItems.OrderBy(l => l.Label)) labeledList.Items.Add(item);
+				foreach (var item in visitor.LabeledListItems
+					.OrderBy(l => l.Label)
+					.GroupBy(l => l.Label)
+					.Select(x => x.First()))
+					labeledList.Items.Add(item);
 
 				_newDocument.Insert(_newDocument.IndexOf(attributeEntry), labeledList);
 			}

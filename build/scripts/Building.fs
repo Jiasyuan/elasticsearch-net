@@ -1,4 +1,4 @@
-﻿// Licensed to Elasticsearch B.V under one or more agreements.
+// Licensed to Elasticsearch B.V under one or more agreements.
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
@@ -6,7 +6,7 @@ namespace Scripts
 
 open System.IO
 
-open Paths
+open Scripts.Commandline
 open Tooling
 open Versioning
 open Fake.Core
@@ -19,7 +19,7 @@ open System.IO.Compression
 
 module Build =
 
-    let Restore() = DotNet.Exec ["restore"; Solution; ] |> ignore
+    let Restore() = DotNet.Exec ["restore"; Paths.Solution; ] |> ignore
         
     let Compile _ version = 
         let props = 
@@ -32,7 +32,7 @@ module Build =
             |> String.concat ";"
             |> sprintf "/property:%s"
             
-        DotNet.Exec ["build"; Solution; "-c"; "Release"; props] |> ignore
+        DotNet.Exec ["build"; Paths.Solution; "-c"; "Release"; props] |> ignore
 
     let Pack version = 
         let props = 
@@ -45,19 +45,20 @@ module Build =
             |> String.concat ";"
             |> sprintf "/p:%s"
             
-        DotNet.Exec ["pack"; Solution; "-c"; "Release"; "-o"; Paths.NugetOutput ; props] |> ignore
+        DotNet.Exec ["pack"; Paths.Solution; "-c"; "Release"; "-o"; Paths.NugetOutput ; props] |> ignore
 
-    let Clean isCanary =
+    let Clean (parsed:PassedArguments) =
+        let outputPath = match parsed.CommandArguments with | SetVersion c -> c.OutputLocation | _ -> None
         printfn "Cleaning known output folders"
+        if (Option.isSome outputPath) then Shell.cleanDir outputPath.Value
         Shell.cleanDir Paths.BuildOutput
-        if isCanary then 
-            DotNet.Exec ["clean"; Solution; "-c"; "Release"; "-v"; "q"] |> ignore 
+        DotNet.Exec ["clean"; Paths.Solution; "-c"; "Release"; "-v"; "q"] 
             
     let private keyFile = Paths.Keys "keypair.snk"
-    let private tmp = "build/output/_packages/tmp" 
+    let private tmp = "build/output/tmp" 
     
     let VersionedPack version =
-        let packages = Versioning.BuiltArtifacts version
+        let packages = BuiltArtifacts version
         let currentMajorVersion = version.Full.Major
         
         let newId nugetId = sprintf "%s.v%i" nugetId currentMajorVersion
@@ -118,20 +119,11 @@ module Build =
                [mainDll]
                |> Seq.append depAssemblies
                |> Seq.map (fun dll ->
-                   sprintf @"-i ""%s"" -o ""%s"" " dll (renamedDll dll)
+                   sprintf @"-i ""%s"" -o ""%s"" -k ""%s""" dll (renamedDll dll) keyFile
                )
            
             ReposTooling.Rewriter dlls
            
-            let rewrittenDll = renamedDll mainDll 
-            let ilMergeArgs = [
-                "/internalize"; 
-                (sprintf "/lib:%s" (Paths.InplaceBuildOutput project tfm)); 
-                (sprintf "/keyfile:%s" keyFile); 
-                (sprintf "/out:%s" rewrittenDll)
-            ]
-                
-            Tooling.ILRepack.Exec (ilMergeArgs |> List.append [rewrittenDll])
             Shell.rm mainDll
             let mainPdb = sprintf "%s.pdb" (Path.Combine(fullPath, project))
             if File.exists mainPdb then Shell.rm mainPdb

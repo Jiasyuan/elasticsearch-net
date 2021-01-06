@@ -2,7 +2,7 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -224,7 +224,8 @@ namespace DocGenerator
 		{
 			json = null;
 
-			foreach (var substitution in Substitutions) anonymousTypeString = anonymousTypeString.Replace(substitution.Key, substitution.Value);
+			foreach (var substitution in Substitutions)
+				anonymousTypeString = anonymousTypeString.Replace(substitution.Key, substitution.Value);
 
 			var text =
 				$@"
@@ -252,10 +253,10 @@ namespace DocGenerator
 			var assemblyName = Path.GetRandomFileName();
 			var references = new List<MetadataReference>
 			{
-				MetadataReference.CreateFromFile(typeof(object).GetTypeInfo().Assembly.Location),
-				MetadataReference.CreateFromFile(typeof(Enumerable).GetTypeInfo().Assembly.Location),
-				MetadataReference.CreateFromFile(typeof(JsonConvert).GetTypeInfo().Assembly.Location),
-				MetadataReference.CreateFromFile(typeof(ITypedList).GetTypeInfo().Assembly.Location),
+				MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
+				MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location),
+				MetadataReference.CreateFromFile(typeof(JsonConvert).Assembly.Location),
+				MetadataReference.CreateFromFile(typeof(ITypedList).Assembly.Location),
 			};
 			var systemReferences = new[]
 			{
@@ -300,6 +301,8 @@ namespace DocGenerator
 
 				var assembly = Assembly.Load(ms.ToArray());
 				var type = assembly.GetType("Temporary.Json");
+				if (type == null)
+					throw new Exception("Can not load json from temporary assembly");
 				var obj = Activator.CreateInstance(type);
 
 				var output = type.InvokeMember("Write",

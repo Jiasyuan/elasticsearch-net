@@ -2,13 +2,13 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq.Expressions;
 using System.Reflection;
-using Elasticsearch.Net;
-using Elasticsearch.Net.Utf8Json;
+using Elastic.Transport;
+using Nest.Utf8Json;
 
 namespace Nest
 {
@@ -91,7 +91,7 @@ namespace Nest
 			? other != null && _type == other._type && _comparisonValue.Equals(other._comparisonValue)
 			: other != null && _comparisonValue.Equals(other._comparisonValue);
 
-		string IUrlParameter.GetString(IConnectionConfigurationValues settings)
+		string IUrlParameter.GetString(ITransportConfigurationValues settings)
 		{
 			if (!(settings is IConnectionSettingsValues nestSettings))
 				throw new ArgumentNullException(nameof(settings),
@@ -104,7 +104,7 @@ namespace Nest
 
 		public Fields And<T, TValue>(Expression<Func<T, TValue>> field, double? boost = null, string format = null) where T : class =>
 			new Fields(new[] { this, new Field(field, boost, format) });
-		
+
 		public Fields And<T>(Expression<Func<T, object>> field, double? boost = null, string format = null) where T : class =>
 			new Fields(new[] { this, new Field(field, boost, format) });
 

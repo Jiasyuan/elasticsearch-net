@@ -1,4 +1,4 @@
-﻿// Licensed to Elasticsearch B.V under one or more agreements.
+// Licensed to Elasticsearch B.V under one or more agreements.
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
@@ -13,7 +13,7 @@ module Documentation =
 
     exception DocGenError of string 
     let Generate args = 
-        let path = Paths.InplaceBuildOutput "DocGenerator" "netcoreapp3.0"
+        let path = Paths.InplaceBuildOutput "DocGenerator" "net5.0"
         let generator = sprintf "%s.dll" "DocGenerator"
         
         printfn "==> %s" path

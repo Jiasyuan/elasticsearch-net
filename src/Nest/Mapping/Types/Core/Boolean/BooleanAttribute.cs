@@ -2,17 +2,11 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿namespace Nest
+namespace Nest
 {
 	public class BooleanAttribute : ElasticsearchDocValuesPropertyAttributeBase, IBooleanProperty
 	{
 		public BooleanAttribute() : base(FieldType.Boolean) { }
-
-		public double Boost
-		{
-			get => Self.Boost.GetValueOrDefault();
-			set => Self.Boost = value;
-		}
 
 		public bool Index
 		{
@@ -26,7 +20,6 @@
 			set => Self.NullValue = value;
 		}
 
-		double? IBooleanProperty.Boost { get; set; }
 		INumericFielddata IBooleanProperty.Fielddata { get; set; }
 
 		bool? IBooleanProperty.Index { get; set; }

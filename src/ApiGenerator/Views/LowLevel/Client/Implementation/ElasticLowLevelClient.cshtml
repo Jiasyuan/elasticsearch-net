@@ -13,12 +13,13 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Elasticsearch.Net;
+using Elastic.Transport;
 @{ await IncludeAsync("LowLevel/Client/Usings.cshtml", Model);}
-using static Elasticsearch.Net.HttpMethod;
+using static Elastic.Transport.HttpMethod;
 
 @{
 	RestApiSpec model = Model;
-	var namespaces = model.EndpointsPerNamespaceLowLevel.Keys.Where(k => k != CsharpNames.RootNamespace);
+	var namespaces = model.EndpointsPerNamespaceLowLevel.Keys.Where(k => k != CsharpNames.RootNamespace).ToList();
 <text>
 // ReSharper disable InterpolatedStringExpressionIsNotIFormattable
 // ReSharper disable RedundantExtendsListEntry

@@ -2,9 +2,8 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System.Runtime.Serialization;
+using System.Runtime.Serialization;
 using Elasticsearch.Net;
-
 
 namespace Nest
 {
@@ -148,6 +147,12 @@ namespace Nest
 		Histogram,
 
 		[EnumMember(Value = "constant_keyword")]
-		ConstantKeyword
+		ConstantKeyword,
+
+		[EnumMember(Value = "wildcard")]
+		Wildcard,
+
+		[EnumMember(Value = "point")]
+		Point,
 	}
 }

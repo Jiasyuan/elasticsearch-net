@@ -2,7 +2,7 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -112,7 +112,7 @@ namespace Tests.ClusterLauncher
 
 			try
 			{
-				types = typeof(INestTestCluster).GetTypeInfo().Assembly.GetTypes();
+				types = typeof(INestTestCluster).Assembly.GetTypes();
 			}
 			catch (ReflectionTypeLoadException e)
 			{

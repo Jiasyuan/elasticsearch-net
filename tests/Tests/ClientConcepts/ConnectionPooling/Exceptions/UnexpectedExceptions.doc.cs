@@ -2,16 +2,17 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Elastic.Elasticsearch.Xunit.XunitPlumbing;
-using Elasticsearch.Net;
-using Elasticsearch.Net.VirtualizedCluster;
-using Elasticsearch.Net.VirtualizedCluster.Audit;
+using Elastic.Transport;
+using Elastic.Transport.VirtualizedCluster;
+using Elastic.Transport.VirtualizedCluster.Audit;
 using FluentAssertions;
 using Tests.Framework;
+using static Elastic.Transport.Diagnostics.Auditing.AuditEvent;
 
 namespace Tests.ClientConcepts.ConnectionPooling.Exceptions
 {
@@ -20,7 +21,7 @@ namespace Tests.ClientConcepts.ConnectionPooling.Exceptions
 		/**=== Unexpected exceptions
 		*
 		* When a client call throws an exception that the `IConnection` cannot handle, the exception will bubble
-		* out of the client as an `UnexpectedElasticsearchClientException`, regardless of whether the client is configured to
+		* out of the client as an `UnexpectedTransportException`, regardless of whether the client is configured to
 		* throw exceptions or not.
 		*
 		* An `IConnection` is in charge of knowing which exceptions it can recover from and those it can't, and the default `IConnection`
@@ -34,23 +35,23 @@ namespace Tests.ClientConcepts.ConnectionPooling.Exceptions
 		*/
 		[U] public async Task UnexpectedExceptionsBubbleOut()
 		{
-			var audit = new Auditor(() => VirtualClusterWith // <1> set up a cluster with 10 nodes
-				.Nodes(10)
+			var audit = new Auditor(() => Virtual.Elasticsearch // <1> set up a cluster with 10 nodes
+				.Bootstrap(10)
 				.ClientCalls(r => r.SucceedAlways())
 				.ClientCalls(r => r.OnPort(9201).FailAlways(new Exception("boom!"))) // <2> where node 2 on port 9201 always throws an exception
 				.StaticConnectionPool()
-				.Settings(s => s.DisablePing())
+				.Settings(s => s.DisablePing().EnableDebugMode())
 			);
 
 			audit = await audit.TraceCall(
 				new ClientCall {
-					{ AuditEvent.HealthyResponse, 9200 }, // <3> The first call to 9200 returns a healthy response
+					{ HealthyResponse, 9200 }, // <3> The first call to 9200 returns a healthy response
 				}
 			);
 
 			audit = await audit.TraceUnexpectedException(
 				new ClientCall {
-					{ AuditEvent.BadResponse, 9201 }, // <4> ...but the second call, to 9201, returns a bad response
+					{ BadResponse, 9201 }, // <4> ...but the second call, to 9201, returns a bad response
 				},
 				(e) =>
 				{
@@ -63,7 +64,7 @@ namespace Tests.ClientConcepts.ConnectionPooling.Exceptions
 
 		/**
 		* Sometimes, an unexpected exception happens further down in the pipeline. In this scenario, we
-		* wrap them inside an `UnexpectedElasticsearchClientException` so that information about where
+		* wrap them inside an `UnexpectedTransportException` so that information about where
 		* in the pipeline the exception happened is not lost.
 		*
 		* In this next example, a call to 9200 fails with a `WebException`.
@@ -73,8 +74,8 @@ namespace Tests.ClientConcepts.ConnectionPooling.Exceptions
 
 		[U] public async Task WillFailOverKnowConnectionExceptionButNotUnexpected()
 		{
-			var audit = new Auditor(() => VirtualClusterWith
-				.Nodes(10)
+			var audit = new Auditor(() => Virtual.Elasticsearch
+				.Bootstrap(10)
 #if DOTNETCORE
 				.ClientCalls(r => r.OnPort(9200).FailAlways(new System.Net.Http.HttpRequestException("recover"))) // <1> calls on 9200 set up to throw a `HttpRequestException` or a `WebException`
 #else
@@ -87,8 +88,8 @@ namespace Tests.ClientConcepts.ConnectionPooling.Exceptions
 
 			audit = await audit.TraceUnexpectedException(
 				new ClientCall {
-					{ AuditEvent.BadResponse, 9200 },
-					{ AuditEvent.BadResponse, 9201 }, // <3> Assert that the audit trail for the client call includes the bad response from 9200 and 9201
+					{ BadResponse, 9200 },
+					{ BadResponse, 9201 }, // <3> Assert that the audit trail for the client call includes the bad response from 9200 and 9201
 				},
 				(e) =>
 				{
@@ -108,8 +109,8 @@ namespace Tests.ClientConcepts.ConnectionPooling.Exceptions
 		*/
 		[U] public async Task PingUnexceptedExceptionDoesFailOver()
 		{
-			var audit = new Auditor(() => VirtualClusterWith
-				.Nodes(10)
+			var audit = new Auditor(() => Virtual.Elasticsearch
+				.Bootstrap(10)
 				.Ping(r => r.OnPort(9200).FailAlways(new Exception("ping exception")))
 				.Ping(r => r.OnPort(9201).SucceedAlways())
 				.ClientCalls(r => r.OnPort(9201).FailAlways(new Exception("boom!")))
@@ -119,9 +120,9 @@ namespace Tests.ClientConcepts.ConnectionPooling.Exceptions
 
 			audit = await audit.TraceUnexpectedException(
 				new ClientCall {
-					{ AuditEvent.PingFailure, 9200 },
-					{ AuditEvent.PingSuccess, 9201 },
-					{ AuditEvent.BadResponse, 9201 },
+					{ PingFailure, 9200 },
+					{ PingSuccess, 9201 },
+					{ BadResponse, 9201 },
 				},
 				e =>
 				{
@@ -135,7 +136,7 @@ namespace Tests.ClientConcepts.ConnectionPooling.Exceptions
 					pipelineException.FailureReason.Should().Be(PipelineFailure.PingFailure);
 					pipelineException.InnerException.Message.Should().Be("ping exception");
 
-					var pingException = e.AuditTrail.First(a => a.Event == AuditEvent.PingFailure).Exception; // <3> An exception can be hard to relate back to a point in time, so the exception is also available on the audit trail
+					var pingException = e.AuditTrail.First(a => a.Event == PingFailure).Exception; // <3> An exception can be hard to relate back to a point in time, so the exception is also available on the audit trail
 					pingException.Should().NotBeNull();
 					pingException.Message.Should().Be("ping exception");
 				}

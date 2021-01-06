@@ -64,11 +64,11 @@ The values are typically extracted from the fields of the document (using the fi
 
 * <<sum-aggregation-usage,Sum Aggregation Usage>>
 
+* <<t-test-aggregation-usage,T Test Aggregation Usage>>
+
 * <<top-hits-aggregation-usage,Top Hits Aggregation Usage>>
 
 * <<top-metrics-aggregation-usage,Top Metrics Aggregation Usage>>
-
-* <<t-test-aggregation-usage,T Test Aggregation Usage>>
 
 * <<value-count-aggregation-usage,Value Count Aggregation Usage>>
 
@@ -108,11 +108,11 @@ include::aggregations/metric/string-stats/string-stats-aggregation-usage.asciido
 
 include::aggregations/metric/sum/sum-aggregation-usage.asciidoc[]
 
+include::aggregations/metric/t-test/t-test-aggregation-usage.asciidoc[]
+
 include::aggregations/metric/top-hits/top-hits-aggregation-usage.asciidoc[]
 
 include::aggregations/metric/top-metrics/top-metrics-aggregation-usage.asciidoc[]
-
-include::aggregations/metric/t-test/t-test-aggregation-usage.asciidoc[]
 
 include::aggregations/metric/value-count/value-count-aggregation-usage.asciidoc[]
 
@@ -139,6 +139,8 @@ In addition to the buckets themselves, the bucket aggregations also compute and 
 * <<date-histogram-aggregation-usage,Date Histogram Aggregation Usage>>
 
 * <<date-range-aggregation-usage,Date Range Aggregation Usage>>
+
+* <<diversified-sampler-aggregation-usage,Diversified Sampler Aggregation Usage>>
 
 * <<filter-aggregation-usage,Filter Aggregation Usage>>
 
@@ -200,6 +202,8 @@ include::aggregations/bucket/composite/composite-aggregation-usage.asciidoc[]
 include::aggregations/bucket/date-histogram/date-histogram-aggregation-usage.asciidoc[]
 
 include::aggregations/bucket/date-range/date-range-aggregation-usage.asciidoc[]
+
+include::aggregations/bucket/diversified-sampler/diversified-sampler-aggregation-usage.asciidoc[]
 
 include::aggregations/bucket/filter/filter-aggregation-usage.asciidoc[]
 
@@ -277,6 +281,10 @@ There are many different types of pipeline aggregation, each computing different
 
 * <<moving-function-aggregation-usage,Moving Function Aggregation Usage>>
 
+* <<moving-percentiles-aggregation-usage,Moving Percentiles Aggregation Usage>>
+
+* <<normalize-aggregation-usage,Normalize Aggregation Usage>>
+
 * <<percentiles-bucket-aggregation-usage,Percentiles Bucket Aggregation Usage>>
 
 * <<serial-differencing-aggregation-usage,Serial Differencing Aggregation Usage>>
@@ -320,6 +328,10 @@ include::aggregations/pipeline/moving-average/moving-average-linear-aggregation-
 include::aggregations/pipeline/moving-average/moving-average-simple-aggregation-usage.asciidoc[]
 
 include::aggregations/pipeline/moving-function/moving-function-aggregation-usage.asciidoc[]
+
+include::aggregations/pipeline/moving-percentiles/moving-percentiles-aggregation-usage.asciidoc[]
+
+include::aggregations/pipeline/normalize/normalize-aggregation-usage.asciidoc[]
 
 include::aggregations/pipeline/percentiles-bucket/percentiles-bucket-aggregation-usage.asciidoc[]
 

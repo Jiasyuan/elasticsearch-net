@@ -2,10 +2,10 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Diagnostics;
-using Elasticsearch.Net;
-using Elasticsearch.Net.Utf8Json;
+using Elastic.Transport;
+using Nest.Utf8Json;
 
 namespace Nest
 {
@@ -39,12 +39,12 @@ namespace Nest
 		public Type Type { get; }
 
 		internal string DebugDisplay => Type == null ? Name : $"{nameof(IndexName)} for typeof: {Type?.Name}";
-		
+
 		private static int TypeHashCode { get; } = typeof(IndexName).GetHashCode();
 
 		bool IEquatable<IndexName>.Equals(IndexName other) => EqualsMarker(other);
 
-		public string GetString(IConnectionConfigurationValues settings)
+		public string GetString(ITransportConfigurationValues settings)
 		{
 			if (!(settings is IConnectionSettingsValues nestSettings))
 				throw new Exception("Tried to pass index name on querystring but it could not be resolved because no nest settings are available");
@@ -125,7 +125,7 @@ namespace Nest
 
 			if ((!Cluster.IsNullOrEmpty() || !other.Cluster.IsNullOrEmpty()) && Cluster != other.Cluster) return false;
 
-			return Type != null && other?.Type != null && Type == other.Type;
+			return Type != null && other.Type != null && Type == other.Type;
 		}
 	}
 }

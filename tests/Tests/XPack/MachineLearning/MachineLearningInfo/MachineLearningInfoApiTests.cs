@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information
 
 using System;
-using Elasticsearch.Net;
+using Elastic.Transport;
 using FluentAssertions;
 using Nest;
 using Tests.Core.Client;
@@ -47,6 +47,9 @@ namespace Tests.XPack.MachineLearning.MachineLearningInfo
 				? 10
 				: 1);
 
+			if (TestClient.Configuration.InRange(">=7.8.0"))
+				anomalyDetectors.DailyModelSnapshotRetentionAfterDays.Should().Be(1);
+
 			response.Defaults.Datafeeds.ScrollSize.Should().Be(1000);
 
 			if (Cluster.ClusterConfiguration.Version >= "7.6.0")
@@ -56,6 +59,9 @@ namespace Tests.XPack.MachineLearning.MachineLearningInfo
 				analyzer.Tokenizer.Should().Be("ml_classic");
 				analyzer.Filter.Should().NotBeNullOrEmpty();
 			}
+
+			if (TestClient.Configuration.InRange(">=7.8.0"))
+				response.Limits.EffectiveMaxModelMemoryLimit.Should().NotBeNullOrEmpty();
 		}
 	}
 }

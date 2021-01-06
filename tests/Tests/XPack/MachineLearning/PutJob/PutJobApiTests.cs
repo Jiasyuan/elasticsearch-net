@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Elastic.Elasticsearch.Xunit.XunitPlumbing;
-using Elasticsearch.Net;
+using Elastic.Transport;
 using FluentAssertions;
 using Nest;
 using Tests.Core.Client;
@@ -45,6 +45,16 @@ namespace Tests.XPack.MachineLearning.PutJob
 			description = "Lab 1 - Simple example",
 			results_index_name = "server-metrics"
 		};
+
+		protected override void IntegrationTeardown(IElasticClient client, CallUniqueValues values)
+		{
+			foreach (var value in values)
+			{
+				var response = DeleteJob(client, value.Value);
+				if (!response.IsValid)
+					throw new Exception($"Problem in integration teardown {response.DebugInformation}");
+			}
+		}
 
 		protected override int ExpectStatusCode => 200;
 
@@ -205,6 +215,16 @@ namespace Tests.XPack.MachineLearning.PutJob
 		};
 
 		protected override int ExpectStatusCode => 200;
+
+		protected override void IntegrationTeardown(IElasticClient client, CallUniqueValues values)
+		{
+			foreach (var value in values)
+			{
+				var response = DeleteJob(client, value.Value);
+				if (!response.IsValid)
+					throw new Exception($"Problem in integration teardown {response.DebugInformation}");
+			}
+		}
 
 		protected override Func<PutJobDescriptor<Metric>, IPutJobRequest> Fluent => f => f
 			.Description("Lab 1 - Simple example")

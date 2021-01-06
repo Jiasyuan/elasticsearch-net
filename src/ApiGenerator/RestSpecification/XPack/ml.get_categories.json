@@ -5,6 +5,11 @@
       "description":"Retrieves anomaly detection job results for one or more categories."
     },
     "stability":"stable",
+    "visibility":"public",
+    "headers":{
+      "accept": [ "application/json"],
+      "content_type": ["application/json"]
+    },
     "url":{
       "paths":[
         {
@@ -47,6 +52,10 @@
       "size":{
         "type":"int",
         "description":"specifies a max number of categories to get"
+      },
+      "partition_field_value":{
+        "type":"string",
+        "description":"Specifies the partition to retrieve categories for. This is optional, and should never be used for jobs where per-partition categorization is disabled."
       }
     },
     "body":{

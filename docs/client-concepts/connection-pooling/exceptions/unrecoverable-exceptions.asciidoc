@@ -31,7 +31,7 @@ but by exiting the pipeline.
 
 --
 
-By default, the client won't throw on any `ElasticsearchClientException` but instead return an invalid response
+By default, the client won't throw on any `TransportException` but instead return an invalid response
 that can be detected by checking the `.IsValid` property on the response. You can change this behaviour with
 by using `ThrowExceptions()` on <<configuration-options, `ConnectionSettings`>>.
 
@@ -72,8 +72,8 @@ that always succeeds when pinged but fails with a 401 response when making clien
 
 [source,csharp]
 ----
-var audit = new Auditor(() => VirtualClusterWith
-    .Nodes(10)
+var audit = new Auditor(() => Virtual.Elasticsearch
+    .Bootstrap(10)
     .Ping(r => r.SucceedAlways()) <1>
     .ClientCalls(r => r.FailAlways(401)) <2>
     .StaticConnectionPool()
@@ -90,8 +90,8 @@ followed by a bad response as a result of the 401 bad authentication response
 ----
 audit = await audit.TraceElasticsearchException(
     new ClientCall {
-        { AuditEvent.PingSuccess, 9200 }, <1>
-        { AuditEvent.BadResponse, 9200 }, <2>
+        { PingSuccess, 9200 }, <1>
+        { BadResponse, 9200 }, <2>
     },
     exception =>
     {
@@ -113,8 +113,8 @@ should never be deserialized by calling `SkipDeserializationForStatusCodes()` on
 
 [source,csharp]
 ----
-var audit = new Auditor(() => VirtualClusterWith
-    .Nodes(10)
+var audit = new Auditor(() => Virtual.Elasticsearch
+    .Bootstrap(10)
     .Ping(r => r.SucceedAlways())
     .ClientCalls(r => r.FailAlways(401).ReturnByteResponse(HtmlNginx401Response, "application/json")) <1>
     .StaticConnectionPool()
@@ -123,8 +123,8 @@ var audit = new Auditor(() => VirtualClusterWith
 
 audit = await audit.TraceElasticsearchException(
     new ClientCall {
-        { AuditEvent.PingSuccess, 9200 },
-        { AuditEvent.BadResponse, 9201 },
+        { PingSuccess, 9200 },
+        { BadResponse, 9201 },
     },
     (e) =>
     {
@@ -144,8 +144,8 @@ we no longer need to set `SkipDeserializationForStatusCodes()`
 
 [source,csharp]
 ----
-var audit = new Auditor(() => VirtualClusterWith
-    .Nodes(10)
+var audit = new Auditor(() => Virtual.Elasticsearch
+    .Bootstrap(10)
     .Ping(r => r.SucceedAlways())
     .ClientCalls(r => r.FailAlways(401).ReturnByteResponse(HtmlNginx401Response, "text/html"))
     .StaticConnectionPool()
@@ -154,8 +154,8 @@ var audit = new Auditor(() => VirtualClusterWith
 
 audit = await audit.TraceElasticsearchException(
     new ClientCall {
-        { AuditEvent.PingSuccess, 9200 },
-        { AuditEvent.BadResponse, 9200 },
+        { PingSuccess, 9200 },
+        { BadResponse, 9200 },
     },
     (e) =>
     {

@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information
 
 using System.Collections.Generic;
-using Elasticsearch.Net;
+using Elastic.Transport;
 using Nest;
 using Nest.JsonNetSerializer;
 using Newtonsoft.Json;
@@ -14,7 +14,7 @@ namespace Tests.Core.Client.Serializers
 {
 	public class TestSourceSerializerBase : ConnectionSettingsAwareSerializerBase
 	{
-		public TestSourceSerializerBase(IElasticsearchSerializer builtinSerializer, IConnectionSettingsValues connectionSettings)
+		public TestSourceSerializerBase(ITransportSerializer builtinSerializer, IConnectionSettingsValues connectionSettings)
 			: base(builtinSerializer, connectionSettings) { }
 
 		protected override JsonSerializerSettings CreateJsonSerializerSettings() =>

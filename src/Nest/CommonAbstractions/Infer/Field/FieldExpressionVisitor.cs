@@ -2,7 +2,7 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -25,9 +25,11 @@ namespace Nest
 			Visit(expression);
 			if (toLastToken) return _stack.Last();
 
+			var builder = new StringBuilder(_stack.Sum(s => s.Length) + (_stack.Count - 1));
+
 			return _stack
 				.Aggregate(
-					new StringBuilder(),
+					builder,
 					(sb, name) =>
 						(sb.Length > 0 ? sb.Append(".") : sb).Append(name))
 				.ToString();

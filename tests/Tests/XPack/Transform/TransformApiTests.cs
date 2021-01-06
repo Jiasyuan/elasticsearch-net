@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Elastic.Elasticsearch.Xunit.XunitPlumbing;
 using FluentAssertions;
 using Nest;
+using Tests.Core.Client;
 using Tests.Core.Extensions;
 using Tests.Core.ManagedElasticsearch.Clusters;
 using Tests.Domain;
@@ -13,7 +15,7 @@ using static Nest.Infer;
 
 namespace Tests.XPack.Transform
 {
-	[SkipVersion("<7.7.0", "Introduced in 7.7.0")]
+	[SkipVersion("<7.9.0", "Geotile grid group by introduced in 7.9.0")]
 	public class TransformApiTests : CoordinatedIntegrationTestBase<WritableCluster>
 	{
 		private const string PutTransformStep = nameof(PutTransformStep);
@@ -61,6 +63,18 @@ namespace Tests.XPack.Transform
 											Field = Field<Project>(f => f.StartedOn),
 											CalendarInterval = DateInterval.Week
 										}
+									},
+									{
+										"geotile", new GeoTileGridGroupSource
+										{
+											Field = Field<Project>(f => f.LocationPoint),
+											Precision = GeoTilePrecision.Precision6,
+											Bounds = new BoundingBox
+											{
+												TopLeft = new GeoLocation(-90, 180),
+												BottomRight = new GeoLocation(90, -180)
+											}
+										}
 									}
 								}
 							}
@@ -92,6 +106,14 @@ namespace Tests.XPack.Transform
 										.Field(f => f.StartedOn)
 										.CalendarInterval(DateInterval.Week)
 									)
+									.GeoTileGrid("geotile", gtg => gtg
+										.Field(f => f.LocationPoint)
+										.Precision(GeoTilePrecision.Precision6)
+										.Bounds(b => b
+											.TopLeft(-90, 180)
+											.BottomRight(90, -180)
+										)
+									)
 								)
 							),
 						(v, c, f) => c.Transform.Put(v, f),
@@ -114,8 +136,8 @@ namespace Tests.XPack.Transform
 			{
 				StartTransformStep, u =>
 					u.Calls<StartTransformDescriptor, StartTransformRequest, IStartTransformRequest, StartTransformResponse>(
-						v => new StartTransformRequest(v),
-						(v, d) => d,
+						v => new StartTransformRequest(v) { Timeout = "2m" },
+						(v, d) => d.Timeout("2m"),
 						(v, c, f) => c.Transform.Start(v, f),
 						(v, c, f) => c.Transform.StartAsync(v, f),
 						(v, c, r) => c.Transform.Start(r),
@@ -151,7 +173,7 @@ namespace Tests.XPack.Transform
 									},
 								GroupBy = new Dictionary<string, ISingleGroupSource>
 								{
-									{ "weekStartedOn", new DateHistogramGroupSource()
+									{ TestClient.Configuration.InRange("<7.11.0") ? "weekStartedOnMillis" : "weekStartedOnDate", new DateHistogramGroupSource
 										{
 											Field = Field<Project>(f => f.StartedOn),
 											CalendarInterval = DateInterval.Week
@@ -187,7 +209,7 @@ namespace Tests.XPack.Transform
 									)
 								)
 								.GroupBy(g => g
-									.DateHistogram("weekStartedOn", dh => dh
+									.DateHistogram(TestClient.Configuration.InRange("<7.11.0") ? "weekStartedOnMillis" : "weekStartedOnDate", dh => dh
 										.Field(f => f.StartedOn)
 										.CalendarInterval(DateInterval.Week)
 									)
@@ -233,8 +255,8 @@ namespace Tests.XPack.Transform
 			{
 				StopTransformStep, u =>
 					u.Calls<StopTransformDescriptor, StopTransformRequest, IStopTransformRequest, StopTransformResponse>(
-						v => new StopTransformRequest(v) { Force = true, WaitForCompletion = true },
-						(v, d) => d.Force().WaitForCompletion(),
+						v => new StopTransformRequest(v) { Force = true, WaitForCompletion = true, Timeout = "2m"},
+						(v, d) => d.Force().WaitForCompletion().Timeout("2m"),
 						(v, c, f) => c.Transform.Stop(v, f),
 						(v, c, f) => c.Transform.StopAsync(v, f),
 						(v, c, r) => c.Transform.Stop(r),
@@ -244,8 +266,8 @@ namespace Tests.XPack.Transform
 			{
 				DeleteTransformStep, u =>
 					u.Calls<DeleteTransformDescriptor, DeleteTransformRequest, IDeleteTransformRequest, DeleteTransformResponse>(
-						v => new DeleteTransformRequest(v),
-						(v, d) => d,
+						v => new DeleteTransformRequest(v) { Force = true },
+						(v, d) => d.Force(),
 						(v, c, f) => c.Transform.Delete(v, f),
 						(v, c, f) => c.Transform.DeleteAsync(v, f),
 						(v, c, r) => c.Transform.Delete(r),
@@ -297,6 +319,11 @@ namespace Tests.XPack.Transform
 			r.GeneratedDestinationIndex.Mappings.Should().NotBeNull();
 			r.GeneratedDestinationIndex.Settings.Should().NotBeNull();
 			r.GeneratedDestinationIndex.Aliases.Should().NotBeNull();
+
+			if (TestClient.Configuration.InRange("<7.11.0"))
+				r.Preview.First().WeekStartedOnMillis.Should().BeGreaterOrEqualTo(1);
+			else
+				r.Preview.First().WeekStartedOnDate.Should().NotBe(DateTime.MinValue);
 		});
 
 		[I] public async Task UpdateTransformResponse() => await Assert<UpdateTransformResponse>(UpdateTransformStep, (v, r) =>

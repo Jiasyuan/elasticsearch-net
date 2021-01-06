@@ -2,19 +2,19 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Elastic.Elasticsearch.Xunit.XunitPlumbing;
-using Elasticsearch.Net;
-using Elasticsearch.Net.VirtualizedCluster;
-using Elasticsearch.Net.VirtualizedCluster.Audit;
-using Elasticsearch.Net.VirtualizedCluster.Providers;
+using Elastic.Transport;
+using Elastic.Transport.VirtualizedCluster;
+using Elastic.Transport.VirtualizedCluster.Audit;
+using Elastic.Transport.VirtualizedCluster.Providers;
 using FluentAssertions;
 using Tests.Framework;
-using static Elasticsearch.Net.VirtualizedCluster.Rules.TimesHelper;
-using static Elasticsearch.Net.AuditEvent;
+using static Elastic.Transport.VirtualizedCluster.Rules.TimesHelper;
+using static Elastic.Transport.Diagnostics.Auditing.AuditEvent;
 
 namespace Tests.ClientConcepts.ConnectionPooling.RoundRobin
 {
@@ -103,8 +103,8 @@ namespace Tests.ClientConcepts.ConnectionPooling.RoundRobin
 		public async Task FallsOverDeadNodes()
 		{
 			/** A cluster with 2 nodes where the second node fails on ping */
-			var audit = new Auditor(() => VirtualClusterWith
-				.Nodes(4)
+			var audit = new Auditor(() => Virtual.Elasticsearch
+				.Bootstrap(4)
 				.ClientCalls(p => p.Succeeds(Always))
 				.ClientCalls(p => p.OnPort(9201).FailAlways())
 				.ClientCalls(p => p.OnPort(9203).FailAlways())
@@ -151,8 +151,8 @@ namespace Tests.ClientConcepts.ConnectionPooling.RoundRobin
 		public async Task PicksADifferentNodeEachTimeAnodeIsDown()
 		{
 			/** A cluster with 2 nodes where the second node fails on ping */
-			var audit = new Auditor(() => VirtualClusterWith
-				.Nodes(4)
+			var audit = new Auditor(() => Virtual.Elasticsearch
+				.Bootstrap(4)
 				.ClientCalls(p => p.Fails(Always))
 				.StaticConnectionPool()
 				.Settings(p=>p.DisablePing())

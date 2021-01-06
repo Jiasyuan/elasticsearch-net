@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Linq.Expressions;
+using Elastic.Transport;
 
 // ReSharper disable once CheckNamespace
 namespace Elasticsearch.Net.Specification.AutoscalingApi
@@ -31,8 +32,8 @@ namespace Elasticsearch.Net.Specification.AutoscalingApi
 		public override bool SupportsBody => false;
 	}
 
-	///<summary>Request options for GetDecision <para>https://www.elastic.co/guide/en/elasticsearch/reference/current/autoscaling-get-autoscaling-decision.html</para></summary>
-	public class GetAutoscalingDecisionRequestParameters : RequestParameters<GetAutoscalingDecisionRequestParameters>
+	///<summary>Request options for GetCapacity <para>https://www.elastic.co/guide/en/elasticsearch/reference/current/autoscaling-get-autoscaling-capacity.html</para></summary>
+	public class GetAutoscalingCapacityRequestParameters : RequestParameters<GetAutoscalingCapacityRequestParameters>
 	{
 		public override HttpMethod DefaultHttpMethod => HttpMethod.GET;
 		public override bool SupportsBody => false;

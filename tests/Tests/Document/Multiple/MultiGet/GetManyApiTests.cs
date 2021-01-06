@@ -2,13 +2,14 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Elastic.Elasticsearch.Xunit.XunitPlumbing;
-using Elasticsearch.Net;
+using Elastic.Transport;
 using FluentAssertions;
 using Nest;
 using Tests.Core.Client.Settings;
@@ -17,6 +18,8 @@ using Tests.Domain;
 
 namespace Tests.Document.Multiple.MultiGet
 {
+	// TODO getmany should return a readonly collection
+	[SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
 	public class GetManyApiTests : IClusterFixture<WritableCluster>
 	{
 		private readonly IElasticClient _client;
@@ -166,9 +169,7 @@ namespace Tests.Document.Multiple.MultiGet
 			var sources = await _client.SourceManyAsync<Developer>(new[] { id, id, id });
 			sources.Count().Should().Be(1);
 			foreach (var hit in sources)
-			{
 				hit.Id.Should().Be(id);
-			}
 		}
 
 		[I] public async Task CanHandleNotFoundResponses()
@@ -189,7 +190,7 @@ namespace Tests.Document.Multiple.MultiGet
 
 			var client = new ElasticClient(new TestConnectionSettings(port: 9500));
 			Action response = () => client.GetMany<Developer>(_ids.Select(i => i * 100));
-			response.Should().Throw<ElasticsearchClientException>();
+			response.Should().Throw<TransportException>();
 		}
 	}
 }

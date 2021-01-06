@@ -2,11 +2,11 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Elasticsearch.Net;
-using Elasticsearch.Net.Utf8Json;
+using Elastic.Transport;
+using Nest.Utf8Json;
 
 namespace Nest
 {
@@ -36,7 +36,7 @@ namespace Nest
 		/// </summary>
 		/// <typeparam name="T">The type</typeparam>
 		Task<T> AsAsync<T>(CancellationToken ct = default);
-		
+
 		/// <summary>
 		/// Creates an instance of <paramref name="objectType" /> from this
 		/// <see cref="ILazyDocument" /> instance
@@ -49,8 +49,8 @@ namespace Nest
 	[JsonFormatter(typeof(LazyDocumentFormatter))]
 	public class LazyDocument : ILazyDocument
 	{
-		private readonly IElasticsearchSerializer _sourceSerializer;
-		private readonly IElasticsearchSerializer _requestResponseSerializer;
+		private readonly ITransportSerializer _sourceSerializer;
+		private readonly ITransportSerializer _requestResponseSerializer;
 		private readonly IMemoryStreamFactory _memoryStreamFactory;
 
 		internal LazyDocument(byte[] bytes, IJsonFormatterResolver formatterResolver)

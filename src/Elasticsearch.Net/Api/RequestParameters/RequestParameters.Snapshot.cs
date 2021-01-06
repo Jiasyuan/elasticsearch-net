@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Linq.Expressions;
+using Elastic.Transport;
 
 // ReSharper disable once CheckNamespace
 namespace Elasticsearch.Net.Specification.SnapshotApi
@@ -41,6 +42,19 @@ namespace Elasticsearch.Net.Specification.SnapshotApi
 		{
 			get => Q<TimeSpan>("timeout");
 			set => Q("timeout", value);
+		}
+	}
+
+	///<summary>Request options for Clone <para>https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html</para></summary>
+	public class CloneRequestParameters : RequestParameters<CloneRequestParameters>
+	{
+		public override HttpMethod DefaultHttpMethod => HttpMethod.PUT;
+		public override bool SupportsBody => true;
+		///<summary>Explicit operation timeout for connection to master node</summary>
+		public TimeSpan MasterTimeout
+		{
+			get => Q<TimeSpan>("master_timeout");
+			set => Q("master_timeout", value);
 		}
 	}
 

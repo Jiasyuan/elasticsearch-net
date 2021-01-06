@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Linq.Expressions;
+using Elastic.Transport;
 
 // ReSharper disable once CheckNamespace
 namespace Elasticsearch.Net.Specification.TransformApi
@@ -50,6 +51,13 @@ namespace Elasticsearch.Net.Specification.TransformApi
 		{
 			get => Q<bool? >("allow_no_match");
 			set => Q("allow_no_match", value);
+		}
+
+		///<summary>Omits fields that are illegal to set on transform PUT</summary>
+		public bool? ExcludeGenerated
+		{
+			get => Q<bool? >("exclude_generated");
+			set => Q("exclude_generated", value);
 		}
 
 		///<summary>skips a number of transform configs, defaults to 0</summary>

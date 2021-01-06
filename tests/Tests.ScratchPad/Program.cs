@@ -8,8 +8,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Running;
-using Elasticsearch.Net;
-using Elasticsearch.Net.Diagnostics;
+using Elastic.Transport;
+using Elastic.Transport.Diagnostics;
+using Elastic.Transport.Extensions;
 using Nest;
 using Tests.Core.Client;
 using Tests.Domain;
@@ -18,6 +19,7 @@ namespace Tests.ScratchPad
 {
 	public class Program
 	{
+		// ReSharper disable once UnusedType.Local
 		private class ListenerObserver : IObserver<DiagnosticListener>
 		{
 			public void OnCompleted() => Console.WriteLine("Completed");

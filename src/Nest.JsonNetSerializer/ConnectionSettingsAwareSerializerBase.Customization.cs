@@ -7,12 +7,12 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Elasticsearch.Net;
+using Elastic.Transport;
 using Newtonsoft.Json;
 
 namespace Nest.JsonNetSerializer
 {
-	public abstract partial class ConnectionSettingsAwareSerializerBase : IElasticsearchSerializer
+	public abstract partial class ConnectionSettingsAwareSerializerBase : ITransportSerializer
 	{
 		// Default buffer size of StreamWriter, which is private :(
 		internal const int DefaultBufferSize = 1024;

@@ -7,8 +7,6 @@ namespace Scripts
 open System
 open System.IO
 
-open Build
-open Commandline
 open Bullseye
 open ProcNet
 open Fake.Core
@@ -62,11 +60,10 @@ module Main =
         let canaryChain = [ "version"; "release"; "test-nuget-package";]
         
         // the following are expected to be called as targets directly        
-        conditional "clean" parsed.ReleaseBuild  <| fun _ -> Build.Clean isCanary
-        
+        conditional "clean" parsed.ReleaseBuild  <| fun _ -> Build.Clean parsed 
         target "version" <| fun _ -> printfn "Artifacts Version: %O" artifactsVersion
         
-        target "restore" Restore
+        target "restore" Build.Restore
         
         target "full-build" <| fun _ -> Build.Compile parsed artifactsVersion
 
@@ -90,7 +87,13 @@ module Main =
         
         //RELEASE
         command "release" releaseChain <| fun _ ->
-            printfn "Finished Release Build %O" artifactsVersion
+            let outputPath = match parsed.CommandArguments with | Commandline.SetVersion c -> c.OutputLocation | _ -> None
+            match outputPath with
+            | None ->
+                printfn "Finished Release Build %O, artifacts available at: %s" artifactsVersion Paths.BuildOutput
+            | Some path ->
+                Fake.IO.Shell.cp_r Paths.BuildOutput path
+                printfn "Finished Release Build %O, output copied to: %s" artifactsVersion path
 
         conditional "test-nuget-package" (not parsed.SkipTests && Environment.isWindows)  <| fun _ -> 
             // run release unit tests puts packages in the system cache prevent this from happening locally

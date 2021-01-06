@@ -2,11 +2,11 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Threading;
 using Elastic.Elasticsearch.Xunit.XunitPlumbing;
-using Elasticsearch.Net;
-using Elasticsearch.Net.VirtualizedCluster;
+using Elastic.Transport;
+using Elastic.Transport.VirtualizedCluster;
 using FluentAssertions;
 using Nest;
 using Tests.Core.ManagedElasticsearch.Clusters;
@@ -66,7 +66,8 @@ namespace Tests.Document.Multiple.BulkAll
 
 		[U] public void Completes()
 		{
-			var cluster = VirtualClusterWith.Nodes(2)
+			var cluster = Virtual.Elasticsearch
+				.Bootstrap(2)
 				.ClientCalls(c => c.FailAlways())
 				.StaticConnectionPool()
 				.AllDefaults();
@@ -109,7 +110,7 @@ namespace Tests.Document.Multiple.BulkAll
 			}
 			ex.Should().NotBeNull();
 
-			var clientException = ex.Should().BeOfType<ElasticsearchClientException>().Subject;
+			var clientException = ex.Should().BeOfType<TransportException>().Subject;
 
 			clientException.Message.Should()
 				.StartWith("BulkAll halted after");

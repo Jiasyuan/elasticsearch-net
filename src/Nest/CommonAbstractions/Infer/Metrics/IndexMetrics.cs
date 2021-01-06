@@ -2,7 +2,8 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
+using Elastic.Transport;
 using Elasticsearch.Net;
 
 namespace Nest
@@ -17,7 +18,7 @@ namespace Nest
 
 		public bool Equals(IndexMetrics other) => Value.Equals(other.Value);
 
-		public string GetString(IConnectionConfigurationValues settings) => _enumValue.GetStringValue();
+		public string GetString(ITransportConfigurationValues settings) => _enumValue.GetStringValue();
 
 		public static implicit operator IndexMetrics(NodesStatsIndexMetric metric) => new IndexMetrics(metric);
 

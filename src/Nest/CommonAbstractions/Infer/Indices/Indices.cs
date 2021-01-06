@@ -6,8 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Elasticsearch.Net;
-using Elasticsearch.Net.Utf8Json;
+using Elastic.Transport;
+using Nest.Utf8Json;
 
 namespace Nest
 {
@@ -34,7 +34,7 @@ namespace Nest
 
 		public override string ToString() => DebugDisplay;
 
-		string IUrlParameter.GetString(IConnectionConfigurationValues settings) => Match(
+		string IUrlParameter.GetString(ITransportConfigurationValues settings) => Match(
 			all => "_all",
 			many =>
 			{
@@ -120,17 +120,10 @@ namespace Nest
 		{
 			private readonly List<IndexName> _indices = new List<IndexName>();
 
-			internal ManyIndices(IEnumerable<IndexName> indices)
-			{
-				indices.ThrowIfEmpty(nameof(indices));
-				_indices.AddRange(indices);
-			}
+			internal ManyIndices(IEnumerable<IndexName> indices) => _indices.AddRange(indices.NotEmpty(nameof(indices)));
 
-			internal ManyIndices(IEnumerable<string> indices)
-			{
-				indices.ThrowIfEmpty(nameof(indices));
-				_indices.AddRange(indices.Select(s => (IndexName)s));
-			}
+			internal ManyIndices(IEnumerable<string> indices) =>
+				_indices.AddRange(indices.NotEmpty(nameof(indices)).Select(s => (IndexName)s));
 
 			public IReadOnlyList<IndexName> Indices => _indices;
 

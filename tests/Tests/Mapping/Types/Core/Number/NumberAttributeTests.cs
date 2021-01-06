@@ -2,7 +2,7 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using Nest;
 
 namespace Tests.Mapping.Types.Core.Number
@@ -22,7 +22,6 @@ namespace Tests.Mapping.Types.Core.Number
 			Similarity = "classic",
 			Store = true,
 			Index = false,
-			Boost = 1.5,
 			NullValue = 0.0,
 			IgnoreMalformed = true,
 			Coerce = true,
@@ -63,7 +62,6 @@ namespace Tests.Mapping.Types.Core.Number
 					similarity = "classic",
 					store = true,
 					index = false,
-					boost = 1.5,
 					null_value = 0.0,
 					ignore_malformed = true,
 					coerce = true,

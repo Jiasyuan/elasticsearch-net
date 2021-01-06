@@ -2,7 +2,7 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +10,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Elastic.Elasticsearch.Xunit.XunitPlumbing;
-using Elasticsearch.Net;
+using Elastic.Transport;
 using FluentAssertions;
 using Nest;
 using Tests.Framework;
@@ -76,7 +76,7 @@ namespace Tests.CodeStandards
 					else
 					{
 						var generic = sameNamedInterface.GetGenericTypeDefinition();
-						var genericArg = generic.GetTypeInfo().GenericTypeParameters
+						var genericArg = generic.GetGenericArguments()
 							.FirstOrDefault(a => a.GenericParameterAttributes.HasFlag(GenericParameterAttributes.Covariant));
 						if (genericArg == null)
 							offenders.Add(sameNamedInterface.Name + " is generic but not of its type arguments are covariant");

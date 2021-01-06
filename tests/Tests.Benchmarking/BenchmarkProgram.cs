@@ -2,7 +2,7 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -20,10 +20,14 @@ namespace Tests.Benchmarking
 {
 	public static class Program
 	{
+		// TODO add ./build.sh benchark to CI again and validate setting git info no longer errors
+
+		// ReSharper disable UnassignedGetOnlyAutoProperty
 		private static string Commit { get; }
 		private static string CommitMessage { get; }
 		private static string Branch { get; }
 		private static string Repository { get; }
+		// ReSharper restore UnassignedGetOnlyAutoProperty
 
 		static Program()
 		{
@@ -115,7 +119,7 @@ namespace Tests.Benchmarking
 
 			try
 			{
-				types = typeof(Program).GetTypeInfo().Assembly.GetTypes();
+				types = typeof(Program).Assembly.GetTypes();
 			}
 			catch (ReflectionTypeLoadException e)
 			{

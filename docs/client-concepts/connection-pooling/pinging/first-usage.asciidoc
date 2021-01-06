@@ -24,10 +24,11 @@ Here's an example with a cluster with two nodes where the second node fails on p
 
 [source,csharp]
 ----
-var audit = new Auditor(() => VirtualClusterWith
-    .Nodes(2)
+var audit = new Auditor(() => Virtual.Elasticsearch
+    .Bootstrap(2)
     .Ping(p => p.Succeeds(Always))
     .Ping(p => p.OnPort(9201).FailAlways())
+    .ClientCalls(c=>c.SucceedAlways())
     .StaticConnectionPool()
     .AllDefaults()
 );
@@ -63,11 +64,12 @@ A cluster with 4 nodes where the second and third pings fail
 
 [source,csharp]
 ----
-var audit = new Auditor(() => VirtualClusterWith
-    .Nodes(4)
+var audit = new Auditor(() => Virtual.Elasticsearch
+    .Bootstrap(4)
     .Ping(p => p.SucceedAlways())
     .Ping(p => p.OnPort(9201).FailAlways())
     .Ping(p => p.OnPort(9202).FailAlways())
+    .ClientCalls(c=>c.SucceedAlways())
     .StaticConnectionPool()
     .AllDefaults()
 );
@@ -101,9 +103,10 @@ All nodes are pinged on first use, provided they are healthy
 
 [source,csharp]
 ----
-var audit = new Auditor(() => VirtualClusterWith
-    .Nodes(4)
+var audit = new Auditor(() => Virtual.Elasticsearch
+    .Bootstrap(4)
     .Ping(p => p.SucceedAlways()) <1>
+    .ClientCalls(c=>c.SucceedAlways())
     .StaticConnectionPool()
     .AllDefaults()
 );

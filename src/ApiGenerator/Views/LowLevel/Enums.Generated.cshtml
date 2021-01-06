@@ -30,12 +30,6 @@
 		return name.EndsWith("Metric") || name.EndsWith("Feature");
 	}
 
-	private string CreateEnumKeyValue(string enumName, string value, int index)
-	{
-		var enumValue = GetEnumValue(enumName, value);
-		return string.Format("{3}{{ {0}.{1}, \"{2}\" }},", enumName, enumValue, value, index == 0 ? "\t\t\t\t" : string.Empty);
-	}
-
 	private string GetEnumValue(string enumName, string value)
 	{
 		return enumName == SizeEnum && value == string.Empty 
@@ -77,12 +71,6 @@ namespace Elasticsearch.Net
 		}
 		}
 
-		private class EnumDictionary : @(Raw("Dictionary<Enum, string>"))
-		{	
-			public EnumDictionary(int capacity) : base(capacity) {}
-			public @(Raw("Func<Enum, string>")) Resolver { get; set; }
-		}	
-
 	@foreach (EnumDescription e in Model.EnumsInTheSpec)
 	{
 		var isFlag = IsFlag(e.Name);
@@ -104,7 +92,7 @@ namespace Elasticsearch.Net
 			foreach (var option in e.Options.Where(o => o != "_all"))
 			{
 				var value = GetEnumValue(e.Name, option);
-				if (g && d.TryGetValue(option, out var obsolete)) {
+				if (g && d.TryGetValue(option, out var _)) {
 <text>#pragma warning disable 618
 			if ((enumValue & @(e.Name).@(value)) != 0) list.Add("@(option)");
 #pragma warning restore 618
@@ -129,45 +117,5 @@ namespace Elasticsearch.Net
 		}
 	}
 
-		public static string GetStringValue(this Enum e)
-		{
-			var type = e.GetType();		
-			var resolver = EnumStringResolvers.GetOrAdd(type, GetEnumStringResolver);
-			return resolver(e);
-		}
-
-		private static @Raw("Func<Enum, string>") GetEnumStringResolver(Type type)
-		{
-			var values = Enum.GetValues(type);
-			var dictionary = new EnumDictionary(values.Length);
-
-			for (int index = 0; index < values.Length; index++)
-			{
-				var value = values.GetValue(index);
-				var info = type.GetField(value.ToString());
-				var da = (EnumMemberAttribute[])info.GetCustomAttributes(typeof(EnumMemberAttribute), false);
-				var stringValue = da.Length > 0 ? da[0].Value : Enum.GetName(type, value);
-				dictionary.Add((Enum)value, stringValue);
-			}
-
-			var isFlag = type.GetCustomAttributes(typeof(FlagsAttribute), false).Length > 0;
-
-			return (e) => 
-			{
-				if (isFlag)
-				{
-					var list = new @(Raw("List<string>()"));
-					foreach(var kv in dictionary)
-					{
-						if (e.HasFlag(kv.Key)) list.Add(kv.Value);
-					}
-					return string.Join(",", list);
-				}
-				else
-				{
-					return dictionary[e];
-				}
-			};
-		}
 	}
 }

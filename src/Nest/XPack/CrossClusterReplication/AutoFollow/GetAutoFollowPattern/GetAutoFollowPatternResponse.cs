@@ -2,12 +2,9 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
-using Elasticsearch.Net;
-using Elasticsearch.Net.Utf8Json;
-using Elasticsearch.Net.Utf8Json.Internal;
-
+using Nest.Utf8Json;
 namespace Nest
 {
 	public class GetAutoFollowPatternResponse : ResponseBase
@@ -110,6 +107,15 @@ namespace Nest
 		IEnumerable<string> LeaderIndexPatterns { get; set; }
 
 		/// <summary>
+		/// Settings to override from the leader index.
+		/// Note that certain settings can not be overrode e.g. index.number_of_shards.
+		/// <para />
+		/// Valid in Elasticsearch 7.9.0+
+		/// </summary>
+		[DataMember(Name ="settings")]
+		IIndexSettings Settings { get; set; }
+
+		/// <summary>
 		/// the maximum number of outstanding reads requests from the remote cluster
 		/// </summary>
 		[DataMember(Name = "max_outstanding_read_requests")]
@@ -188,6 +194,9 @@ namespace Nest
 
 		/// <inheritdoc cref="IAutoFollowPattern.LeaderIndexPatterns" />
 		public IEnumerable<string> LeaderIndexPatterns { get; set; }
+
+		/// <inheritdoc cref="IAutoFollowPattern.Settings" />
+		public IIndexSettings Settings { get; set; }
 
 		/// <inheritdoc cref="IAutoFollowPattern.MaxOutstandingReadRequests" />
 		public long? MaxOutstandingReadRequests { get; set; }

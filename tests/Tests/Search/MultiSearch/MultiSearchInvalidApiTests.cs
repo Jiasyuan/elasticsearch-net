@@ -2,11 +2,12 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Elastic.Elasticsearch.Xunit.XunitPlumbing;
+using Elastic.Transport;
 using Elasticsearch.Net;
 using FluentAssertions;
 using Nest;
@@ -85,9 +86,10 @@ namespace Tests.Search.MultiSearch
 			AssertInvalidResponse(responses[2]);
 
 			/** GetInvalidResponses returns all the invalid responses as IResponse **/
-			var nvalidResponses = r.GetInvalidResponses();
-			nvalidResponses.Should().NotBeNull().And.HaveCount(2);
-			foreach (var response in nvalidResponses)
+			// TODO make GetResponses return ReadOnlyCollection
+			var invalidResponses = r.GetInvalidResponses().ToArray();
+			invalidResponses.Should().NotBeNull().And.HaveCount(2);
+			foreach (var response in invalidResponses)
 				AssertInvalidResponse(response);
 		});
 

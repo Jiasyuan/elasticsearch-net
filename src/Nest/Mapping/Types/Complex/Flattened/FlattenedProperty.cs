@@ -4,7 +4,7 @@
 
 using System.Diagnostics;
 using System.Runtime.Serialization;
-using Elasticsearch.Net.Utf8Json;
+using Nest.Utf8Json;
 
 namespace Nest
 {
@@ -20,12 +20,6 @@ namespace Nest
 	[InterfaceDataContract]
 	public interface IFlattenedProperty : IProperty
 	{
-		/// <summary>
-		/// Mapping field-level query time boosting. Accepts a floating point number, defaults to 1.0.
-		/// </summary>
-		[DataMember(Name = "boost")]
-		double? Boost { get; set; }
-
 		/// <summary>
 		/// The maximum allowed depth of the flattened object field,
 		/// in terms of nested inner objects. If a flattened object field exceeds this limit,
@@ -95,9 +89,6 @@ namespace Nest
 		public FlattenedProperty() : base(FieldType.Flattened) { }
 
 		/// <inheritdoc />
-		public double? Boost { get; set; }
-
-		/// <inheritdoc />
 		public int? DepthLimit { get; set; }
 
 		/// <inheritdoc />
@@ -133,7 +124,6 @@ namespace Nest
 	{
 		public FlattenedPropertyDescriptor() : base(FieldType.Flattened) { }
 
-		double? IFlattenedProperty.Boost { get; set; }
 		int? IFlattenedProperty.DepthLimit { get; set; }
 		bool? IFlattenedProperty.DocValues { get; set; }
 		bool? IFlattenedProperty.EagerGlobalOrdinals { get; set; }
@@ -143,9 +133,6 @@ namespace Nest
 		string IFlattenedProperty.NullValue { get; set; }
 		string IFlattenedProperty.Similarity { get; set; }
 		bool? IFlattenedProperty.SplitQueriesOnWhitespace { get; set; }
-
-		/// <inheritdoc cref="IFlattenedProperty.Boost" />
-		public FlattenedPropertyDescriptor<T> Boost(double? boost) => Assign(boost, (a, v) => a.Boost = v);
 
 		/// <inheritdoc cref="IFlattenedProperty.DepthLimit" />
 		public FlattenedPropertyDescriptor<T> DepthLimit(int? depthLimit) => Assign(depthLimit, (a, v) => a.DepthLimit = v);

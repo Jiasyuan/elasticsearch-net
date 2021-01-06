@@ -2,7 +2,7 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -10,13 +10,13 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Elastic.Elasticsearch.Xunit.XunitPlumbing;
-using Elasticsearch.Net;
-using Elasticsearch.Net.VirtualizedCluster;
-using Elasticsearch.Net.VirtualizedCluster.Audit;
+using Elastic.Transport;
+using Elastic.Transport.VirtualizedCluster;
+using Elastic.Transport.VirtualizedCluster.Audit;
 using FluentAssertions;
 using Tests.Framework;
-using static Elasticsearch.Net.VirtualizedCluster.Rules.TimesHelper;
-using static Elasticsearch.Net.AuditEvent;
+using static Elastic.Transport.VirtualizedCluster.Rules.TimesHelper;
+using static Elastic.Transport.Diagnostics.Auditing.AuditEvent;
 
 namespace Tests.ClientConcepts.ConnectionPooling.Sticky
 {
@@ -31,7 +31,7 @@ namespace Tests.ClientConcepts.ConnectionPooling.Sticky
 		{
 			var numberOfNodes = 10;
 			var uris = Enumerable.Range(9200, numberOfNodes).Select(p => new Uri("http://localhost:" + p));
-			var pool = new Elasticsearch.Net.StickySniffingConnectionPool(uris, (n)=>0f);
+			var pool = new Elastic.Transport.StickySniffingConnectionPool(uris, (n)=>0f);
 
 			/**
 			* Here we have setup a sticky connection pool seeded with 10 nodes all weighted the same.
@@ -66,12 +66,12 @@ namespace Tests.ClientConcepts.ConnectionPooling.Sticky
 				We setup node 9202 to fail after two client calls in which case we sniff and find nodes
 				`9210-9213` in which case we should become sticky on rack_11.
 			 */
-			var audit = new Auditor(() => VirtualClusterWith
-				.Nodes(Nodes(0))
-				.ClientCalls(p => p.OnPort(9202).Succeeds(Twice).ThrowsAfterSucceeds())
+			var audit = new Auditor(() => Virtual.Elasticsearch
+				.Bootstrap(Nodes(0))
+				.ClientCalls(p => p.OnPort(9202).Succeeds(Twice))
 				.ClientCalls(p => p.FailAlways())
-				.Sniff(s=>s.SucceedAlways(VirtualClusterWith
-					.Nodes(Nodes(10))
+				.Sniff(s=>s.SucceedAlways(Virtual.Elasticsearch
+					.Bootstrap(Nodes(10))
 					.ClientCalls(p => p.SucceedAlways()))
 				)
 				.StickySniffingConnectionPool(n=>
@@ -118,11 +118,11 @@ namespace Tests.ClientConcepts.ConnectionPooling.Sticky
 			/** We seed a cluster with an array of 4 Uri's starting at port 9200.
 			* Our sniffing sorted connection pool is set up to favor nodes in rack_2
 			*/
-			var audit = new Auditor(() => VirtualClusterWith
-				.Nodes(4)
+			var audit = new Auditor(() => Virtual.Elasticsearch
+				.Bootstrap(4)
 				.ClientCalls(p => p.SucceedAlways())
-				.Sniff(s=>s.SucceedAlways(VirtualClusterWith
-					.Nodes(Nodes(0))
+				.Sniff(s=>s.SucceedAlways(Virtual.Elasticsearch
+					.Bootstrap(Nodes(0))
 					.ClientCalls(p => p.SucceedAlways()))
 				)
 				.StickySniffingConnectionPool(n=>
@@ -158,8 +158,8 @@ namespace Tests.ClientConcepts.ConnectionPooling.Sticky
 		[U, SuppressMessage("AsyncUsage", "AsyncFixer001:Unnecessary async/await usage", Justification = "Its a test")]
 		public async Task PicksADifferentNodeEachTimeAnodeIsDown()
 		{
-			var audit = new Auditor(() => VirtualClusterWith
-				.Nodes(4)
+			var audit = new Auditor(() => Virtual.Elasticsearch
+				.Bootstrap(4)
 				.ClientCalls(p => p.Fails(Always))
 				.StickySniffingConnectionPool()
 				.Settings(p => p.DisablePing().SniffOnStartup(false).SniffOnConnectionFault(false))

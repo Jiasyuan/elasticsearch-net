@@ -2,12 +2,14 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Elasticsearch.Net;
+using Elastic.Transport;
+using Elastic.Transport.Diagnostics.Auditing;
+using Elastic.Transport.Extensions;
 
 namespace Nest
 {
@@ -42,7 +44,7 @@ namespace Nest
 			_retryPredicate = _partitionedBulkRequest.RetryDocumentPredicate ?? RetryBulkActionPredicate;
 			_droppedDocumentCallBack = _partitionedBulkRequest.DroppedDocumentCallback ?? DroppedDocumentCallbackDefault;
 			_bulkResponseCallback = _partitionedBulkRequest.BulkResponseCallback;
-			
+
 			_maxDegreeOfParallelism =
 				_partitionedBulkRequest.MaxDegreeOfParallelism ?? CoordinatedRequestDefaults.BulkAllMaxDegreeOfParallelismDefault;
 			_compositeCancelTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
@@ -174,8 +176,8 @@ namespace Nest
 
 		private async Task<BulkAllResponse> HandleBulkRequest(IList<T> buffer, long page, int backOffRetries, BulkResponse response)
 		{
-			var clientException = response.ApiCall.OriginalException as ElasticsearchClientException;
-			var failureReason = clientException?.FailureReason; 
+			var clientException = response.ApiCall.OriginalException as TransportException;
+			var failureReason = clientException?.FailureReason;
 			var reason = failureReason?.GetStringValue() ?? nameof(PipelineFailure.BadRequest);
 			switch (failureReason)
 			{
@@ -202,7 +204,7 @@ namespace Nest
 
 			void ThrowOnExhaustedRetries()
 			{
-				if (_partitionedBulkRequest.ContinueAfterDroppedDocuments || backOffRetries < _backOffRetries) return;
+				if (backOffRetries < _backOffRetries) return;
 
 				throw ThrowOnBadBulk(response,
 					$"{nameof(BulkAll)} halted after {nameof(PipelineFailure)}.{reason} from _bulk and exhausting retries ({backOffRetries})"
@@ -217,15 +219,15 @@ namespace Nest
 			return await BulkAsync(retryDocuments, page, backOffRetries).ConfigureAwait(false);
 		}
 
-		private Exception ThrowOnBadBulk(IElasticsearchResponse response, string message)
+		private Exception ThrowOnBadBulk(ITransportResponse response, string message)
 		{
 			_incrementFailed();
 			_partitionedBulkRequest.BackPressure?.Release();
 			return Throw(message, response.ApiCall);
 		}
 
-		private static ElasticsearchClientException Throw(string message, IApiCallDetails details) =>
-			new ElasticsearchClientException(PipelineFailure.BadResponse, message, details);
+		private static TransportException Throw(string message, IApiCallDetails details) =>
+			new TransportException(PipelineFailure.BadResponse, message, details);
 
 
 		private static bool RetryBulkActionPredicate(BulkResponseItemBase bulkResponseItem, T d) => bulkResponseItem.Status == 429;

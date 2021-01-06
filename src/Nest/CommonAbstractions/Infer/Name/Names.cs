@@ -2,11 +2,11 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Elasticsearch.Net;
+using Elastic.Transport;
 
 namespace Nest
 {
@@ -30,7 +30,7 @@ namespace Nest
 
 		public bool Equals(Names other) => EqualsAllIds(Value, other.Value);
 
-		string IUrlParameter.GetString(IConnectionConfigurationValues settings) =>
+		string IUrlParameter.GetString(ITransportConfigurationValues settings) =>
 			string.Join(",", Value.Cast<IUrlParameter>().Select(n => n.GetString(settings)));
 
 		public static Names Parse(string names) => names.IsNullOrEmptyCommaSeparatedList(out var list) ? null : new Names(list);

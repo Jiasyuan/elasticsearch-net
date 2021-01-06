@@ -7,8 +7,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using Elasticsearch.Net;
-using Elasticsearch.Net.Utf8Json;
+using Elastic.Transport;
+using Nest.Utf8Json;
 
 namespace Nest
 {
@@ -52,8 +52,6 @@ namespace Nest
 
 	internal class PostJobDataFormatter : IJsonFormatter<IPostJobDataRequest>
 	{
-		private const byte Newline = (byte)'\n';
-
 		public IPostJobDataRequest Deserialize(ref JsonReader reader, IJsonFormatterResolver formatterResolver) =>
 			throw new NotSupportedException();
 

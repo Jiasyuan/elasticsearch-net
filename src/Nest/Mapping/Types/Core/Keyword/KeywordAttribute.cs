@@ -2,13 +2,12 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿namespace Nest
+namespace Nest
 {
 	public class KeywordAttribute : ElasticsearchDocValuesPropertyAttributeBase, IKeywordProperty
 	{
 		public KeywordAttribute() : base(FieldType.Keyword) { }
 
-		double? IKeywordProperty.Boost { get; set; }
 		bool? IKeywordProperty.EagerGlobalOrdinals { get; set; }
 		int? IKeywordProperty.IgnoreAbove { get; set; }
 		bool? IKeywordProperty.Index { get; set; }
@@ -18,13 +17,6 @@
 		string IKeywordProperty.NullValue { get; set; }
 		private IKeywordProperty Self => this;
 		bool? IKeywordProperty.SplitQueriesOnWhitespace { get; set; }
-
-		// ReSharper disable ArrangeThisQualifier
-		public double Boost
-		{
-			get => Self.Boost.GetValueOrDefault();
-			set => Self.Boost = value;
-		}
 
 		public bool EagerGlobalOrdinals
 		{

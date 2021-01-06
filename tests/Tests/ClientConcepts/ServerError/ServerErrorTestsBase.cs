@@ -2,7 +2,8 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using Elasticsearch.Net;
+using Elastic.Transport;
+using Elasticsearch.Net;
 using FluentAssertions;
 using Nest;
 using Tests.Core.Client;
@@ -15,8 +16,9 @@ namespace Tests.ClientConcepts.ServerError
 	{
 		protected ServerErrorTestsBase()
 		{
+			var lowLevelClientSettings = FixedResponseClient.CreateConnectionSettings(ResponseJson, 500, serializer: new LowLevelRequestResponseSerializer());
+			LowLevelClient = new ElasticLowLevelClient(lowLevelClientSettings);
 			var settings = FixedResponseClient.CreateConnectionSettings(ResponseJson, 500);
-			LowLevelClient = new ElasticLowLevelClient(settings);
 			HighLevelClient = new ElasticClient(settings);
 		}
 

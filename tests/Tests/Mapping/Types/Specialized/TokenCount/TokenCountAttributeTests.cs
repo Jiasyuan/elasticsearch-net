@@ -2,7 +2,7 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using Nest;
+using Nest;
 
 namespace Tests.Mapping.Types.Specialized.TokenCount
 {
@@ -11,7 +11,7 @@ namespace Tests.Mapping.Types.Specialized.TokenCount
 		[TokenCount(
 			Index = false,
 			Analyzer = "standard",
-			Boost = 1.2,
+			EnablePositionIncrements = false,
 			NullValue = 0)]
 		public int Full { get; set; }
 
@@ -29,8 +29,8 @@ namespace Tests.Mapping.Types.Specialized.TokenCount
 				{
 					type = "token_count",
 					analyzer = "standard",
+					enable_position_increments = false,
 					index = false,
-					boost = 1.2,
 					null_value = 0.0,
 				},
 				minimal = new

@@ -2,8 +2,8 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
-using Elasticsearch.Net;
+using System;
+using Elastic.Transport;
 
 namespace Nest
 {
@@ -21,7 +21,7 @@ namespace Nest
 	/// <summary>
 	/// The preferred way to wire in a custom response formatter is for requests to override
 	/// <see cref="RequestBase{TParameters}.RequestDefaults"/> however sometimes a request does not have
-	/// access to enough type information. This attribute will set up the <see cref="RequestParameters{T}.CustomResponseBuilder"/>
+	/// access to enough type information. This attribute will set up the see <see cref="CustomResponseBuilderBase"/>
 	/// in the generated client methods instead.
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Interface)]

@@ -2,7 +2,7 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿namespace Nest
+namespace Nest
 {
 	public class TextAttribute : ElasticsearchCorePropertyAttributeBase, ITextProperty {
 		public TextAttribute() : base(FieldType.Text) { }
@@ -12,12 +12,6 @@
 		{
 			get => Self.Analyzer;
 			set => Self.Analyzer = value;
-		}
-
-		public double Boost
-		{
-			get => Self.Boost.GetValueOrDefault();
-			set => Self.Boost = value;
 		}
 
 		public bool EagerGlobalOrdinals
@@ -81,7 +75,6 @@
 		}
 
 		string ITextProperty.Analyzer { get; set; }
-		double? ITextProperty.Boost { get; set; }
 		bool? ITextProperty.EagerGlobalOrdinals { get; set; }
 		bool? ITextProperty.Fielddata { get; set; }
 		IFielddataFrequencyFilter ITextProperty.FielddataFrequencyFilter { get; set; }

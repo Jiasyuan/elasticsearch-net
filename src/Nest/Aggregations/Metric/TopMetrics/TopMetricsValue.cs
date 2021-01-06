@@ -2,11 +2,11 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Runtime.Serialization;
-using Elasticsearch.Net.Utf8Json;
+using Nest.Utf8Json;
 
 namespace Nest
 {
@@ -47,7 +47,7 @@ namespace Nest
 		public TopMetricsValuesDescriptor<T> Field<TValue>(Expression<Func<T, TValue>> field) =>
 			AddTopMetrics(new TopMetricsValue { Field = field});
 
-		private TopMetricsValuesDescriptor<T> AddTopMetrics(ITopMetricsValue TopMetrics) => TopMetrics == null ? this : Assign(TopMetrics, (a, v) => a.Add(v));
+		private TopMetricsValuesDescriptor<T> AddTopMetrics(ITopMetricsValue topMetrics) => topMetrics == null ? this : Assign(topMetrics, (a, v) => a.Add(v));
 	}
 
 }

@@ -2,7 +2,8 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
+using FluentAssertions;
 using Nest;
 using Tests.Core.ManagedElasticsearch.Clusters;
 using Tests.Domain;
@@ -10,6 +11,7 @@ using Tests.Framework.EndpointTests.TestState;
 
 namespace Tests.Search.Request
 {
+	// ReSharper disable InvalidXmlDocComment
 	/**
 	 * Allows to return a script evaluation (based on different fields) for each hit.
 	 *
@@ -24,6 +26,7 @@ namespace Tests.Search.Request
 	 * See the Elasticsearch documentation on {ref_current}/search-request-body.html#request-body-search-script-fields[script fields]
 	 * for more detail.
 	 */
+	// ReSharper restore InvalidXmlDocComment
 	public class ScriptFieldsUsageTests : SearchUsageTestBase
 	{
 		public ScriptFieldsUsageTests(ReadOnlyCluster cluster, EndpointUsage usage) : base(cluster, usage) { }
@@ -83,5 +86,15 @@ namespace Tests.Search.Request
 					}
 				}
 			};
+
+
+		protected override void ExpectResponse(ISearchResponse<Project> response)
+		{
+			foreach (var fields in response.Fields)
+			{
+				fields.Value<int>("test1").Should().BeGreaterOrEqualTo(0);
+				fields.Value<double>("test2").Should().BeGreaterOrEqualTo(0);
+			}
+		}
 	}
 }

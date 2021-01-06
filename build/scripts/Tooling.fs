@@ -1,4 +1,4 @@
-﻿// Licensed to Elasticsearch B.V under one or more agreements.
+// Licensed to Elasticsearch B.V under one or more agreements.
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
@@ -10,7 +10,7 @@ open ProcNet.Std
 
 module Tooling = 
 
-    type ExecResult = { ExitCode: int; Output: Std.LineOut seq;}
+    type ExecResult = { ExitCode: int; Output: LineOut seq;}
     
     let private defaultTimeout = TimeSpan.FromMinutes(5.)
     
@@ -62,7 +62,6 @@ module Tooling =
         member this.ExecIn workingDirectory arguments = this.ExecInWithTimeout workingDirectory arguments timeout
         member this.Exec arguments = this.ExecWithTimeout arguments timeout
 
-    let ILRepack = BuildTooling(None, "build/scripts/bin/Release/netcoreapp3.0/ILRepack.exe")
     let DotNet = BuildTooling(None, "dotnet")
 
     

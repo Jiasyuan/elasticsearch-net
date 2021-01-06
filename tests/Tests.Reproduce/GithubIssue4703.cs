@@ -5,10 +5,9 @@
 using System;
 using System.Text;
 using Elastic.Elasticsearch.Xunit.XunitPlumbing;
-using Elasticsearch.Net;
+using Elastic.Transport;
 using FluentAssertions;
 using Nest;
-using Tests.Core.Client;
 
 namespace Tests.Reproduce
 {
@@ -37,6 +36,7 @@ namespace Tests.Reproduce
 
 	public class ExampleDoc
 	{
+		// ReSharper disable once InconsistentNaming
 		public (string info, int number)? tupleNullable { get; set; }
 	}
 }

@@ -2,8 +2,9 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
-using System.IO;
+using System;
+ using System.Globalization;
+ using System.IO;
 using System.Linq;
 using CommandLine;
 using Newtonsoft.Json.Linq;
@@ -14,6 +15,7 @@ namespace DocGenerator
 	{
 		static Program()
 		{
+			CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-us");
 			var root = new DirectoryInfo(Directory.GetCurrentDirectory());
 
 			do

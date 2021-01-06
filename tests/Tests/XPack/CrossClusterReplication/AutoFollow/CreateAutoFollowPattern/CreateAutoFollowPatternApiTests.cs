@@ -2,8 +2,9 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
-using Elasticsearch.Net;
+using System;
+ using System.Collections.Generic;
+ using Elastic.Transport;
 using Nest;
 using Tests.Core.ManagedElasticsearch.Clusters;
 using Tests.Framework.EndpointTests;
@@ -19,6 +20,10 @@ namespace Tests.XPack.CrossClusterReplication.AutoFollow.CreateAutoFollowPattern
 		{
 			follow_index_pattern = "y",
 			leader_index_patterns = new [] { "z" },
+			settings = new Dictionary<string, object>
+			{
+				["index.queries.cache.enabled"] = false
+			},
 			max_outstanding_read_requests = 100,
 			max_outstanding_write_requests = 101,
 			max_read_request_operation_count = 102,
@@ -38,6 +43,13 @@ namespace Tests.XPack.CrossClusterReplication.AutoFollow.CreateAutoFollowPattern
 			.RemoteCluster("x")
 			.FollowIndexPattern("y")
 			.LeaderIndexPatterns("z")
+			.Settings(s => s
+				.Queries(q => q
+					.Cache(qc => qc
+						.Enabled(false)
+					)
+				)
+			)
 			.MaxWriteBufferSize("1mb")
 			.MaxOutstandingReadRequests(100)
 			.MaxOutstandingWriteRequests( 101)
@@ -57,6 +69,16 @@ namespace Tests.XPack.CrossClusterReplication.AutoFollow.CreateAutoFollowPattern
 			RemoteCluster = "x",
 			FollowIndexPattern = "y",
 			LeaderIndexPatterns = new []{"z"},
+			Settings = new IndexSettings
+			{
+				Queries = new QueriesSettings
+				{
+					Cache = new QueriesCacheSettings
+					{
+						Enabled = false
+					}
+				}
+			},
 			MaxWriteBufferSize = "1mb",
 			MaxOutstandingReadRequests = 100,
 			MaxOutstandingWriteRequests = 101,

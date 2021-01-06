@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Linq.Expressions;
+using Elastic.Transport;
 
 // ReSharper disable once CheckNamespace
 namespace Elasticsearch.Net.Specification.CatApi
@@ -383,13 +384,6 @@ namespace Elasticsearch.Net.Specification.CatApi
 			set => Q("include_unloaded_segments", value);
 		}
 
-		///<summary>Return local information, do not retrieve the state from master node (default: false)</summary>
-		public bool? Local
-		{
-			get => Q<bool? >("local");
-			set => Q("local", value);
-		}
-
 		///<summary>Explicit operation timeout for connection to master node</summary>
 		public TimeSpan MasterTimeout
 		{
@@ -543,10 +537,18 @@ namespace Elasticsearch.Net.Specification.CatApi
 		public override HttpMethod DefaultHttpMethod => HttpMethod.GET;
 		public override bool SupportsBody => false;
 		///<summary>Whether to ignore if a wildcard expression matches no datafeeds. (This includes `_all` string or when no datafeeds have been specified)</summary>
+		[Obsolete("Scheduled to be removed in 8.0, deprecated")]
 		public bool? AllowNoDatafeeds
 		{
 			get => Q<bool? >("allow_no_datafeeds");
 			set => Q("allow_no_datafeeds", value);
+		}
+
+		///<summary>Whether to ignore if a wildcard expression matches no datafeeds. (This includes `_all` string or when no datafeeds have been specified)</summary>
+		public bool? AllowNoMatch
+		{
+			get => Q<bool? >("allow_no_match");
+			set => Q("allow_no_match", value);
 		}
 
 		///<summary>a short version of the Accept header, e.g. json, yaml</summary>
@@ -595,10 +597,18 @@ namespace Elasticsearch.Net.Specification.CatApi
 		public override HttpMethod DefaultHttpMethod => HttpMethod.GET;
 		public override bool SupportsBody => false;
 		///<summary>Whether to ignore if a wildcard expression matches no jobs. (This includes `_all` string or when no jobs have been specified)</summary>
+		[Obsolete("Scheduled to be removed in 8.0, deprecated")]
 		public bool? AllowNoJobs
 		{
 			get => Q<bool? >("allow_no_jobs");
 			set => Q("allow_no_jobs", value);
+		}
+
+		///<summary>Whether to ignore if a wildcard expression matches no jobs. (This includes `_all` string or when no jobs have been specified)</summary>
+		public bool? AllowNoMatch
+		{
+			get => Q<bool? >("allow_no_match");
+			set => Q("allow_no_match", value);
 		}
 
 		///<summary>The unit in which to display byte values</summary>
@@ -938,6 +948,13 @@ namespace Elasticsearch.Net.Specification.CatApi
 			set => Q("help", value);
 		}
 
+		///<summary>Include bootstrap plugins in the response</summary>
+		public bool? IncludeBootstrap
+		{
+			get => Q<bool? >("include_bootstrap");
+			set => Q("include_bootstrap", value);
+		}
+
 		///<summary>Return local information, do not retrieve the state from master node (default: false)</summary>
 		public bool? Local
 		{
@@ -1188,13 +1205,6 @@ namespace Elasticsearch.Net.Specification.CatApi
 			set => Q("help", value);
 		}
 
-		///<summary>Return local information, do not retrieve the state from master node (default: false)</summary>
-		public bool? Local
-		{
-			get => Q<bool? >("local");
-			set => Q("local", value);
-		}
-
 		///<summary>Explicit operation timeout for connection to master node</summary>
 		public TimeSpan MasterTimeout
 		{
@@ -1324,17 +1334,17 @@ namespace Elasticsearch.Net.Specification.CatApi
 		/// A comma-separated list of node IDs or names to limit the returned information; use `_local` to return information from the node you're
 		/// connecting to, leave empty to get information from all nodes
 		///</summary>
-		public string[] NodeId
+		public string[] Nodes
 		{
-			get => Q<string[]>("node_id");
-			set => Q("node_id", value);
+			get => Q<string[]>("nodes");
+			set => Q("nodes", value);
 		}
 
-		///<summary>Return tasks with specified parent task id. Set to -1 to return all.</summary>
-		public long? ParentTask
+		///<summary>Return tasks with specified parent task id (node_id:task_number). Set to -1 to return all.</summary>
+		public string ParentTaskId
 		{
-			get => Q<long? >("parent_task");
-			set => Q("parent_task", value);
+			get => Q<string>("parent_task_id");
+			set => Q("parent_task_id", value);
 		}
 
 		///<summary>Comma-separated list of column names or column aliases to sort by</summary>

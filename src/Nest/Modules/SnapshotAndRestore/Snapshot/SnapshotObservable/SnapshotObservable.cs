@@ -2,11 +2,11 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using Elasticsearch.Net;
+using Elastic.Transport;
 
 namespace Nest
 {
@@ -55,7 +55,7 @@ namespace Nest
 				var snapshotResponse = _elasticClient.Snapshot.Snapshot(_snapshotRequest);
 
 				if (!snapshotResponse.IsValid)
-					throw new ElasticsearchClientException(PipelineFailure.BadResponse, "Failed to create snapshot.", snapshotResponse.ApiCall);
+					throw new TransportException(PipelineFailure.BadResponse, "Failed to create snapshot.", snapshotResponse.ApiCall);
 
 				EventHandler<SnapshotNextEventArgs> onNext = (sender, args) => observer.OnNext(args.SnapshotStatusResponse);
 				EventHandler<SnapshotCompletedEventArgs> onCompleted = (sender, args) => observer.OnCompleted();
@@ -174,7 +174,7 @@ namespace Nest
 						_snapshotRequest.Snapshot));
 
 				if (!snapshotStatusResponse.IsValid)
-					throw new ElasticsearchClientException(PipelineFailure.BadResponse, "Failed to get snapshot status.",
+					throw new TransportException(PipelineFailure.BadResponse, "Failed to get snapshot status.",
 						snapshotStatusResponse.ApiCall);
 
 				if (snapshotStatusResponse.Snapshots.All(s => s.ShardsStats.Done == s.ShardsStats.Total))

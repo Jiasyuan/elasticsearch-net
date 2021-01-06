@@ -2,11 +2,12 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Elasticsearch.Net;
+using Elastic.Transport;
+using Elastic.Transport.Extensions;
 using FluentAssertions;
 using Nest;
 using Newtonsoft.Json;
@@ -78,7 +79,7 @@ namespace Tests.Core.Serialization
 
 		public static SerializationTester DefaultWithJsonNetSerializer { get; } = new SerializationTester(TestClient.InMemoryWithJsonNetSerializer);
 
-		protected IElasticsearchSerializer Serializer => Client.ConnectionSettings.RequestResponseSerializer;
+		protected ITransportSerializer Serializer => Client.ConnectionSettings.RequestResponseSerializer;
 
 		public RoundTripResult<T> RoundTrips<T>(T @object, bool preserveNullInExpected = false)
 		{

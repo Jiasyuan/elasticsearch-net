@@ -4,7 +4,7 @@
 
 using System;
 using Elastic.Elasticsearch.Xunit.XunitPlumbing;
-using Elasticsearch.Net;
+using Elastic.Transport;
 using FluentAssertions;
 using Nest;
 using Tests.ClientConcepts.Connection;
@@ -15,9 +15,9 @@ namespace Tests.ClientConcepts.ConnectionPooling.Pinging
 {
 	public class PingTests : IClusterFixture<ReadOnlyCluster>
 	{
-		private readonly ReadOnlyCluster _cluster;
 
-		public PingTests(ReadOnlyCluster cluster) => _cluster = cluster;
+		// ReSharper disable once UnusedParameter.Local
+		public PingTests(ReadOnlyCluster cluster) { }
 
 #if DOTNETCORE
 		[I]

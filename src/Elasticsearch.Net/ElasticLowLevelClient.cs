@@ -2,10 +2,11 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
+using Elastic.Transport;
 using Elasticsearch.Net.Extensions;
 
 namespace Elasticsearch.Net
@@ -13,6 +14,7 @@ namespace Elasticsearch.Net
 	/// <summary>
 	/// Low level client that exposes all of Elasticsearch API endpoints but leaves you in charge of building request and handling the response
 	/// </summary>
+	// ReSharper disable once RedundantExtendsListEntry
 	public partial class ElasticLowLevelClient : IElasticLowLevelClient
 	{
 		/// <summary>Instantiate a new low level Elasticsearch client to http://localhost:9200</summary>
@@ -56,22 +58,22 @@ namespace Elasticsearch.Net
 
 		partial void SetupNamespaces();
 
-		public IElasticsearchSerializer Serializer => Transport.Settings.RequestResponseSerializer;
+		public ITransportSerializer Serializer => Transport.Settings.RequestResponseSerializer;
 
 		public IConnectionConfigurationValues Settings => Transport.Settings;
 
 		protected ITransport<IConnectionConfigurationValues> Transport { get; set; }
 
-		private ElasticsearchUrlFormatter UrlFormatter { get; }
+		private UrlFormatter UrlFormatter { get; }
 
 		public TResponse DoRequest<TResponse>(HttpMethod method, string path, PostData data = null, IRequestParameters requestParameters = null)
-			where TResponse : class, IElasticsearchResponse, new() =>
+			where TResponse : class, ITransportResponse, new() =>
 			Transport.Request<TResponse>(method, path, data, requestParameters);
 
 		public Task<TResponse> DoRequestAsync<TResponse>(HttpMethod method, string path, CancellationToken cancellationToken, PostData data = null,
 			IRequestParameters requestParameters = null
 		)
-			where TResponse : class, IElasticsearchResponse, new() =>
+			where TResponse : class, ITransportResponse, new() =>
 			Transport.RequestAsync<TResponse>(method, path, cancellationToken, data, requestParameters);
 
 		protected internal string Url(FormattableString formattable) => formattable.ToString(UrlFormatter);

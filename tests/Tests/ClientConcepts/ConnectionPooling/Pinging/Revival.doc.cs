@@ -2,17 +2,17 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Elastic.Elasticsearch.Xunit.XunitPlumbing;
-using Elasticsearch.Net;
-using Elasticsearch.Net.VirtualizedCluster;
-using Elasticsearch.Net.VirtualizedCluster.Audit;
+using Elastic.Transport;
+using Elastic.Transport.VirtualizedCluster;
+using Elastic.Transport.VirtualizedCluster.Audit;
 using FluentAssertions;
 using Tests.Framework;
-using static Elasticsearch.Net.VirtualizedCluster.Rules.TimesHelper;
-using static Elasticsearch.Net.AuditEvent;
+using static Elastic.Transport.VirtualizedCluster.Rules.TimesHelper;
+using static Elastic.Transport.Diagnostics.Auditing.AuditEvent;
 
 namespace Tests.ClientConcepts.ConnectionPooling.Pinging
 {
@@ -29,8 +29,8 @@ namespace Tests.ClientConcepts.ConnectionPooling.Pinging
 		[U]
 		public async Task PingAfterRevival()
 		{
-			var audit = new Auditor(() => VirtualClusterWith
-				.Nodes(3)
+			var audit = new Auditor(() => Virtual.Elasticsearch
+				.Bootstrap(3)
 				.ClientCalls(r => r.SucceedAlways())
 				.ClientCalls(r => r.OnPort(9202).Fails(Once))
 				.Ping(p => p.SucceedAlways())

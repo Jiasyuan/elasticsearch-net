@@ -2,14 +2,14 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using Elastic.Elasticsearch.Xunit.XunitPlumbing;
-using Elasticsearch.Net;
+using Elastic.Transport;
 using Nest;
 using Tests.Domain;
 using Tests.Framework.EndpointTests;
 using Tests.Framework.EndpointTests.TestState;
-using static Elasticsearch.Net.HttpMethod;
+using static Elastic.Transport.HttpMethod;
 using static Nest.Infer;
 
 namespace Tests.XPack.Enrich.PutPolicy
@@ -52,8 +52,8 @@ namespace Tests.XPack.Enrich.PutPolicy
 		protected override Func<PutEnrichPolicyDescriptor<Project>, IPutEnrichPolicyRequest> Fluent => f => f
 			.Match(m => m
 				.Indices(typeof(Project))
-				.MatchField(f => f.Name)
-				.EnrichFields(f => f
+				.MatchField(mf => mf.Name)
+				.EnrichFields(e => e
 					.Field(ff => ff.Description)
 					.Field(ff => ff.Tags)
 				)

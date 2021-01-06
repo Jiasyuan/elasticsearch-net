@@ -2,7 +2,7 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using Nest;
 using Tests.Core.ManagedElasticsearch.Clusters;
 using Tests.Domain;
@@ -22,8 +22,8 @@ namespace Tests.Mapping.Types.Specialized.TokenCount
 				{
 					type = "token_count",
 					analyzer = "standard",
+					enable_position_increments = false,
 					index = false,
-					boost = 1.2,
 					null_value = 0.0
 				}
 			}
@@ -33,8 +33,8 @@ namespace Tests.Mapping.Types.Specialized.TokenCount
 			.TokenCount(s => s
 				.Name(p => p.Name)
 				.Analyzer("standard")
+				.EnablePositionIncrements(false)
 				.Index(false)
-				.Boost(1.2)
 				.NullValue(0.0)
 			);
 
@@ -46,7 +46,7 @@ namespace Tests.Mapping.Types.Specialized.TokenCount
 				{
 					Index = false,
 					Analyzer = "standard",
-					Boost = 1.2,
+					EnablePositionIncrements = false,
 					NullValue = 0.0
 				}
 			}

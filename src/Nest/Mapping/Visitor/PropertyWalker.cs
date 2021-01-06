@@ -2,7 +2,7 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Reflection;
@@ -41,7 +41,7 @@ namespace Nest
 			if (seenTypes != null && seenTypes.TryGetValue(_type, out var seen) && seen > maxRecursion)
 				return properties;
 
-			foreach (var propertyInfo in _type.AllPropertiesCached())
+			foreach (var propertyInfo in _type.GetAllProperties())
 			{
 				var attribute = ElasticsearchPropertyAttributeBase.From(propertyInfo);
 				if (attribute != null && attribute.Ignore) continue;
@@ -61,7 +61,7 @@ namespace Nest
 			var property = _visitor.Visit(propertyInfo, attribute);
 			if (property != null) return property;
 
-			if (propertyInfo.GetGetMethod().IsStatic)
+			if (propertyInfo.GetMethod.IsStatic)
 				return null;
 
 			property = attribute ?? InferProperty(propertyInfo);
@@ -100,7 +100,7 @@ namespace Nest
 
 			if (type.IsEnum)
 			{
-				if (type.GetTypeInfo().GetCustomAttribute<StringEnumAttribute>() != null
+				if (type.GetCustomAttribute<StringEnumAttribute>() != null
 					|| propertyInfo.GetCustomAttribute<StringEnumAttribute>() != null)
 					return new KeywordProperty();
 
@@ -173,14 +173,16 @@ namespace Nest
 			return new ObjectProperty();
 		}
 
+		/// <summary>
+		/// Gets the underlying type when the type is a generic collection that implements <see cref="IEnumerable"/> or a nullable type
+		/// </summary>
 		private static Type GetUnderlyingType(Type type)
 		{
 			if (type.IsArray)
 				return type.GetElementType();
 
-			var typeInfo = type.GetTypeInfo();
-			if (typeInfo.IsGenericType && type.GetGenericArguments().Length == 1
-				&& (typeInfo.ImplementedInterfaces.HasAny(t => t == typeof(IEnumerable)) || Nullable.GetUnderlyingType(type) != null))
+			if (type.IsGenericType && type.GetGenericArguments().Length == 1
+				&& (type.GetInterfaces().HasAny(t => t == typeof(IEnumerable)) || Nullable.GetUnderlyingType(type) != null))
 				return type.GetGenericArguments()[0];
 
 			return type;

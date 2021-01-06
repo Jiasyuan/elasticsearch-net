@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Elasticsearch.Net;
+using Elastic.Transport;
 
 namespace Nest
 {
@@ -14,7 +14,7 @@ namespace Nest
 	{
 		public static CatHelpResponseBuilder Instance { get; } = new CatHelpResponseBuilder();
 
-		public override object DeserializeResponse(IElasticsearchSerializer builtInSerializer, IApiCallDetails response, Stream stream)
+		public override object DeserializeResponse(ITransportSerializer builtInSerializer, IApiCallDetails response, Stream stream)
 		{
 			var catResponse = new CatResponse<CatHelpRecord>();
 
@@ -32,7 +32,7 @@ namespace Nest
 			return catResponse;
 		}
 
-		public override async Task<object> DeserializeResponseAsync(IElasticsearchSerializer builtInSerializer, IApiCallDetails response, Stream stream,
+		public override async Task<object> DeserializeResponseAsync(ITransportSerializer builtInSerializer, IApiCallDetails response, Stream stream,
 			CancellationToken ctx = default)
 		{
 			var catResponse = new CatResponse<CatHelpRecord>();

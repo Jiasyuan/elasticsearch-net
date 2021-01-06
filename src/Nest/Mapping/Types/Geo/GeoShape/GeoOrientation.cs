@@ -2,7 +2,7 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using Elasticsearch.Net.Utf8Json;
+using Nest.Utf8Json;
 
 namespace Nest
 {
@@ -29,11 +29,9 @@ namespace Nest
 
 		public GeoOrientation Deserialize(ref JsonReader reader, IJsonFormatterResolver formatterResolver)
 		{
+			// Default, complies with the OGC standard
 			if (reader.ReadIsNull())
-			{
-				// Default, complies with the OGC standard
 				return GeoOrientation.CounterClockWise;
-			}
 
 			var enumString = reader.ReadString();
 			switch (enumString.ToUpperInvariant())
@@ -72,10 +70,7 @@ namespace Nest
 
 		public GeoOrientation? Deserialize(ref JsonReader reader, IJsonFormatterResolver formatterResolver)
 		{
-			if (reader.ReadIsNull())
-			{
-				return null;
-			}
+			if (reader.ReadIsNull()) return null;
 
 			var enumString = reader.ReadString();
 

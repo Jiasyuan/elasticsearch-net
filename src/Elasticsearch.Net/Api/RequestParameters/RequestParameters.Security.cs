@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Linq.Expressions;
+using Elastic.Transport;
 
 // ReSharper disable once CheckNamespace
 namespace Elasticsearch.Net.Specification.SecurityApi
@@ -45,6 +46,20 @@ namespace Elasticsearch.Net.Specification.SecurityApi
 			get => Q<Refresh? >("refresh");
 			set => Q("refresh", value);
 		}
+	}
+
+	///<summary>Request options for ClearApiKeyCache <para>https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-clear-api-key-cache.html</para></summary>
+	public class ClearApiKeyCacheRequestParameters : RequestParameters<ClearApiKeyCacheRequestParameters>
+	{
+		public override HttpMethod DefaultHttpMethod => HttpMethod.POST;
+		public override bool SupportsBody => false;
+	}
+
+	///<summary>Request options for ClearCachedPrivileges <para>https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-clear-privilege-cache.html</para></summary>
+	public class ClearCachedPrivilegesRequestParameters : RequestParameters<ClearCachedPrivilegesRequestParameters>
+	{
+		public override HttpMethod DefaultHttpMethod => HttpMethod.POST;
+		public override bool SupportsBody => false;
 	}
 
 	///<summary>Request options for ClearCachedRealms <para>https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-clear-cache.html</para></summary>
@@ -267,6 +282,22 @@ namespace Elasticsearch.Net.Specification.SecurityApi
 	{
 		public override HttpMethod DefaultHttpMethod => HttpMethod.GET;
 		public override bool SupportsBody => false;
+	}
+
+	///<summary>Request options for GrantApiKey <para>https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-grant-api-key.html</para></summary>
+	public class GrantApiKeyRequestParameters : RequestParameters<GrantApiKeyRequestParameters>
+	{
+		public override HttpMethod DefaultHttpMethod => HttpMethod.POST;
+		public override bool SupportsBody => true;
+		///<summary>
+		/// If `true` (the default) then refresh the affected shards to make this operation visible to search, if `wait_for` then wait for a refresh
+		/// to make this operation visible to search, if `false` then do nothing with refreshes.
+		///</summary>
+		public Refresh? Refresh
+		{
+			get => Q<Refresh? >("refresh");
+			set => Q("refresh", value);
+		}
 	}
 
 	///<summary>Request options for HasPrivileges <para>https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-has-privileges.html</para></summary>

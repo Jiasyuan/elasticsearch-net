@@ -131,8 +131,10 @@ namespace Elasticsearch.Net
 		Transport = 1 << 8,
 		[EnumMember(Value = "discovery")]
 		Discovery = 1 << 9,
+		[EnumMember(Value = "indexing_pressure")]
+		IndexingPressure = 1 << 10,
 		[EnumMember(Value = "_all")]
-		All = 1 << 10
+		All = 1 << 11
 	}
 
 	[Flags, StringEnum]
@@ -456,19 +458,6 @@ namespace Elasticsearch.Net
 			EnumStringResolvers.TryAdd(typeof(GroupBy), (e) => GetStringValue((GroupBy)e));
 		}
 
-		private class EnumDictionary : Dictionary<Enum, string>
-		{
-			public EnumDictionary(int capacity): base(capacity)
-			{
-			}
-
-			public Func<Enum, string> Resolver
-			{
-				get;
-				set;
-			}
-		}
-
 		public static string GetStringValue(this ClusterStateMetric enumValue)
 		{
 			if ((enumValue & ClusterStateMetric.All) != 0)
@@ -580,6 +569,8 @@ namespace Elasticsearch.Net
 				list.Add("transport");
 			if ((enumValue & NodesStatsMetric.Discovery) != 0)
 				list.Add("discovery");
+			if ((enumValue & NodesStatsMetric.IndexingPressure) != 0)
+				list.Add("indexing_pressure");
 			return string.Join(",", list);
 		}
 
@@ -942,49 +933,6 @@ namespace Elasticsearch.Net
 			}
 
 			throw new ArgumentException($"'{enumValue.ToString()}' is not a valid value for enum 'GroupBy'");
-		}
-
-		public static string GetStringValue(this Enum e)
-		{
-			var type = e.GetType();
-			var resolver = EnumStringResolvers.GetOrAdd(type, GetEnumStringResolver);
-			return resolver(e);
-		}
-
-		private static Func<Enum, string> GetEnumStringResolver(Type type)
-		{
-			var values = Enum.GetValues(type);
-			var dictionary = new EnumDictionary(values.Length);
-			for (int index = 0; index < values.Length; index++)
-			{
-				var value = values.GetValue(index);
-				var info = type.GetField(value.ToString());
-				var da = (EnumMemberAttribute[])info.GetCustomAttributes(typeof(EnumMemberAttribute), false);
-				var stringValue = da.Length > 0 ? da[0].Value : Enum.GetName(type, value);
-				dictionary.Add((Enum)value, stringValue);
-			}
-
-			var isFlag = type.GetCustomAttributes(typeof(FlagsAttribute), false).Length > 0;
-			return (e) =>
-			{
-				if (isFlag)
-				{
-					var list = new List<string>();
-					foreach (var kv in dictionary)
-					{
-						if (e.HasFlag(kv.Key))
-							list.Add(kv.Value);
-					}
-
-					return string.Join(",", list);
-				}
-				else
-				{
-					return dictionary[e];
-				}
-			}
-
-			;
 		}
 	}
 }

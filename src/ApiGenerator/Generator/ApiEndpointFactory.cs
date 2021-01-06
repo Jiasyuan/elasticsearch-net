@@ -11,18 +11,22 @@ using ApiGenerator.Configuration.Overrides;
 using ApiGenerator.Domain;
 using ApiGenerator.Domain.Code;
 using ApiGenerator.Domain.Specification;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace ApiGenerator.Generator
 {
 	public static class ApiEndpointFactory
 	{
+		private static readonly JsonSerializer Serializer = JsonSerializer.Create(
+			new JsonSerializerSettings { Converters = new List<JsonConverter> { new QueryParameterDeprecationConverter() } });
+
 		public static ApiEndpoint FromFile(string jsonFile)
 		{
 			var officialJsonSpec = JObject.Parse(File.ReadAllText(jsonFile));
 			TransformNewSpecStructureToOld(officialJsonSpec);
 			PatchOfficialSpec(officialJsonSpec, jsonFile);
-			var (name, endpoint) = officialJsonSpec.ToObject<Dictionary<string, ApiEndpoint>>().First();
+			var (name, endpoint) = officialJsonSpec.ToObject<Dictionary<string, ApiEndpoint>>(Serializer).First();
 
 			endpoint.FileName = Path.GetFileName(jsonFile);
 			endpoint.Name = name;
@@ -52,7 +56,13 @@ namespace ApiGenerator.Generator
 			{
 				var required = url.Paths.All(p => p.Path.Contains($"{{{part.Name}}}"));
 				if (part.Required != required)
-					ApiGenerator.Warnings.Add($"{jsonFile} has part: {part.Name} listed as {part.Required} but should be {required}");
+				{
+					var message = required
+						? "is [b green] required [/] but appears in spec as [b red] optional [/]"
+						: "is [b green] optional [/] but marked as [b red] required [/]  ";
+					// TODO submit PR to fix these, too noisy for now
+					//ApiGenerator.Warnings.Add($"[grey]{jsonFile}[/] part [b white] {part.Name} [/] {message}");
+				}
 				part.Required = required;
 			}
 		}
@@ -83,7 +93,7 @@ namespace ApiGenerator.Generator
 		private static void PatchOfficialSpec(JObject original, string jsonFile)
 		{
 			var directory = Path.GetDirectoryName(jsonFile);
-			var patchFile = Path.Combine(directory,"..", "_Patches", Path.GetFileNameWithoutExtension(jsonFile)) + ".patch.json";
+			var patchFile = Path.Combine(directory!,"..", "_Patches", Path.GetFileNameWithoutExtension(jsonFile)) + ".patch.json";
 			if (!File.Exists(patchFile)) return;
 
 			var patchedJson = JObject.Parse(File.ReadAllText(patchFile));
@@ -99,9 +109,7 @@ namespace ApiGenerator.Generator
 
 			var methodsOverride = patchedJson.SelectToken("*.methods");
 			if (methodsOverride != null)
-			{
 				original.SelectToken("*.methods").Replace(methodsOverride);
-			}
 
 			var paramsOverride = patchedJson.SelectToken("*.params");
 			var originalParams = original.SelectToken("*.url.params") as JObject;
@@ -175,7 +183,7 @@ namespace ApiGenerator.Generator
 
 			var newUrl = new JObject
 			{
-				["paths"] = new JArray(paths.ToArray()),
+				["paths"] = new JArray(paths.Cast<object>().ToArray()),
 			};
 
 			if (spec.ContainsKey("params"))
@@ -188,10 +196,10 @@ namespace ApiGenerator.Generator
 				newUrl["parts"] = parts;
 
 			if (deprecatedPaths.Any())
-				newUrl["deprecated_paths"] = new JArray(deprecatedPaths.ToArray());
+				newUrl["deprecated_paths"] = new JArray(deprecatedPaths.Cast<object>().ToArray());
 
 			spec["url"] = newUrl;
-			spec["methods"] = new JArray(methods.ToArray());
+			spec["methods"] = new JArray(methods.Cast<object>().ToArray());
 		}
 	}
 }

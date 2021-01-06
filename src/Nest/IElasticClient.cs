@@ -2,7 +2,8 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using Elasticsearch.Net;
+using Elastic.Transport;
+using Elasticsearch.Net;
 
 namespace Nest
 {
@@ -25,15 +26,15 @@ namespace Nest
 		IElasticLowLevelClient LowLevel { get; }
 
 		/// <summary>
-		/// Access the configured <see cref="IConnectionConfigurationValues.RequestResponseSerializer" />
+		/// Access the configured <see cref="ITransportConfigurationValues.RequestResponseSerializer" />
 		/// Out of the box <see cref="SourceSerializer" /> and this point to the same instance
 		/// </summary>
-		IElasticsearchSerializer RequestResponseSerializer { get; }
+		ITransportSerializer RequestResponseSerializer { get; }
 
 		/// <summary>
 		/// Access the configured <see cref="IConnectionSettingsValues.SourceSerializer" />
 		/// Out of the box <see cref="RequestResponseSerializer" /> and this point to the same instance
 		/// </summary>
-		IElasticsearchSerializer SourceSerializer { get; }
+		ITransportSerializer SourceSerializer { get; }
 	}
 }

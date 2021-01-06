@@ -20,11 +20,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Linq.Expressions;
+using Elastic.Transport;
 
 // ReSharper disable once CheckNamespace
 namespace Elasticsearch.Net.Specification.SearchableSnapshotsApi
 {
-	///<summary>Request options for ClearCache <para>https://www.elastic.co/guide/en/elasticsearch/reference/master/searchable-snapshots-api-clear-cache.html</para></summary>
+	///<summary>Request options for ClearCache <para>https://www.elastic.co/guide/en/elasticsearch/reference/master/searchable-snapshots-apis.html</para></summary>
 	public class ClearCacheRequestParameters : RequestParameters<ClearCacheRequestParameters>
 	{
 		public override HttpMethod DefaultHttpMethod => HttpMethod.POST;
@@ -81,14 +82,7 @@ namespace Elasticsearch.Net.Specification.SearchableSnapshotsApi
 		}
 	}
 
-	///<summary>Request options for RepositoryStats <para>https://www.elastic.co/guide/en/elasticsearch/reference/master/searchable-snapshots-repository-stats.html</para></summary>
-	public class RepositoryStatsRequestParameters : RequestParameters<RepositoryStatsRequestParameters>
-	{
-		public override HttpMethod DefaultHttpMethod => HttpMethod.GET;
-		public override bool SupportsBody => false;
-	}
-
-	///<summary>Request options for Stats <para>https://www.elastic.co/guide/en/elasticsearch/reference/master/searchable-snapshots-api-stats.html</para></summary>
+	///<summary>Request options for Stats <para>https://www.elastic.co/guide/en/elasticsearch/reference/master/searchable-snapshots-apis.html</para></summary>
 	public class StatsRequestParameters : RequestParameters<StatsRequestParameters>
 	{
 		public override HttpMethod DefaultHttpMethod => HttpMethod.GET;

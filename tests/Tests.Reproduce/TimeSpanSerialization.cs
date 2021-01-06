@@ -5,7 +5,7 @@
 using System;
 using System.Text;
 using Elastic.Elasticsearch.Xunit.XunitPlumbing;
-using Elasticsearch.Net;
+using Elastic.Transport.Extensions;
 using FluentAssertions;
 using Nest;
 
@@ -63,10 +63,6 @@ namespace Tests.Reproduce
 				DefaultNullable = timeSpan;
 				String = timeSpan;
 				StringNullable = timeSpan;
-			}
-
-			public TimeSpans()
-			{
 			}
 
 			public TimeSpan Default { get; set; }

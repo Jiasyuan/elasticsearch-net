@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Linq.Expressions;
+using Elastic.Transport;
 
 // ReSharper disable once CheckNamespace
 namespace Elasticsearch.Net.Specification.MachineLearningApi
@@ -30,10 +31,18 @@ namespace Elasticsearch.Net.Specification.MachineLearningApi
 		public override HttpMethod DefaultHttpMethod => HttpMethod.POST;
 		public override bool SupportsBody => true;
 		///<summary>Whether to ignore if a wildcard expression matches no jobs. (This includes `_all` string or when no jobs have been specified)</summary>
+		[Obsolete("Scheduled to be removed in 8.0, deprecated")]
 		public bool? AllowNoJobs
 		{
 			get => Q<bool? >("allow_no_jobs");
 			set => Q("allow_no_jobs", value);
+		}
+
+		///<summary>Whether to ignore if a wildcard expression matches no jobs. (This includes `_all` string or when no jobs have been specified)</summary>
+		public bool? AllowNoMatch
+		{
+			get => Q<bool? >("allow_no_match");
+			set => Q("allow_no_match", value);
 		}
 
 		///<summary>True if the job should be forcefully closed</summary>
@@ -83,6 +92,13 @@ namespace Elasticsearch.Net.Specification.MachineLearningApi
 			get => Q<bool? >("force");
 			set => Q("force", value);
 		}
+
+		///<summary>Controls the time to wait until a job is deleted. Defaults to 1 minute</summary>
+		public TimeSpan Timeout
+		{
+			get => Q<TimeSpan>("timeout");
+			set => Q("timeout", value);
+		}
 	}
 
 	///<summary>Request options for DeleteDatafeed <para>https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-delete-datafeed.html</para></summary>
@@ -103,6 +119,19 @@ namespace Elasticsearch.Net.Specification.MachineLearningApi
 	{
 		public override HttpMethod DefaultHttpMethod => HttpMethod.DELETE;
 		public override bool SupportsBody => true;
+		///<summary>The desired requests per second for the deletion processes.</summary>
+		public long? RequestsPerSecond
+		{
+			get => Q<long? >("requests_per_second");
+			set => Q("requests_per_second", value);
+		}
+
+		///<summary>How long can the underlying delete processes run until they are canceled</summary>
+		public TimeSpan Timeout
+		{
+			get => Q<TimeSpan>("timeout");
+			set => Q("timeout", value);
+		}
 	}
 
 	///<summary>Request options for DeleteFilter <para>https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-delete-filter.html</para></summary>
@@ -159,7 +188,7 @@ namespace Elasticsearch.Net.Specification.MachineLearningApi
 		public override bool SupportsBody => false;
 	}
 
-	///<summary>Request options for DeleteTrainedModel <para>https://www.elastic.co/guide/en/elasticsearch/reference/current/delete-inference.html</para></summary>
+	///<summary>Request options for DeleteTrainedModel <para>https://www.elastic.co/guide/en/elasticsearch/reference/current/delete-trained-models.html</para></summary>
 	public class DeleteTrainedModelRequestParameters : RequestParameters<DeleteTrainedModelRequestParameters>
 	{
 		public override HttpMethod DefaultHttpMethod => HttpMethod.DELETE;
@@ -309,6 +338,12 @@ namespace Elasticsearch.Net.Specification.MachineLearningApi
 	{
 		public override HttpMethod DefaultHttpMethod => HttpMethod.POST;
 		public override bool SupportsBody => false;
+		///<summary>The max memory able to be used by the forecast. Default is 20mb.</summary>
+		public string MaxModelMemory
+		{
+			get => Q<string>("max_model_memory");
+			set => Q("max_model_memory", value);
+		}
 	}
 
 	///<summary>Request options for GetBuckets <para>https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-bucket.html</para></summary>
@@ -357,6 +392,15 @@ namespace Elasticsearch.Net.Specification.MachineLearningApi
 	{
 		public override HttpMethod DefaultHttpMethod => HttpMethod.POST;
 		public override bool SupportsBody => true;
+		///<summary>
+		/// Specifies the partition to retrieve categories for. This is optional, and should never be used for jobs where per-partition categorization
+		/// is disabled.
+		///</summary>
+		public string PartitionFieldValue
+		{
+			get => Q<string>("partition_field_value");
+			set => Q("partition_field_value", value);
+		}
 	}
 
 	///<summary>Request options for GetDataFrameAnalytics <para>https://www.elastic.co/guide/en/elasticsearch/reference/current/get-dfanalytics.html</para></summary>
@@ -372,6 +416,13 @@ namespace Elasticsearch.Net.Specification.MachineLearningApi
 		{
 			get => Q<bool? >("allow_no_match");
 			set => Q("allow_no_match", value);
+		}
+
+		///<summary>Omits fields that are illegal to set on data frame analytics PUT</summary>
+		public bool? ExcludeGenerated
+		{
+			get => Q<bool? >("exclude_generated");
+			set => Q("exclude_generated", value);
 		}
 
 		///<summary>skips a number of analytics</summary>
@@ -417,6 +468,13 @@ namespace Elasticsearch.Net.Specification.MachineLearningApi
 			get => Q<int? >("size");
 			set => Q("size", value);
 		}
+
+		///<summary>whether the stats response should be verbose</summary>
+		public bool? Verbose
+		{
+			get => Q<bool? >("verbose");
+			set => Q("verbose", value);
+		}
 	}
 
 	///<summary>Request options for GetDatafeedStats <para>https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-datafeed-stats.html</para></summary>
@@ -425,10 +483,18 @@ namespace Elasticsearch.Net.Specification.MachineLearningApi
 		public override HttpMethod DefaultHttpMethod => HttpMethod.GET;
 		public override bool SupportsBody => false;
 		///<summary>Whether to ignore if a wildcard expression matches no datafeeds. (This includes `_all` string or when no datafeeds have been specified)</summary>
+		[Obsolete("Scheduled to be removed in 8.0, deprecated")]
 		public bool? AllowNoDatafeeds
 		{
 			get => Q<bool? >("allow_no_datafeeds");
 			set => Q("allow_no_datafeeds", value);
+		}
+
+		///<summary>Whether to ignore if a wildcard expression matches no datafeeds. (This includes `_all` string or when no datafeeds have been specified)</summary>
+		public bool? AllowNoMatch
+		{
+			get => Q<bool? >("allow_no_match");
+			set => Q("allow_no_match", value);
 		}
 	}
 
@@ -438,10 +504,25 @@ namespace Elasticsearch.Net.Specification.MachineLearningApi
 		public override HttpMethod DefaultHttpMethod => HttpMethod.GET;
 		public override bool SupportsBody => false;
 		///<summary>Whether to ignore if a wildcard expression matches no datafeeds. (This includes `_all` string or when no datafeeds have been specified)</summary>
+		[Obsolete("Scheduled to be removed in 8.0, deprecated")]
 		public bool? AllowNoDatafeeds
 		{
 			get => Q<bool? >("allow_no_datafeeds");
 			set => Q("allow_no_datafeeds", value);
+		}
+
+		///<summary>Whether to ignore if a wildcard expression matches no datafeeds. (This includes `_all` string or when no datafeeds have been specified)</summary>
+		public bool? AllowNoMatch
+		{
+			get => Q<bool? >("allow_no_match");
+			set => Q("allow_no_match", value);
+		}
+
+		///<summary>Omits fields that are illegal to set on datafeed PUT</summary>
+		public bool? ExcludeGenerated
+		{
+			get => Q<bool? >("exclude_generated");
+			set => Q("exclude_generated", value);
 		}
 	}
 
@@ -478,10 +559,18 @@ namespace Elasticsearch.Net.Specification.MachineLearningApi
 		public override HttpMethod DefaultHttpMethod => HttpMethod.GET;
 		public override bool SupportsBody => false;
 		///<summary>Whether to ignore if a wildcard expression matches no jobs. (This includes `_all` string or when no jobs have been specified)</summary>
+		[Obsolete("Scheduled to be removed in 8.0, deprecated")]
 		public bool? AllowNoJobs
 		{
 			get => Q<bool? >("allow_no_jobs");
 			set => Q("allow_no_jobs", value);
+		}
+
+		///<summary>Whether to ignore if a wildcard expression matches no jobs. (This includes `_all` string or when no jobs have been specified)</summary>
+		public bool? AllowNoMatch
+		{
+			get => Q<bool? >("allow_no_match");
+			set => Q("allow_no_match", value);
 		}
 	}
 
@@ -491,10 +580,25 @@ namespace Elasticsearch.Net.Specification.MachineLearningApi
 		public override HttpMethod DefaultHttpMethod => HttpMethod.GET;
 		public override bool SupportsBody => false;
 		///<summary>Whether to ignore if a wildcard expression matches no jobs. (This includes `_all` string or when no jobs have been specified)</summary>
+		[Obsolete("Scheduled to be removed in 8.0, deprecated")]
 		public bool? AllowNoJobs
 		{
 			get => Q<bool? >("allow_no_jobs");
 			set => Q("allow_no_jobs", value);
+		}
+
+		///<summary>Whether to ignore if a wildcard expression matches no jobs. (This includes `_all` string or when no jobs have been specified)</summary>
+		public bool? AllowNoMatch
+		{
+			get => Q<bool? >("allow_no_match");
+			set => Q("allow_no_match", value);
+		}
+
+		///<summary>Omits fields that are illegal to set on job PUT</summary>
+		public bool? ExcludeGenerated
+		{
+			get => Q<bool? >("exclude_generated");
+			set => Q("exclude_generated", value);
 		}
 	}
 
@@ -510,6 +614,12 @@ namespace Elasticsearch.Net.Specification.MachineLearningApi
 	{
 		public override HttpMethod DefaultHttpMethod => HttpMethod.POST;
 		public override bool SupportsBody => true;
+		///<summary>Whether to ignore if a wildcard expression matches no jobs. (This includes `_all` string or when no jobs have been specified)</summary>
+		public bool? AllowNoMatch
+		{
+			get => Q<bool? >("allow_no_match");
+			set => Q("allow_no_match", value);
+		}
 	}
 
 	///<summary>Request options for GetAnomalyRecords <para>https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-record.html</para></summary>
@@ -519,7 +629,7 @@ namespace Elasticsearch.Net.Specification.MachineLearningApi
 		public override bool SupportsBody => true;
 	}
 
-	///<summary>Request options for GetTrainedModels <para>https://www.elastic.co/guide/en/elasticsearch/reference/current/get-inference.html</para></summary>
+	///<summary>Request options for GetTrainedModels <para>https://www.elastic.co/guide/en/elasticsearch/reference/current/get-trained-models.html</para></summary>
 	public class GetTrainedModelsRequestParameters : RequestParameters<GetTrainedModelsRequestParameters>
 	{
 		public override HttpMethod DefaultHttpMethod => HttpMethod.GET;
@@ -541,6 +651,13 @@ namespace Elasticsearch.Net.Specification.MachineLearningApi
 			set => Q("decompress_definition", value);
 		}
 
+		///<summary>Omits fields that are illegal to set on model PUT</summary>
+		public bool? ExcludeGenerated
+		{
+			get => Q<bool? >("exclude_generated");
+			set => Q("exclude_generated", value);
+		}
+
 		///<summary>skips a number of trained models</summary>
 		public int? From
 		{
@@ -548,10 +665,18 @@ namespace Elasticsearch.Net.Specification.MachineLearningApi
 			set => Q("from", value);
 		}
 
+		///<summary>A comma-separate list of fields to optionally include. Valid options are 'definition' and 'total_feature_importance'. Default is none.</summary>
+		public string Include
+		{
+			get => Q<string>("include");
+			set => Q("include", value);
+		}
+
 		///<summary>
 		/// Should the full model definition be included in the results. These definitions can be large. So be cautious when including them. Defaults
 		/// to false.
 		///</summary>
+		[Obsolete("Scheduled to be removed in 8.0, deprecated")]
 		public bool? IncludeModelDefinition
 		{
 			get => Q<bool? >("include_model_definition");
@@ -573,7 +698,7 @@ namespace Elasticsearch.Net.Specification.MachineLearningApi
 		}
 	}
 
-	///<summary>Request options for GetTrainedModelsStats <para>https://www.elastic.co/guide/en/elasticsearch/reference/current/get-inference-stats.html</para></summary>
+	///<summary>Request options for GetTrainedModelsStats <para>https://www.elastic.co/guide/en/elasticsearch/reference/current/get-trained-models-stats.html</para></summary>
 	public class GetTrainedModelsStatsRequestParameters : RequestParameters<GetTrainedModelsStatsRequestParameters>
 	{
 		public override HttpMethod DefaultHttpMethod => HttpMethod.GET;
@@ -720,7 +845,7 @@ namespace Elasticsearch.Net.Specification.MachineLearningApi
 		public override bool SupportsBody => true;
 	}
 
-	///<summary>Request options for PutTrainedModel <para>https://www.elastic.co/guide/en/elasticsearch/reference/current/put-inference.html</para></summary>
+	///<summary>Request options for PutTrainedModel <para>https://www.elastic.co/guide/en/elasticsearch/reference/current/put-trained-models.html</para></summary>
 	public class PutTrainedModelRequestParameters : RequestParameters<PutTrainedModelRequestParameters>
 	{
 		public override HttpMethod DefaultHttpMethod => HttpMethod.PUT;
@@ -808,13 +933,28 @@ namespace Elasticsearch.Net.Specification.MachineLearningApi
 	public class StopDatafeedRequestParameters : RequestParameters<StopDatafeedRequestParameters>
 	{
 		public override HttpMethod DefaultHttpMethod => HttpMethod.POST;
-		public override bool SupportsBody => false;
+		public override bool SupportsBody => true;
 		///<summary>Whether to ignore if a wildcard expression matches no datafeeds. (This includes `_all` string or when no datafeeds have been specified)</summary>
+		[Obsolete("Scheduled to be removed in 8.0, deprecated")]
 		public bool? AllowNoDatafeeds
 		{
 			get => Q<bool? >("allow_no_datafeeds");
 			set => Q("allow_no_datafeeds", value);
 		}
+
+		///<summary>Whether to ignore if a wildcard expression matches no datafeeds. (This includes `_all` string or when no datafeeds have been specified)</summary>
+		public bool? AllowNoMatch
+		{
+			get => Q<bool? >("allow_no_match");
+			set => Q("allow_no_match", value);
+		}
+	}
+
+	///<summary>Request options for UpdateDataFrameAnalytics <para>https://www.elastic.co/guide/en/elasticsearch/reference/current/update-dfanalytics.html</para></summary>
+	public class UpdateDataFrameAnalyticsRequestParameters : RequestParameters<UpdateDataFrameAnalyticsRequestParameters>
+	{
+		public override HttpMethod DefaultHttpMethod => HttpMethod.POST;
+		public override bool SupportsBody => true;
 	}
 
 	///<summary>Request options for UpdateDatafeed <para>https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-update-datafeed.html</para></summary>
@@ -870,6 +1010,26 @@ namespace Elasticsearch.Net.Specification.MachineLearningApi
 	{
 		public override HttpMethod DefaultHttpMethod => HttpMethod.POST;
 		public override bool SupportsBody => true;
+	}
+
+	///<summary>Request options for UpgradeJobSnapshot <para>https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-upgrade-job-model-snapshot.html</para></summary>
+	public class UpgradeJobSnapshotRequestParameters : RequestParameters<UpgradeJobSnapshotRequestParameters>
+	{
+		public override HttpMethod DefaultHttpMethod => HttpMethod.POST;
+		public override bool SupportsBody => false;
+		///<summary>How long should the API wait for the job to be opened and the old snapshot to be loaded.</summary>
+		public TimeSpan Timeout
+		{
+			get => Q<TimeSpan>("timeout");
+			set => Q("timeout", value);
+		}
+
+		///<summary>Should the request wait until the task is complete before responding to the caller. Default is false.</summary>
+		public bool? WaitForCompletion
+		{
+			get => Q<bool? >("wait_for_completion");
+			set => Q("wait_for_completion", value);
+		}
 	}
 
 	///<summary>Request options for ValidateJob <para>https://www.elastic.co/guide/en/machine-learning/current/ml-jobs.html</para></summary>

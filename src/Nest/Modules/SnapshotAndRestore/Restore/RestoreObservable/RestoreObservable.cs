@@ -2,12 +2,12 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
-using Elasticsearch.Net;
+using Elastic.Transport;
 
 namespace Nest
 {
@@ -57,7 +57,7 @@ namespace Nest
 				var restoreResponse = _elasticClient.Snapshot.Restore(_restoreRequest);
 
 				if (!restoreResponse.IsValid)
-					throw new ElasticsearchClientException(PipelineFailure.BadResponse, "Failed to restore snapshot.", restoreResponse.ApiCall);
+					throw new TransportException(PipelineFailure.BadResponse, "Failed to restore snapshot.", restoreResponse.ApiCall);
 
 				EventHandler<RestoreNextEventArgs> onNext = (sender, args) => observer.OnNext(args.RecoveryStatusResponse);
 				EventHandler<RestoreCompletedEventArgs> onCompleted = (sender, args) => observer.OnCompleted();
@@ -189,7 +189,7 @@ namespace Nest
 				});
 
 				if (!recoveryStatus.IsValid)
-					throw new ElasticsearchClientException(PipelineFailure.BadResponse, "Failed getting recovery status.", recoveryStatus.ApiCall);
+					throw new TransportException(PipelineFailure.BadResponse, "Failed getting recovery status.", recoveryStatus.ApiCall);
 
 				if (recoveryStatus.Indices.All(x => x.Value.Shards.All(s => s.Index.Files.Recovered == s.Index.Files.Total)))
 				{

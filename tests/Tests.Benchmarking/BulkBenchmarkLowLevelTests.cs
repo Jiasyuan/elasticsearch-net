@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using BenchmarkDotNet.Attributes;
+using Elastic.Transport;
+using Elastic.Transport.Extensions;
 using Elasticsearch.Net;
 using Nest;
 using Tests.Benchmarking.Framework;
@@ -65,7 +67,7 @@ namespace Tests.Benchmarking
 
 		private static readonly string _header = @"{""index"":{}}";
 		private static readonly string[] StaticListString =
-			Projects.SelectMany(p => new string[] { _header, Client.SourceSerializer.SerializeToString(p) }).ToArray();
+			Projects.SelectMany(p => new[] { _header, Client.SourceSerializer.SerializeToString(p) }).ToArray();
 		private static readonly PostData StaticPostDataListString = PostData.MultiJson(StaticListString);
 
 		[Benchmark(Description = "StaticListOfStrings")]

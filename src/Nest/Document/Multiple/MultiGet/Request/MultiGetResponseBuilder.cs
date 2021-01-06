@@ -5,7 +5,7 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Elasticsearch.Net;
+using Elastic.Transport;
 
 namespace Nest
 {
@@ -15,13 +15,13 @@ namespace Nest
 
 		private MultiGetResponseFormatter Formatter { get; }
 
-		public override object DeserializeResponse(IElasticsearchSerializer builtInSerializer, IApiCallDetails response, Stream stream) =>
+		public override object DeserializeResponse(ITransportSerializer builtInSerializer, IApiCallDetails response, Stream stream) =>
 			response.Success
 				? builtInSerializer.CreateStateful(Formatter).Deserialize<MultiGetResponse>(stream)
 				: new MultiGetResponse();
 
 		public override async Task<object> DeserializeResponseAsync(
-			IElasticsearchSerializer builtInSerializer,
+			ITransportSerializer builtInSerializer,
 			IApiCallDetails response,
 			Stream stream,
 			CancellationToken ctx = default

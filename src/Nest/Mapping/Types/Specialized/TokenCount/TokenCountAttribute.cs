@@ -2,7 +2,7 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿namespace Nest
+namespace Nest
 {
 	public class TokenCountAttribute : ElasticsearchDocValuesPropertyAttributeBase, ITokenCountProperty
 	{
@@ -14,10 +14,10 @@
 			set => Self.Analyzer = value;
 		}
 
-		public double Boost
+		public bool EnablePositionIncrements
 		{
-			get => Self.Boost.GetValueOrDefault();
-			set => Self.Boost = value;
+			get => Self.EnablePositionIncrements.GetValueOrDefault(true);
+			set => Self.EnablePositionIncrements = value;
 		}
 
 		public bool Index
@@ -33,7 +33,7 @@
 		}
 
 		string ITokenCountProperty.Analyzer { get; set; }
-		double? ITokenCountProperty.Boost { get; set; }
+		bool? ITokenCountProperty.EnablePositionIncrements { get; set; }
 		bool? ITokenCountProperty.Index { get; set; }
 		double? ITokenCountProperty.NullValue { get; set; }
 		private ITokenCountProperty Self => this;

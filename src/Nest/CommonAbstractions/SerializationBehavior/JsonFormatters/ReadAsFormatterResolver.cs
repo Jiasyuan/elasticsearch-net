@@ -2,12 +2,9 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Reflection;
-using Elasticsearch.Net.Utf8Json;
-using Elasticsearch.Net.Utf8Json.Resolvers;
-
-
+using Nest.Utf8Json;
 namespace Nest
 {
 	internal sealed class ReadAsFormatterResolver : IJsonFormatterResolver
@@ -24,7 +21,7 @@ namespace Nest
 
 			static FormatterCache()
 			{
-				var readAsAttribute = typeof(T).GetTypeInfo().GetCustomAttribute<ReadAsAttribute>();
+				var readAsAttribute = typeof(T).GetCustomAttribute<ReadAsAttribute>();
 				if (readAsAttribute == null)
 					return;
 

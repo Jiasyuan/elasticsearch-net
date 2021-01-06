@@ -2,7 +2,7 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System.Security.Cryptography.X509Certificates;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Elasticsearch.Net.Extensions
 {
@@ -19,7 +19,7 @@ namespace Elasticsearch.Net.Extensions
 		{
 			string result = null;
 
-			if (sArray == null) return result;
+			if (sArray == null) return null;
 
 			var hexOrder = new char[sArray.Length * 2];
 

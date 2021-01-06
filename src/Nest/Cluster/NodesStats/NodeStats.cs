@@ -2,10 +2,9 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
-using Elasticsearch.Net;
-using Elasticsearch.Net.Utf8Json;
+using Nest.Utf8Json;
 
 namespace Nest
 {
@@ -66,8 +65,7 @@ namespace Nest
 		/// Available in Elasticsearch 7.8.0+
 		/// </summary>
 		[DataMember(Name = "script_cache")]
-		[JsonFormatter(typeof(VerbatimInterfaceReadOnlyDictionaryKeysFormatter<string, ScriptStats>))]
-		public IReadOnlyDictionary<string, ScriptStats> ScriptCache { get; internal set; }
+		public ScriptCacheStats ScriptCache { get; internal set; }
 
 		[DataMember(Name = "thread_pool")]
 		[JsonFormatter(typeof(VerbatimInterfaceReadOnlyDictionaryKeysFormatter<string, ThreadCountStats>))]
@@ -81,8 +79,27 @@ namespace Nest
 
 		[DataMember(Name = "transport_address")]
 		public string TransportAddress { get; internal set; }
+
+		[DataMember(Name = "indexing_pressure")]
+		public IndexingPressureStats IndexingPressure { get; internal set; }
 	}
 
+	[DataContract]
+	public class ScriptCacheStats
+	{
+		[DataMember(Name = "sum")]
+		public ScriptStats Sum { get; internal set; }
+
+		[DataMember(Name = "contexts")]
+		public IReadOnlyCollection<ContextScriptStats> Contexts { get; internal set; }
+	}
+
+	[DataContract]
+	public class ContextScriptStats : ScriptStats
+	{
+		[DataMember(Name = "context")]
+		public string Context { get; internal set; }
+	}
 
 	[DataContract]
 	public class ScriptStats
@@ -555,5 +572,75 @@ namespace Nest
 
 		[DataMember(Name = "total_opened")]
 		public long TotalOpened { get; internal set; }
+	}
+
+	[DataContract]
+	public class IndexingPressureStats
+	{
+		[DataMember(Name = "memory")]
+		public IndexingPressureMemoryStats Memory { get; internal set; }
+	}
+
+	[DataContract]
+	public class IndexingPressureMemoryStats
+	{
+		[DataMember(Name = "current")]
+		public IndexingLoad Current { get; internal set; }
+
+		[DataMember(Name = "total")]
+		public TotalIndexingLoad Total { get; internal set; }
+
+		[DataMember(Name = "limit_in_bytes")]
+		public long LimitInBytes { get; internal set; }
+
+		[DataMember(Name = "limit")]
+		public string Limit { get; internal set; }
+	}
+
+	[DataContract]
+	public class IndexingLoad
+	{
+		[DataMember(Name = "combined_coordinating_and_primary_in_bytes")]
+		public long CombinedCoordinatingAndPrimaryInBytes { get; internal set; }
+
+		[DataMember(Name = "combined_coordinating_and_primary")]
+		public string CombinedCoordinatingAndPrimary { get; internal set; }
+
+		[DataMember(Name = "coordinating_in_bytes")]
+		public long CoordinatingInBytes { get; internal set; }
+
+		[DataMember(Name = "coordinating")]
+		public string Coordinating { get; internal set; }
+
+		[DataMember(Name = "primary_in_bytes")]
+		public long PrimaryInBytes { get; internal set; }
+
+		[DataMember(Name = "primary")]
+		public string Primary { get; internal set; }
+
+		[DataMember(Name = "replica_in_bytes")]
+		public long ReplicaInBytes { get; internal set; }
+
+		[DataMember(Name = "replica")]
+		public string Replica { get; internal set; }
+
+		[DataMember(Name = "all_in_bytes")]
+		public long AllInBytes { get; internal set; }
+
+		[DataMember(Name = "all")]
+		public string All { get; internal set; }
+	}
+
+	[DataContract]
+	public class TotalIndexingLoad : IndexingLoad
+	{
+		[DataMember(Name = "coordinating_rejections")]
+		public int CoordinatingRejections { get; internal set; }
+
+		[DataMember(Name = "primary_rejections")]
+		public int PrimaryRejections { get; internal set; }
+
+		[DataMember(Name = "replica_rejections")]
+		public int ReplicaRejections { get; internal set; }
 	}
 }

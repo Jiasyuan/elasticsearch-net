@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Linq.Expressions;
+using Elastic.Transport;
 
 // ReSharper disable once CheckNamespace
 namespace Elasticsearch.Net
@@ -44,6 +45,13 @@ namespace Elasticsearch.Net
 		{
 			get => Q<Refresh? >("refresh");
 			set => Q("refresh", value);
+		}
+
+		///<summary>Sets require_alias for all incoming documents. Defaults to unset (false)</summary>
+		public bool? RequireAlias
+		{
+			get => Q<bool? >("require_alias");
+			set => Q("require_alias", value);
 		}
 
 		///<summary>Specific routing value</summary>
@@ -100,8 +108,15 @@ namespace Elasticsearch.Net
 		}
 	}
 
-	///<summary>Request options for ClearScroll <para>https://www.elastic.co/guide/en/elasticsearch/reference/master/search-request-body.html#_clear_scroll_api</para></summary>
+	///<summary>Request options for ClearScroll <para>https://www.elastic.co/guide/en/elasticsearch/reference/current/clear-scroll-api.html</para></summary>
 	public class ClearScrollRequestParameters : RequestParameters<ClearScrollRequestParameters>
+	{
+		public override HttpMethod DefaultHttpMethod => HttpMethod.DELETE;
+		public override bool SupportsBody => true;
+	}
+
+	///<summary>Request options for ClosePointInTime <para>https://www.elastic.co/guide/en/elasticsearch/reference/master/point-in-time-api.html</para></summary>
+	public class ClosePointInTimeRequestParameters : RequestParameters<ClosePointInTimeRequestParameters>
 	{
 		public override HttpMethod DefaultHttpMethod => HttpMethod.DELETE;
 		public override bool SupportsBody => true;
@@ -847,7 +862,7 @@ namespace Elasticsearch.Net
 	public class FieldCapabilitiesRequestParameters : RequestParameters<FieldCapabilitiesRequestParameters>
 	{
 		public override HttpMethod DefaultHttpMethod => HttpMethod.POST;
-		public override bool SupportsBody => false;
+		public override bool SupportsBody => true;
 		///<summary>
 		/// Whether to ignore if a wildcard indices expression resolves into no concrete indices. (This includes `_all` string or when no indices have
 		/// been specified)
@@ -1103,6 +1118,13 @@ namespace Elasticsearch.Net
 		{
 			get => Q<Refresh? >("refresh");
 			set => Q("refresh", value);
+		}
+
+		///<summary>When true, requires destination to be an alias. Default is false</summary>
+		public bool? RequireAlias
+		{
+			get => Q<bool? >("require_alias");
+			set => Q("require_alias", value);
 		}
 
 		///<summary>Specific routing value</summary>
@@ -1407,6 +1429,47 @@ namespace Elasticsearch.Net
 		{
 			get => Q<VersionType? >("version_type");
 			set => Q("version_type", value);
+		}
+	}
+
+	///<summary>Request options for OpenPointInTime <para>https://www.elastic.co/guide/en/elasticsearch/reference/master/point-in-time-api.html</para></summary>
+	public class OpenPointInTimeRequestParameters : RequestParameters<OpenPointInTimeRequestParameters>
+	{
+		public override HttpMethod DefaultHttpMethod => HttpMethod.POST;
+		public override bool SupportsBody => false;
+		///<summary>Whether to expand wildcard expression to concrete indices that are open, closed or both.</summary>
+		public ExpandWildcards? ExpandWildcards
+		{
+			get => Q<ExpandWildcards? >("expand_wildcards");
+			set => Q("expand_wildcards", value);
+		}
+
+		///<summary>Whether specified concrete indices should be ignored when unavailable (missing or closed)</summary>
+		public bool? IgnoreUnavailable
+		{
+			get => Q<bool? >("ignore_unavailable");
+			set => Q("ignore_unavailable", value);
+		}
+
+		///<summary>Specific the time to live for the point in time</summary>
+		public string KeepAlive
+		{
+			get => Q<string>("keep_alive");
+			set => Q("keep_alive", value);
+		}
+
+		///<summary>Specify the node or shard the operation should be performed on (default: random)</summary>
+		public string Preference
+		{
+			get => Q<string>("preference");
+			set => Q("preference", value);
+		}
+
+		///<summary>Specific routing value</summary>
+		public string Routing
+		{
+			get => Q<string>("routing");
+			set => Q("routing", value);
 		}
 	}
 
@@ -1802,7 +1865,10 @@ namespace Elasticsearch.Net
 			set => Q("rest_total_hits_as_int", value);
 		}
 
-		///<summary>Indicate if the number of documents that match the query should be tracked</summary>
+		///<summary>
+		/// Indicate if the number of documents that match the query should be tracked. A number can also be specified, to accurately track the total
+		/// hit count up to the number.
+		///</summary>
 		public bool? TrackTotalHits
 		{
 			get => Q<bool? >("track_total_hits");
@@ -2085,6 +2151,13 @@ namespace Elasticsearch.Net
 		{
 			get => Q<Refresh? >("refresh");
 			set => Q("refresh", value);
+		}
+
+		///<summary>When true, requires destination is an alias. Default is false</summary>
+		public bool? RequireAlias
+		{
+			get => Q<bool? >("require_alias");
+			set => Q("require_alias", value);
 		}
 
 		///<summary>Specify how many times should the operation be retried when a conflict occurs (default: 0)</summary>

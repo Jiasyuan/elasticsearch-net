@@ -2,19 +2,13 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 
 namespace Nest
 {
 	public class DateAttribute : ElasticsearchDocValuesPropertyAttributeBase, IDateProperty
 	{
 		public DateAttribute() : base(FieldType.Date) { }
-
-		public double Boost
-		{
-			get => Self.Boost.GetValueOrDefault();
-			set => Self.Boost = value;
-		}
 
 		public string Format
 		{
@@ -40,7 +34,6 @@ namespace Nest
 			set => Self.NullValue = value;
 		}
 
-		double? IDateProperty.Boost { get; set; }
 		INumericFielddata IDateProperty.Fielddata { get; set; }
 		string IDateProperty.Format { get; set; }
 		bool? IDateProperty.IgnoreMalformed { get; set; }

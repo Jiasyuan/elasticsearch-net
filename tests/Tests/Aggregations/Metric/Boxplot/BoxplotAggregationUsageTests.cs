@@ -2,7 +2,7 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Elastic.Elasticsearch.Xunit.XunitPlumbing;
 using FluentAssertions;
@@ -77,6 +77,8 @@ namespace Tests.Aggregations.Metric.Boxplot
 			boxplot.Q1.Should().BeGreaterOrEqualTo(0);
 			boxplot.Q2.Should().BeGreaterOrEqualTo(0);
 			boxplot.Q3.Should().BeGreaterOrEqualTo(0);
+			boxplot.Lower.Should().BeGreaterOrEqualTo(0);
+			boxplot.Upper.Should().BeGreaterOrEqualTo(0);
 			boxplot.Meta.Should().NotBeNull().And.HaveCount(1);
 			boxplot.Meta["foo"].Should().Be("bar");
 		}

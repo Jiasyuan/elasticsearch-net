@@ -7,8 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Elasticsearch.Net.CrossPlatform;
-using Elasticsearch.Net.Utf8Json;
+using Nest.Utf8Json;
 
 namespace Nest
 {
@@ -19,7 +18,7 @@ namespace Nest
 		public IJsonFormatter<T> GetFormatter<T>() => FormatterCache<T>.Formatter;
 
 		internal static bool IsGenericIDictionary(Type type) => type.GetInterfaces()
-			.Any(t => t.IsGeneric() && t.GetGenericTypeDefinition() == typeof(IDictionary<,>));
+			.Any(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IDictionary<,>));
 
 		private static class FormatterCache<T>
 		{
@@ -92,7 +91,7 @@ namespace Nest
 		public IJsonFormatter<T> GetFormatter<T>() => FormatterCache<T>.Formatter;
 
 		internal static bool IsGenericIReadOnlyDictionary(Type type) => type.GetInterfaces()
-			.Any(t => t.IsGeneric() && t.GetGenericTypeDefinition() == typeof(IReadOnlyDictionary<,>));
+			.Any(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IReadOnlyDictionary<,>));
 
 		private static class FormatterCache<T>
 		{
@@ -213,6 +212,7 @@ namespace Nest
 			}
 
 			// TODO 7.0 mutator is not used, should it?
+			// ReSharper disable once UnusedVariable
 			var mutator = formatterResolver.GetConnectionSettings().DefaultFieldNameInferrer;
 			var keyFormatter = formatterResolver.GetFormatterWithVerify<TKey>() as IObjectPropertyNameFormatter<TKey>;
 			var valueFormatter = formatterResolver.GetFormatterWithVerify<TValue>();

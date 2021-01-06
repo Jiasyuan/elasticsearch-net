@@ -2,12 +2,15 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using Elasticsearch.Net;
+using Elastic.Transport;
 using Nest;
 using System.Threading;
+using Elastic.Transport.Products;
+using Elastic.Transport.Products.Elasticsearch;
+using Elasticsearch.Net;
 using Tests.Domain;
 
 namespace Tests.ClientConcepts.ConnectionPooling.BuildingBlocks
@@ -36,8 +39,7 @@ namespace Tests.ClientConcepts.ConnectionPooling.BuildingBlocks
 			var highlevelTransport = new Transport<ConnectionSettings>(new ConnectionSettings());
 
 			var connectionPool = new SingleNodeConnectionPool(new Uri("http://localhost:9200"));
-			var inMemoryTransport = new Transport<ConnectionSettings>(
-				new ConnectionSettings(connectionPool, new InMemoryConnection()));
+			var inMemoryTransport = new Transport<ConnectionSettings>(new ConnectionSettings(connectionPool, new InMemoryConnection()));
 
 			/**
 			* The only two methods on `ITransport` are `Request()` and `RequestAsync()`; the default `ITransport` implementation is responsible for introducing

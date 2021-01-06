@@ -2,7 +2,7 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using Elastic.Elasticsearch.Xunit.XunitPlumbing;
 using Nest;
 using Tests.Analysis;
@@ -26,14 +26,12 @@ namespace Tests.Mapping.Types.Core.Keyword
 				{
 					type = "keyword",
 					doc_values = false,
-					boost = 1.2,
 					eager_global_ordinals = true,
 					ignore_above = 50,
 					index = false,
 					index_options = "freqs",
 					null_value = "null",
 					norms = false,
-					similarity = "BM25",
 					fields = new
 					{
 						foo = new
@@ -52,7 +50,6 @@ namespace Tests.Mapping.Types.Core.Keyword
 			.Keyword(b => b
 				.Name(p => p.State)
 				.DocValues(false)
-				.Boost(1.2)
 				.EagerGlobalOrdinals()
 				.IgnoreAbove(50)
 				.Index(false)
@@ -60,7 +57,6 @@ namespace Tests.Mapping.Types.Core.Keyword
 				.NullValue("null")
 				.Normalizer("myCustom")
 				.Norms(false)
-				.Similarity("BM25")
 				.Store()
 				.Fields(fs => fs
 					.Keyword(k => k
@@ -77,7 +73,6 @@ namespace Tests.Mapping.Types.Core.Keyword
 				"state", new KeywordProperty
 				{
 					DocValues = false,
-					Boost = 1.2,
 					EagerGlobalOrdinals = true,
 					IgnoreAbove = 50,
 					Index = false,
@@ -85,7 +80,6 @@ namespace Tests.Mapping.Types.Core.Keyword
 					NullValue = "null",
 					Normalizer = "myCustom",
 					Norms = false,
-					Similarity = "BM25",
 					Store = true,
 					Fields = new Properties
 					{

@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Linq.Expressions;
+using Elastic.Transport;
 
 // ReSharper disable once CheckNamespace
 namespace Elasticsearch.Net.Specification.AsyncSearchApi
@@ -56,6 +57,13 @@ namespace Elasticsearch.Net.Specification.AsyncSearchApi
 			get => Q<TimeSpan>("wait_for_completion_timeout");
 			set => Q("wait_for_completion_timeout", value);
 		}
+	}
+
+	///<summary>Request options for Status <para>https://www.elastic.co/guide/en/elasticsearch/reference/current/async-search.html</para></summary>
+	public class StatusRequestParameters : RequestParameters<StatusRequestParameters>
+	{
+		public override HttpMethod DefaultHttpMethod => HttpMethod.GET;
+		public override bool SupportsBody => false;
 	}
 
 	///<summary>Request options for Submit <para>https://www.elastic.co/guide/en/elasticsearch/reference/current/async-search.html</para></summary>
@@ -264,7 +272,10 @@ namespace Elasticsearch.Net.Specification.AsyncSearchApi
 			set => Q("suggest_text", value);
 		}
 
-		///<summary>Indicate if the number of documents that match the query should be tracked</summary>
+		///<summary>
+		/// Indicate if the number of documents that match the query should be tracked. A number can also be specified, to accurately track the total
+		/// hit count up to the number.
+		///</summary>
 		public bool? TrackTotalHits
 		{
 			get => Q<bool? >("track_total_hits");

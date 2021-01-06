@@ -2,16 +2,13 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using Elasticsearch.Net;
-using Elasticsearch.Net.Extensions;
-using Elasticsearch.Net.Utf8Json;
-using Elasticsearch.Net.Utf8Json.Internal;
+using Nest.Utf8Json;
 
 namespace Nest
 {
@@ -72,7 +69,11 @@ namespace Nest
 		{
 			{ "variance", 0 },
 			{ "std_deviation", 1 },
-			{ "std_deviation_bounds", 2 }
+			{ "std_deviation_bounds", 2 },
+			{ "variance_population", 3 },
+			{ "variance_sampling", 4 },
+			{ "std_deviation_population", 5 },
+			{ "std_deviation_sampling", 6 },
 		};
 
 		private static readonly byte[] ValueAsStringField = JsonWriter.GetEncodedPropertyNameWithoutQuotation(Parser.ValueAsString);
@@ -108,8 +109,7 @@ namespace Nest
 			reader.ReadIsBeginObjectWithVerify();
 			IAggregate aggregate = null;
 
-			if (reader.ReadIsEndObject())
-				return aggregate;
+			if (reader.ReadIsEndObject()) return null;
 
 			var propertyName = reader.ReadPropertyNameSegmentRaw();
 			Dictionary<string, object> meta = null;
@@ -165,7 +165,7 @@ namespace Nest
 						aggregate = GetMatrixStatsAggregate(ref reader, formatterResolver, meta);
 						break;
 					case 11:
-						aggregate = GetBoxplotAggregate(ref reader, formatterResolver, meta);
+						aggregate = GetBoxplotAggregate(ref reader, meta);
 						break;
 					case 12:
 						aggregate = GetTopMetricsAggregate(ref reader, formatterResolver, meta);
@@ -231,7 +231,7 @@ namespace Nest
 			return matrixStats;
 		}
 
-		private IAggregate GetBoxplotAggregate(ref JsonReader reader, IJsonFormatterResolver formatterResolver, IReadOnlyDictionary<string, object> meta)
+		private IAggregate GetBoxplotAggregate(ref JsonReader reader, IReadOnlyDictionary<string, object> meta)
 		{
 			var boxplot = new BoxplotAggregate
 			{
@@ -254,6 +254,20 @@ namespace Nest
 			reader.ReadNext(); // "q3"
 			reader.ReadNext(); // :
 			boxplot.Q3 = reader.ReadDouble();
+
+			var token = reader.GetCurrentJsonToken();
+			if (token != JsonToken.EndObject)
+			{
+				reader.ReadNext(); // ,
+				reader.ReadNext(); // "lower"
+				reader.ReadNext(); // :
+				boxplot.Lower = reader.ReadDouble();
+				reader.ReadNext(); // ,
+				reader.ReadNext(); // "upper"
+				reader.ReadNext(); // :
+				boxplot.Upper = reader.ReadDouble();
+			}
+
 			return boxplot;
     }
 
@@ -554,10 +568,10 @@ namespace Nest
 			if (reader.GetCurrentJsonToken() == JsonToken.EndObject)
 				return statsMetric;
 
-			return GetExtendedStatsAggregate(ref reader, formatterResolver, statsMetric, meta);
+			return GetExtendedStatsAggregate(ref reader, formatterResolver, statsMetric);
 		}
 
-		private IAggregate GetExtendedStatsAggregate(ref JsonReader reader, IJsonFormatterResolver formatterResolver, StatsAggregate statsMetric, IReadOnlyDictionary<string, object> meta)
+		private IAggregate GetExtendedStatsAggregate(ref JsonReader reader, IJsonFormatterResolver formatterResolver, StatsAggregate statsMetric)
 		{
 			var extendedStatsMetric = new ExtendedStatsAggregate
 			{
@@ -588,6 +602,18 @@ namespace Nest
 						case 2:
 							extendedStatsMetric.StdDeviationBounds =
 								formatterResolver.GetFormatter<StandardDeviationBounds>().Deserialize(ref reader, formatterResolver);
+							break;
+						case 3:
+							extendedStatsMetric.VariancePopulation = reader.ReadNullableDouble();
+							break;
+						case 4:
+							extendedStatsMetric.VarianceSampling = reader.ReadNullableDouble();
+							break;
+						case 5:
+							extendedStatsMetric.StdDeviationPopulation = reader.ReadNullableDouble();
+							break;
+						case 6:
+							extendedStatsMetric.StdDeviationSampling = reader.ReadNullableDouble();
 							break;
 					}
 				}

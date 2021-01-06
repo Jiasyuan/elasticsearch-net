@@ -7,6 +7,7 @@ module Tests.YamlRunner.TestSuiteBootstrap
 open System
 open System.Linq
 
+open Elastic.Transport
 open Elasticsearch.Net
 open Elasticsearch.Net.Specification.CatApi
 open Elasticsearch.Net.Specification.ClusterApi
@@ -22,13 +23,18 @@ let DefaultSetup : Operation list = [Actions("Setup", fun (client, suite) ->
     let deleteAll () =
         let dp = DeleteIndexRequestParameters()
         dp.SetQueryString("expand_wildcards", "open,closed,hidden")
-        client.Indices.Delete<DynamicResponse>("*", dp)
+        client.Indices.Delete<DynamicResponse>("*,-.ds-ilm-history-*", dp)
     let templates () =
-        client.Cat.Templates<StringResponse>("*", CatTemplatesRequestParameters(Headers=["name"].ToArray()))
+        client.Cat.Templates<StringResponse>("*", CatTemplatesRequestParameters(Headers=["name";"order"].ToArray()))
             .Body.Split("\n")
-            |> Seq.filter(fun f -> not(String.IsNullOrWhiteSpace(f)) && not(f.StartsWith(".")) && f <> "security-audit-log")
+            |> Seq.map(fun line -> line.Split(" ", StringSplitOptions.RemoveEmptyEntries))
+            |> Seq.filter(fun line -> line.Length = 2)
+            |> Seq.map(fun tokens -> tokens.[0], Int32.Parse(tokens.[1]))
+            //assume templates with order 100 or higher are defaults
+            |> Seq.filter(fun (_, order) -> order < 100)
+            |> Seq.filter(fun (name, _) -> not(String.IsNullOrWhiteSpace(name)) && not(name.StartsWith(".")) && name <> "security-audit-log")
             //TODO template does not accept comma separated list but is documented as such
-            |> Seq.map(fun template ->
+            |> Seq.map(fun (template, _) ->
                 let result = client.Indices.DeleteTemplateForAll<DynamicResponse>(template)
                 match result.Success with
                 | true -> result
@@ -87,7 +93,7 @@ let DefaultSetup : Operation list = [Actions("Setup", fun (client, suite) ->
                 
             // deleting feeds before jobs is important
             let mlDataFeeds = 
-                let stopFeeds = client.MachineLearning.StopDatafeed<DynamicResponse>("_all")
+                let stopFeeds = client.MachineLearning.StopDatafeed<DynamicResponse>("_all", null)
                 let getFeeds = client.MachineLearning.GetDatafeeds<DynamicResponse> ()
                 let deleteFeeds =
                     getFeeds.Get<string[]> "datafeeds.datafeed_id"
@@ -154,7 +160,7 @@ let DefaultSetup : Operation list = [Actions("Setup", fun (client, suite) ->
             let indices =
                 let dp = DeleteIndexRequestParameters()
                 dp.SetQueryString("expand_wildcards", "open,closed,hidden")
-                client.Indices.Delete<DynamicResponse>("*", dp)
+                client.Indices.Delete<DynamicResponse>("*,-.ds-ilm-history-*", dp)
             yield indices
             
             let data = PostData.String @"{""password"":""x-pack-test-password"", ""roles"":[""superuser""]}"

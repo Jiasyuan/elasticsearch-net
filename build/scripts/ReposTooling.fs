@@ -1,4 +1,4 @@
-﻿// Licensed to Elasticsearch B.V under one or more agreements.
+// Licensed to Elasticsearch B.V under one or more agreements.
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
@@ -15,7 +15,7 @@ module ReposTooling =
         let clusterName = Option.defaultValue "" <| match args.CommandArguments with | Cluster c -> Some c.Name | _ -> None
         let clusterVersion = Option.defaultValue "" <|match args.CommandArguments with | Cluster c -> c.Version | _ -> None
         
-        let testsProjectDirectory = Path.Combine(Path.GetFullPath(Paths.Output("Tests.ClusterLauncher")), "netcoreapp3.0")
+        let testsProjectDirectory = Path.GetFullPath(Paths.InplaceTestOutput "Tests.ClusterLauncher" "net5.0")
         let tempDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
         
         printfn "%s" testsProjectDirectory
@@ -57,4 +57,9 @@ module ReposTooling =
     let Rewriter args =
         restoreOnce.Force()
         Tooling.DotNet.ExecIn "." (List.append [assemblyRewriter] (List.ofSeq args)) |> ignore
+        
+    let private packageValidator = "nupkg-validator"
+    let PackageValidator args =
+        restoreOnce.Force()
+        Tooling.DotNet.ExecIn "." (List.append [packageValidator] (List.ofSeq args)) |> ignore
          

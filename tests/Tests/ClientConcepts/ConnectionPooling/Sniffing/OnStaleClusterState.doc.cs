@@ -2,16 +2,16 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Elastic.Elasticsearch.Xunit.XunitPlumbing;
-using Elasticsearch.Net;
-using Elasticsearch.Net.VirtualizedCluster;
-using Elasticsearch.Net.VirtualizedCluster.Audit;
+using Elastic.Transport;
+using Elastic.Transport.VirtualizedCluster;
+using Elastic.Transport.VirtualizedCluster.Audit;
 using FluentAssertions;
 using Tests.Framework;
-using static Elasticsearch.Net.AuditEvent;
+using static Elastic.Transport.Diagnostics.Auditing.AuditEvent;
 
 namespace Tests.ClientConcepts.ConnectionPooling.Sniffing
 {
@@ -29,16 +29,16 @@ namespace Tests.ClientConcepts.ConnectionPooling.Sniffing
 		[SuppressMessage("AsyncUsage", "AsyncFixer001:Unnecessary async/await usage", Justification = "Its a test")]
 		public async Task ASniffOnStartupHappens()
 		{
-			var audit = new Auditor(() => VirtualClusterWith
-				.Nodes(10)
+			var audit = new Auditor(() => Virtual.Elasticsearch
+				.Bootstrap(10)
 				.MasterEligible(9202, 9203, 9204)
 				.ClientCalls(r => r.SucceedAlways())
-				.Sniff(s => s.SucceedAlways(VirtualClusterWith
-					.Nodes(100)
+				.Sniff(s => s.SucceedAlways(Virtual.Elasticsearch
+					.Bootstrap(100)
 					.MasterEligible(9202, 9203, 9204)
 					.ClientCalls(r => r.SucceedAlways())
-					.Sniff(ss => ss.SucceedAlways(VirtualClusterWith
-						.Nodes(10)
+					.Sniff(ss => ss.SucceedAlways(Virtual.Elasticsearch
+						.Bootstrap(10)
 						.MasterEligible(9202, 9203, 9204)
 						.ClientCalls(r => r.SucceedAlways())
 					))

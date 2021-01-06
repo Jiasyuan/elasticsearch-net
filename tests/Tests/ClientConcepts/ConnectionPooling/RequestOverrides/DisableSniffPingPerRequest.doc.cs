@@ -2,14 +2,14 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Elastic.Elasticsearch.Xunit.XunitPlumbing;
-using Elasticsearch.Net;
-using Elasticsearch.Net.VirtualizedCluster;
-using Elasticsearch.Net.VirtualizedCluster.Audit;
+using Elastic.Transport;
+using Elastic.Transport.VirtualizedCluster;
+using Elastic.Transport.VirtualizedCluster.Audit;
 using Tests.Framework;
-using static Elasticsearch.Net.AuditEvent;
+using static Elastic.Transport.Diagnostics.Auditing.AuditEvent;
 
 namespace Tests.ClientConcepts.ConnectionPooling.RequestOverrides
 {
@@ -27,9 +27,11 @@ namespace Tests.ClientConcepts.ConnectionPooling.RequestOverrides
 		[U] public async Task DisableSniff()
 		{
 			/** Let's set up the cluster and configure clients to **always** sniff on startup */
-			var audit = new Auditor(() => VirtualClusterWith
-				.Nodes(10)
+			var audit = new Auditor(() => Virtual.Elasticsearch
+				.Bootstrap(10)
 				.ClientCalls(r => r.SucceedAlways())
+				.Sniff(c=>c.SucceedAlways())
+				.Ping(c=>c.SucceedAlways())
 				.SniffingConnectionPool()
 				.Settings(s => s.SniffOnStartup()) // <1> sniff on startup
 			);
@@ -66,9 +68,10 @@ namespace Tests.ClientConcepts.ConnectionPooling.RequestOverrides
 		/** Now, let's disable pinging on the request */
 		[U] public async Task DisablePing()
 		{
-			var audit = new Auditor(() => VirtualClusterWith
-				.Nodes(10)
+			var audit = new Auditor(() => Virtual.Elasticsearch
+				.Bootstrap(10)
 				.ClientCalls(r => r.SucceedAlways())
+				.Sniff(c=>c.SucceedAlways())
 				.SniffingConnectionPool()
 				.Settings(s => s.SniffOnStartup())
 			);
@@ -86,8 +89,8 @@ namespace Tests.ClientConcepts.ConnectionPooling.RequestOverrides
 		/** Finally, let's demonstrate disabling both sniff and ping on the request */
 		[U] public async Task DisableSniffAndPing()
 		{
-			var audit = new Auditor(() => VirtualClusterWith
-				.Nodes(10)
+			var audit = new Auditor(() => Virtual.Elasticsearch
+				.Bootstrap(10)
 				.ClientCalls(r => r.SucceedAlways())
 				.SniffingConnectionPool()
 				.Settings(s => s.SniffOnStartup())

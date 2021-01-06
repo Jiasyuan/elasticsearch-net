@@ -2,14 +2,13 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using Nest;
+using Nest;
 
 namespace Tests.Mapping.Types.Complex.Flattened
 {
 	public class FlattenedTest
 	{
 		[Flattened(
-			Boost = 2,
 			IgnoreAbove = 256,
 			Index = true,
 			Similarity = "BM25",
@@ -39,7 +38,6 @@ namespace Tests.Mapping.Types.Complex.Flattened
 				full = new
 				{
 					type = "flattened",
-					boost = 2.0,
 					ignore_above = 256,
 					index = true,
 					similarity = "BM25",

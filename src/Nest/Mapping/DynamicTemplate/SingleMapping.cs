@@ -2,7 +2,7 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
@@ -53,6 +53,10 @@ namespace Nest
 		/// <inheritdoc />
 		public IProperty Shape(Func<ShapePropertyDescriptor<T>, IShapeProperty> selector) =>
 			selector?.Invoke(new ShapePropertyDescriptor<T>());
+
+		/// <inheritdoc />
+		public IProperty Point(Func<PointPropertyDescriptor<T>, IPointProperty> selector) =>
+			selector?.Invoke(new PointPropertyDescriptor<T>());
 
 		/// <inheritdoc />
 		public IProperty IntegerRange(Func<IntegerRangePropertyDescriptor<T>, IIntegerRangeProperty> selector) =>
@@ -140,6 +144,10 @@ namespace Nest
 		/// <inheritdoc />
 		public IProperty ConstantKeyword(Func<ConstantKeywordPropertyDescriptor<T>, IConstantKeywordProperty> selector) =>
 			selector?.Invoke(new ConstantKeywordPropertyDescriptor<T>());
+
+		/// <inheritdoc />
+		public IProperty Wildcard(Func<WildcardPropertyDescriptor<T>, IWildcardProperty> selector) =>
+			selector?.Invoke(new WildcardPropertyDescriptor<T>());
 
 #pragma warning disable CS3001 // Argument type is not CLS-compliant
 		public IProperty Scalar(Expression<Func<T, int>> field, Func<NumberPropertyDescriptor<T>, INumberProperty> selector = null) =>

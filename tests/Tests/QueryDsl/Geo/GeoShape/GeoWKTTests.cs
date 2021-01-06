@@ -2,7 +2,7 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Linq;
 using Elastic.Elasticsearch.Xunit.XunitPlumbing;
 using FluentAssertions;
@@ -186,18 +186,20 @@ namespace Tests.QueryDsl.Geo.GeoShape
 
 			var multiPolygon = shape as MultiPolygonGeoShape;
 
-			multiPolygon.Should().NotBeNull();
+			multiPolygon!.Should().NotBeNull();
 			multiPolygon.Coordinates.Should().HaveCount(2);
 
 			foreach (var polygon in multiPolygon.Coordinates)
 			foreach (var ring in polygon)
 			{
+				// ReSharper disable PossibleMultipleEnumeration
 				ring.Should().HaveCount(5);
 				foreach (var coordinate in ring)
 				{
 					coordinate.Latitude.Should().BeLessOrEqualTo(3.0).And.BeGreaterOrEqualTo(0);
 					coordinate.Longitude.Should().BeGreaterOrEqualTo(100.0).And.BeLessOrEqualTo(103.0);
 				}
+				// ReSharper restore PossibleMultipleEnumeration
 			}
 		}
 

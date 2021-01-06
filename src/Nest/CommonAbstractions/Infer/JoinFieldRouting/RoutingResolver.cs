@@ -2,7 +2,7 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Reflection;
@@ -100,7 +100,7 @@ namespace Nest
 
 		private static Func<object, object> CreateGetterFunc(Type type, PropertyInfo joinProperty)
 		{
-			var getMethod = joinProperty.GetGetMethod();
+			var getMethod = joinProperty.GetMethod;
 			var generic = MakeDelegateMethodInfo.MakeGenericMethod(type, getMethod.ReturnType);
 			var func = (Func<object, object>)generic.Invoke(null, new object[] { getMethod });
 			return func;

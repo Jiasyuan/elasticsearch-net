@@ -4,7 +4,7 @@
 
 using System.Threading.Tasks;
 using Elastic.Elasticsearch.Xunit.XunitPlumbing;
-using Elasticsearch.Net;
+using Elastic.Transport;
 using FluentAssertions;
 
 namespace Tests.ClientConcepts.Connection
@@ -25,6 +25,7 @@ namespace Tests.ClientConcepts.Connection
 			for (var i = 0; i < count; i++)
 				tasks[i].Start();
 
+			// ReSharper disable once CoVariantArrayConversion
 			Task.WaitAll(tasks);
 
 			for (var i = 0; i < count; i++)

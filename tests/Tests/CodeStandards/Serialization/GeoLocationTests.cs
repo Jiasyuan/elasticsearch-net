@@ -4,7 +4,8 @@
 
 using System.Text;
 using Elastic.Elasticsearch.Xunit.XunitPlumbing;
-using Elasticsearch.Net;
+using Elastic.Transport;
+using Elastic.Transport.Extensions;
 using FluentAssertions;
 using Nest;
 using Tests.Core.Client;
@@ -20,7 +21,7 @@ namespace Tests.CodeStandards.Serialization
 			var client = TestClient.DisabledStreaming;
 
 			Doc deserialized;
-			using (var stream = RecyclableMemoryStreamFactory.Default.Create(Encoding.UTF8.GetBytes(wkt)))
+			using (var stream = TransportConfiguration.DefaultMemoryStreamFactory.Create(Encoding.UTF8.GetBytes(wkt)))
 				deserialized = client.RequestResponseSerializer.Deserialize<Doc>(stream);
 
 			deserialized.Location.Should().Be(new GeoLocation(90, -90));
@@ -29,6 +30,7 @@ namespace Tests.CodeStandards.Serialization
 
 		private class Doc
 		{
+			// ReSharper disable once UnusedAutoPropertyAccessor.Local
 			public GeoLocation Location { get; set; }
 		}
 	}

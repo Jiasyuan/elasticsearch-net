@@ -4,7 +4,7 @@
 
 using System;
 using Elastic.Elasticsearch.Xunit.XunitPlumbing;
-using Elasticsearch.Net;
+using Elastic.Transport;
 using FluentAssertions;
 using Tests.Core.ManagedElasticsearch.Clusters;
 
@@ -19,7 +19,7 @@ namespace Tests.Reproduce
 		protected static string RandomString() => Guid.NewGuid().ToString("N").Substring(0, 8);
 
 		[I]
-		public void BadRequestErrorShouldBeWrappedInElasticsearchClientException()
+		public void BadRequestErrorShouldBeWrappedInTransportException()
 		{
 			var client = _cluster.Client;
 			var index = $"gh2985-{RandomString()}";
@@ -32,7 +32,7 @@ namespace Tests.Reproduce
 					)
 				)
 			);
-			response.OriginalException.Should().NotBeNull().And.BeOfType<ElasticsearchClientException>();
+			response.OriginalException.Should().NotBeNull().And.BeOfType<TransportException>();
 			response.OriginalException.Message.Should()
 				.Contain(
 					"Type: illegal_argument_exception Reason: \"Custom Analyzer [custom] failed to find filter under name [ascii_folding]\""

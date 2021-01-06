@@ -2,7 +2,7 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using Nest;
 
 namespace Tests.Mapping.Types.Core.Keyword
@@ -12,7 +12,6 @@ namespace Tests.Mapping.Types.Core.Keyword
 		public char Char { get; set; }
 
 		[Keyword(
-			Boost = 1.2,
 			EagerGlobalOrdinals = true,
 			IgnoreAbove = 50,
 			Index = false,
@@ -37,7 +36,6 @@ namespace Tests.Mapping.Types.Core.Keyword
 				full = new
 				{
 					type = "keyword",
-					boost = 1.2,
 					eager_global_ordinals = true,
 					ignore_above = 50,
 					index = false,

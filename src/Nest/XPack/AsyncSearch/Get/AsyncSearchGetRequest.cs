@@ -1,5 +1,3 @@
-﻿using System.Collections.Generic;
-
 namespace Nest
 {
 	[MapsApi("async_search.get.json")]

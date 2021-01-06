@@ -2,11 +2,11 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+ using System;
 using System.Collections.Generic;
 using System.Linq;
-using Elasticsearch.Net;
-using FluentAssertions;
+ using Elasticsearch.Net;
+ using FluentAssertions;
 using Nest;
 using Tests.Core.Extensions;
 using Tests.Core.ManagedElasticsearch.Clusters;
@@ -284,7 +284,7 @@ namespace Tests.Search.Request
 			option.Fields.Should().ContainKey("state");
 			option.Contexts.Should().NotBeNull().And.NotBeEmpty();
 			option.Contexts.Should().ContainKey("color");
-			var colorContexts = option.Contexts["color"];
+			var colorContexts = option.Contexts["color"].ToArray();
 			colorContexts.Should().NotBeNull().And.HaveCount(1);
 			colorContexts.First().Category.Should().Be(Project.First.Suggest.Contexts.Values.SelectMany(v => v).First());
 		}

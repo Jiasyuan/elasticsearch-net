@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Elasticsearch.Net;
-using Elasticsearch.Net.Utf8Json;
+using Nest.Utf8Json;
 
 namespace Nest
 {
@@ -42,6 +42,7 @@ namespace Nest
 	}
 
 	/// <inheritdoc cref="ITTestAggregation" />
+	// ReSharper disable once InconsistentNaming
 	public class TTestAggregation : AggregationBase, ITTestAggregation
 	{
 		internal TTestAggregation() { }
@@ -59,6 +60,7 @@ namespace Nest
 	}
 
 	/// <inheritdoc cref="ITTestAggregation" />
+	// ReSharper disable once InconsistentNaming
 	public class TTestAggregationDescriptor<T>
 		: DescriptorBase<TTestAggregationDescriptor<T>, ITTestAggregation>, ITTestAggregation
 		where T : class
@@ -97,6 +99,7 @@ namespace Nest
 	/// The type of t-test
 	/// </summary>
 	[StringEnum]
+	// ReSharper disable once InconsistentNaming
 	public enum TTestType
 	{
 		/// <summary>

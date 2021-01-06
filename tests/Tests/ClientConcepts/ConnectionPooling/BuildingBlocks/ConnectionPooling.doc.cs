@@ -2,18 +2,19 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using Elastic.Elasticsearch.Xunit.XunitPlumbing;
-using Elasticsearch.Net;
+using Elastic.Transport;
 using FluentAssertions;
 using Nest;
 using Tests.Configuration;
 using Tests.Framework;
 using Tests.XPack.Security.Privileges;
+using static Elastic.Transport.Products.Elasticsearch.ElasticsearchNodeFeatures;
 
 namespace Tests.ClientConcepts.ConnectionPooling.BuildingBlocks
 {
@@ -167,6 +168,17 @@ namespace Tests.ClientConcepts.ConnectionPooling.BuildingBlocks
 
 			//hide
 			{
+
+				//make sure we can deal with trailing dollar sign separators.
+				foreach (var dollars in Enumerable.Range(0, 5).Select(i => new string('$', i)))
+				{
+					Func<IElasticClient> doesNotThrowWhenEndsWithDollar = () =>
+						new ElasticClient($"my_cluster:{ToBase64($"hostname$guid{dollars}")}", credentials);
+
+					var validClient = doesNotThrowWhenEndsWithDollar.Should().NotThrow().Subject;
+					validClient.ConnectionSettings.ConnectionPool.Nodes.First().Uri.Should().Be("https://guid.hostname");
+				}
+
 				var badCloudIds = new[]
 				{
 					"",
@@ -341,7 +353,7 @@ namespace Tests.ClientConcepts.ConnectionPooling.BuildingBlocks
 			{
 				var weight = 0f;
 
-				if (node.ClientNode)
+				if (!node.HasFeature(HoldsData) && !node.HasFeature(MasterEligible))
 					weight += 10;
 
 				if (node.Settings.TryGetValue("node.attr.rack_id", out var rackId) && rackId.ToString() == "rack_one")

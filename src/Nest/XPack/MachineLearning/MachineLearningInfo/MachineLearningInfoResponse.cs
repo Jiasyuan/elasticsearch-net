@@ -2,7 +2,7 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace Nest
@@ -39,6 +39,12 @@ namespace Nest
 		[DataMember(Name = "model_snapshot_retention_days")]
 		public int ModelSnapshotRetentionDays { get; internal set; }
 
+		/// <summary>
+		/// Available in Elasticsearch 7.8.0+
+		/// </summary>
+		[DataMember(Name = "daily_model_snapshot_retention_after_days")]
+		public long DailyModelSnapshotRetentionAfterDays { get; internal set; }
+
 		[DataMember(Name = "categorization_analyzer")]
 		public CategorizationAnalyzer CategorizationAnalyzer { get; internal set; }
 	}
@@ -62,5 +68,11 @@ namespace Nest
 	{
 		[DataMember(Name = "max_model_memory_limit")]
 		public string MaxModelMemoryLimit { get; internal set; }
+
+		/// <summary>
+		/// Available in Elasticsearch 7.8.0+
+		/// </summary>
+		[DataMember(Name = "effective_max_model_memory_limit")]
+		public string EffectiveMaxModelMemoryLimit { get; internal set; }
 	}
 }

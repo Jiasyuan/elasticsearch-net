@@ -2,7 +2,7 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using Nest;
 using Tests.Core.ManagedElasticsearch.Clusters;
 using Tests.Domain;
@@ -22,7 +22,6 @@ namespace Tests.Mapping.Types.Specialized.Ip
 				{
 					type = "ip",
 					index = false,
-					boost = 1.3,
 					null_value = "127.0.0.1",
 					doc_values = true,
 					store = true,
@@ -34,7 +33,6 @@ namespace Tests.Mapping.Types.Specialized.Ip
 			.Ip(s => s
 				.Name(p => p.Name)
 				.Index(false)
-				.Boost(1.3)
 				.NullValue("127.0.0.1")
 				.DocValues()
 				.Store()
@@ -47,7 +45,6 @@ namespace Tests.Mapping.Types.Specialized.Ip
 				"name", new IpProperty
 				{
 					Index = false,
-					Boost = 1.3,
 					NullValue = "127.0.0.1",
 					DocValues = true,
 					Store = true,

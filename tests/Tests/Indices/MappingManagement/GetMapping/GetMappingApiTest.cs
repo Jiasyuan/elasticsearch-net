@@ -2,11 +2,11 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Elasticsearch.Net;
+using Elastic.Transport;
 using FluentAssertions;
 using Nest;
 using Tests.Configuration;
@@ -202,6 +202,8 @@ namespace Tests.Indices.MappingManagement.GetMapping
 		public void Visit(IGeoShapeProperty mapping) => Increment("geo_shape");
 
 		public void Visit(IShapeProperty mapping) => Increment("shape");
+
+		public void Visit(IPointProperty mapping) => Increment("point");
 
 		public void Visit(IIpProperty mapping) => Increment("ip");
 

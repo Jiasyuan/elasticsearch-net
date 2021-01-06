@@ -2,11 +2,12 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Elastic.Elasticsearch.Xunit.XunitPlumbing;
-using Elasticsearch.Net;
+using Elastic.Transport;
+using Elastic.Transport.Extensions;
 using FluentAssertions;
 using Nest;
 using Tests.Core.ManagedElasticsearch.Clusters;
@@ -79,6 +80,7 @@ namespace Tests.Search.MultiSearch
 		private static void AssertResponse(DynamicResponse response)
 		{
 			response.Success.Should().BeTrue();
+
 			object o = response.Body;
 			o.Should().NotBeNull();
 
@@ -95,9 +97,6 @@ namespace Tests.Search.MultiSearch
 
 			int totalShards = b.responses[0]._shards.total;
 			totalShards.Should().BeGreaterThan(0);
-//			JArray responses = r.responses;
-//
-//			responses.Count().Should().Be(4);
 		}
 	}
 }

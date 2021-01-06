@@ -2,7 +2,7 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿namespace Nest
+namespace Nest
 {
 	public interface IAggregationVisitor
 	{
@@ -72,6 +72,8 @@
 
 		void Visit(INestedAggregation aggregation);
 
+		void Visit(INormalizeAggregation aggregation);
+
 		void Visit(IParentAggregation aggregation);
 
 		void Visit(IReverseNestedAggregation aggregation);
@@ -112,6 +114,8 @@
 
 		void Visit(IMovingAverageAggregation aggregation);
 
+		void Visit(IMovingPercentilesAggregation aggregation);
+
 		void Visit(ICumulativeSumAggregation aggregation);
 
 		void Visit(ICumulativeCardinalityAggregation aggregation);
@@ -125,6 +129,8 @@
 		void Visit(IBucketSortAggregation aggregation);
 
 		void Visit(ISamplerAggregation aggregation);
+
+		void Visit(IDiversifiedSamplerAggregation aggregation);
 
 		void Visit(IGeoCentroidAggregation aggregation);
 
@@ -209,6 +215,8 @@
 
 		public virtual void Visit(ISamplerAggregation aggregation) { }
 
+		public virtual void Visit(IDiversifiedSamplerAggregation aggregation) { }
+
 		public virtual void Visit(IBucketSelectorAggregation aggregation) { }
 
 		public virtual void Visit(IBucketSortAggregation aggregation) { }
@@ -216,6 +224,8 @@
 		public virtual void Visit(ISerialDifferencingAggregation aggregation) { }
 
 		public virtual void Visit(IMovingAverageAggregation aggregation) { }
+
+		public virtual void Visit(IMovingPercentilesAggregation aggregation) { }
 
 		public virtual void Visit(IMinBucketAggregation aggregation) { }
 
@@ -232,6 +242,8 @@
 		public virtual void Visit(IRareTermsAggregation aggregation) { }
 
 		public virtual void Visit(INestedAggregation aggregation) { }
+
+		public virtual void Visit(INormalizeAggregation aggregation) { }
 
 		public virtual void Visit(IParentAggregation aggregation) { }
 

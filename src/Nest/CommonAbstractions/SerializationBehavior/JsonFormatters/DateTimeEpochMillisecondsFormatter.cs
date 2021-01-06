@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information
 
 using System;
-using Elasticsearch.Net.Utf8Json;
+using Nest.Utf8Json;
 
 namespace Nest
 {
@@ -28,7 +28,7 @@ namespace Nest
 				case JsonToken.Number:
 				{
 					var millisecondsSinceEpoch = reader.ReadDouble();
-					var dateTimeOffset = DateTimeUtil.Epoch.AddMilliseconds(millisecondsSinceEpoch);
+					var dateTimeOffset = DateTimeUtil.UnixEpoch.AddMilliseconds(millisecondsSinceEpoch);
 					return dateTimeOffset.DateTime;
 				}
 				default:
@@ -44,7 +44,7 @@ namespace Nest
 				return;
 			}
 
-			var dateTimeDifference = (value.Value - DateTimeUtil.Epoch).TotalMilliseconds;
+			var dateTimeDifference = (value.Value - DateTimeUtil.UnixEpoch).TotalMilliseconds;
 			writer.WriteInt64((long)dateTimeDifference);
 		}
 	}

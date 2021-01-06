@@ -9,18 +9,19 @@ using Elasticsearch.Net;
 using Examples.Models;
 using Newtonsoft.Json.Linq;
 using System.ComponentModel;
+using Elastic.Transport;
 
 namespace Examples.Docs
 {
 	public class ReindexPage : ExampleBase
 	{
 		[U]
-		[Description("docs/reindex.asciidoc:20")]
-		public void Line20()
+		[Description("docs/reindex.asciidoc:25")]
+		public void Line25()
 		{
 			// tag::0cc991e3f7f8511a34730e154b3c5edc[]
-			var reindexResponse = client.ReindexOnServer(d =>
-				d.Source(s => s.Index("twitter"))
+			var reindexResponse = client.ReindexOnServer(r =>
+				r.Source(s => s.Index("twitter"))
 				 .Destination(d => d.Index("new_twitter"))
 			);
 			// end::0cc991e3f7f8511a34730e154b3c5edc[]
@@ -37,8 +38,8 @@ namespace Examples.Docs
 		}
 
 		[U]
-		[Description("docs/reindex.asciidoc:161")]
-		public void Line161()
+		[Description("docs/reindex.asciidoc:174")]
+		public void Line174()
 		{
 			// tag::68738b4fd0dda177022be45be95b4c84[]
 			var reindexResponse = client.ReindexRethrottle("r1A2WoRbTwKZ516z6NEs5A:36619", d =>
@@ -50,17 +51,17 @@ namespace Examples.Docs
 		}
 
 		[U]
-		[Description("docs/reindex.asciidoc:191")]
-		public void Line191()
+		[Description("docs/reindex.asciidoc:204")]
+		public void Line204()
 		{
 			// tag::1b8655e6ba99fe39933c6eafe78728b7[]
-			var reindexResponse1 = client.ReindexOnServer(d =>
-				d.Source(s => s.Index("twitter").Slice<Tweet>(r => r.Id(0).Max(2)))
+			var reindexResponse1 = client.ReindexOnServer(r =>
+				r.Source(s => s.Index("twitter").Slice<Tweet>(slice => slice.Id(0).Max(2)))
 				 .Destination(d => d.Index("new_twitter"))
 			);
 
-			var reindexResponse2 = client.ReindexOnServer(d =>
-				d.Source(s => s.Index("twitter").Slice<Tweet>(r => r.Id(1).Max(2)))
+			var reindexResponse2 = client.ReindexOnServer(r =>
+				r.Source(s => s.Index("twitter").Slice<Tweet>(slice => slice.Id(1).Max(2)))
 				 .Destination(d => d.Index("new_twitter"))
 			);
 			// end::1b8655e6ba99fe39933c6eafe78728b7[]
@@ -95,8 +96,8 @@ namespace Examples.Docs
 		}
 
 		[U]
-		[Description("docs/reindex.asciidoc:224")]
-		public void Line224()
+		[Description("docs/reindex.asciidoc:237")]
+		public void Line237()
 		{
 			// tag::3ae03ba3b56e5e287953094050766738[]
 			var refreshResponse = client.Indices.Refresh();
@@ -116,12 +117,12 @@ namespace Examples.Docs
 		}
 
 		[U]
-		[Description("docs/reindex.asciidoc:251")]
-		public void Line251()
+		[Description("docs/reindex.asciidoc:264")]
+		public void Line264()
 		{
 			// tag::cb01106bf524df5e0501d4c655c1aa7b[]
-			var reindexResponse = client.ReindexOnServer(d =>
-				d.Source(s => s.Index("twitter"))
+			var reindexResponse = client.ReindexOnServer(r =>
+				r.Source(s => s.Index("twitter"))
 				 .Destination(d => d.Index("new_twitter"))
 				 .Slices(5)
 				 .Refresh()
@@ -140,8 +141,8 @@ namespace Examples.Docs
 		}
 
 		[U]
-		[Description("docs/reindex.asciidoc:267")]
-		public void Line267()
+		[Description("docs/reindex.asciidoc:280")]
+		public void Line280()
 		{
 			// tag::e567e6dbf86300142573c73789c8fce4[]
 			var searchResponse = client.Search<Tweet>(s => s.Index("new_twitter").Size(0).FilterPath(new[] { "hits.total" }));
@@ -154,12 +155,12 @@ namespace Examples.Docs
 		}
 
 		[U]
-		[Description("docs/reindex.asciidoc:359")]
-		public void Line359()
+		[Description("docs/reindex.asciidoc:373")]
+		public void Line373()
 		{
 			// tag::78c96113ae4ed0054e581b17542528a7[]
-			var reindexResponse = client.ReindexOnServer(d =>
-				d.Source(s => s.Index("source").Query<object>(q => q.Match(m => m.Field("company").Query("cat"))))
+			var reindexResponse = client.ReindexOnServer(r =>
+				r.Source(s => s.Index("source").Query<object>(q => q.Match(m => m.Field("company").Query("cat"))))
 				 .Destination(d => d.Index("dest").Routing("=cat"))
 				 .Slices(5)
 				 .Refresh()
@@ -187,12 +188,12 @@ namespace Examples.Docs
 		}
 
 		[U]
-		[Description("docs/reindex.asciidoc:384")]
-		public void Line384()
+		[Description("docs/reindex.asciidoc:398")]
+		public void Line398()
 		{
 			// tag::400e89eb46ead8e9c9e40f123fd5e590[]
-			var reindexResponse = client.ReindexOnServer(d =>
-				d.Source(s => s.Index("source").Size(100))
+			var reindexResponse = client.ReindexOnServer(r =>
+				r.Source(s => s.Index("source").Size(100))
 				 .Destination(d => d.Index("dest").Routing("=cat"))
 			);
 			// end::400e89eb46ead8e9c9e40f123fd5e590[]
@@ -211,12 +212,12 @@ namespace Examples.Docs
 		}
 
 		[U]
-		[Description("docs/reindex.asciidoc:403")]
-		public void Line403()
+		[Description("docs/reindex.asciidoc:417")]
+		public void Line417()
 		{
 			// tag::b1efa1c51a34dd5ab5511b71a399f5b1[]
-			var reindexResponse = client.ReindexOnServer(d =>
-				d.Source(s => s.Index("source"))
+			var reindexResponse = client.ReindexOnServer(r =>
+				r.Source(s => s.Index("source"))
 				 .Destination(d => d.Index("dest").Pipeline("some_ingest_pipeline"))
 			);
 			// end::b1efa1c51a34dd5ab5511b71a399f5b1[]
@@ -234,12 +235,12 @@ namespace Examples.Docs
 		}
 
 		[U]
-		[Description("docs/reindex.asciidoc:592")]
-		public void Line592()
+		[Description("docs/reindex.asciidoc:609")]
+		public void Line609()
 		{
 			// tag::764f9884b370cbdc82a1c5c42ed40ff3[]
-			var reindexResponse = client.ReindexOnServer(d =>
-				d.Source(s => s.Index("twitter").Query<Tweet>(q => q.Term(f => f.User, "kimchy")))
+			var reindexResponse = client.ReindexOnServer(r =>
+				r.Source(s => s.Index("twitter").Query<Tweet>(q => q.Term(f => f.User, "kimchy")))
 				 .Destination(d => d.Index("new_twitter"))
 			);
 			// end::764f9884b370cbdc82a1c5c42ed40ff3[]
@@ -264,12 +265,12 @@ namespace Examples.Docs
 		}
 
 		[U]
-		[Description("docs/reindex.asciidoc:618")]
-		public void Line618()
+		[Description("docs/reindex.asciidoc:635")]
+		public void Line635()
 		{
 			// tag::52b2bfbdd78f8283b6f4891c48013237[]
-			var reindexResponse = client.ReindexOnServer(d =>
-				d.Source(s => s.Index("twitter"))
+			var reindexResponse = client.ReindexOnServer(r =>
+				r.Source(s => s.Index("twitter"))
 				 .Destination(d => d.Index("new_twitter"))
 				 .MaximumDocuments(1)
 			);
@@ -288,12 +289,12 @@ namespace Examples.Docs
 		}
 
 		[U]
-		[Description("docs/reindex.asciidoc:640")]
-		public void Line640()
+		[Description("docs/reindex.asciidoc:657")]
+		public void Line657()
 		{
 			// tag::6f097c298a7abf4c032c4314920c49c8[]
-			var reindexResponse = client.ReindexOnServer(d =>
-				d.Source(s => s.Index(new[] { "twitter", "blog" }))
+			var reindexResponse = client.ReindexOnServer(r =>
+				r.Source(s => s.Index(new[] { "twitter", "blog" }))
 				 .Destination(d => d.Index("all_together"))
 			);
 			// end::6f097c298a7abf4c032c4314920c49c8[]
@@ -313,12 +314,12 @@ namespace Examples.Docs
 		}
 
 		[U]
-		[Description("docs/reindex.asciidoc:666")]
-		public void Line666()
+		[Description("docs/reindex.asciidoc:683")]
+		public void Line683()
 		{
 			// tag::e9c2e15b36372d5281c879d336322b6c[]
-			var reindexResponse = client.ReindexOnServer(d =>
-				d.Source(s => s.Index("twitter").Source<object>(s => s.Fields("user", "_doc")))
+			var reindexResponse = client.ReindexOnServer(r =>
+				r.Source(s => s.Index("twitter").Source<object>(source => source.Fields("user", "_doc")))
 				 .Destination(d => d.Index("new_twitter"))
 			);
 			// end::e9c2e15b36372d5281c879d336322b6c[]
@@ -336,8 +337,8 @@ namespace Examples.Docs
 		}
 
 		[U]
-		[Description("docs/reindex.asciidoc:687")]
-		public void Line687()
+		[Description("docs/reindex.asciidoc:704")]
+		public void Line704()
 		{
 			// tag::1577e6e806b3283c9e99f1596d310754[]
 			var indexResponse = client.Index(new { text = "words words", flag = "foo" },
@@ -355,12 +356,12 @@ namespace Examples.Docs
 		}
 
 		[U]
-		[Description("docs/reindex.asciidoc:699")]
-		public void Line699()
+		[Description("docs/reindex.asciidoc:716")]
+		public void Line716()
 		{
 			// tag::1216f8f7367df3aa823012cef310c08a[]
-			var reindexResponse = client.ReindexOnServer(d =>
-				d.Source(s => s.Index("test"))
+			var reindexResponse = client.ReindexOnServer(r =>
+				r.Source(s => s.Index("test"))
 				 .Destination(d => d.Index("test2"))
 				 .Script(@"ctx._source.tag = ctx._source.remove(""flag"")")
 			);
@@ -381,8 +382,8 @@ namespace Examples.Docs
 		}
 
 		[U]
-		[Description("docs/reindex.asciidoc:718")]
-		public void Line718()
+		[Description("docs/reindex.asciidoc:735")]
+		public void Line735()
 		{
 			// tag::cfc37446bd892d1ac42a3c8e8b204e6c[]
 			var getResponse = client.Get<object>(1, d => d.Index("test2"));
@@ -392,8 +393,8 @@ namespace Examples.Docs
 		}
 
 		[U]
-		[Description("docs/reindex.asciidoc:751")]
-		public void Line751()
+		[Description("docs/reindex.asciidoc:768")]
+		public void Line768()
 		{
 			// tag::9a4d5e41c52c20635d1fd9c6e13f6c7a[]
 			var indexResponse1 = client.Index(new Dictionary<string, double> { { "system.cpu.idle.pct", 0.908 } },
@@ -411,12 +412,12 @@ namespace Examples.Docs
 		}
 
 		[U]
-		[Description("docs/reindex.asciidoc:767")]
-		public void Line767()
+		[Description("docs/reindex.asciidoc:784")]
+		public void Line784()
 		{
 			// tag::973a3ff47fc4ce036ecd9bd363fef9f7[]
-			var reindexResponse = client.ReindexOnServer(d =>
-				d.Source(s => s.Index("metricbeat-*"))
+			var reindexResponse = client.ReindexOnServer(r =>
+				r.Source(s => s.Index("metricbeat-*"))
 				 .Destination(d => d.Index("metricbeat"))
 				 .Script(@"ctx._index = 'metricbeat-' + (ctx._index.substring('metricbeat-'.length(), ctx._index.length())) + '-1'")
 			);
@@ -441,8 +442,8 @@ namespace Examples.Docs
 		}
 
 		[U]
-		[Description("docs/reindex.asciidoc:787")]
-		public void Line787()
+		[Description("docs/reindex.asciidoc:804")]
+		public void Line804()
 		{
 			// tag::3b04cc894e6a47d57983484010feac0c[]
 			var getResponse1 = client.Get<object>(1, i => i.Index("metricbeat-2016.05.30-1"));
@@ -456,12 +457,12 @@ namespace Examples.Docs
 		}
 
 		[U]
-		[Description("docs/reindex.asciidoc:802")]
-		public void Line802()
+		[Description("docs/reindex.asciidoc:819")]
+		public void Line819()
 		{
 			// tag::1bc731a4df952228af6dfa6b48627332[]
-			var reindexResponse = client.ReindexOnServer(d =>
-				d.MaximumDocuments(10)
+			var reindexResponse = client.ReindexOnServer(r =>
+				r.MaximumDocuments(10)
 				 .Source(s => s.Index("twitter").Query<object>(q => q.FunctionScore(f => f.Functions(ff => ff.RandomScore()).MinScore(0.9))))
 				 .Destination(d => d.Index("random_twitter"))
 			);
@@ -494,12 +495,12 @@ namespace Examples.Docs
 		}
 
 		[U]
-		[Description("docs/reindex.asciidoc:833")]
-		public void Line833()
+		[Description("docs/reindex.asciidoc:850")]
+		public void Line850()
 		{
 			// tag::8871b8fcb6de4f0c7dff22798fb10fb7[]
-			var reindexResponse = client.ReindexOnServer(d =>
-				d.Source(s => s.Index("twitter"))
+			var reindexResponse = client.ReindexOnServer(r =>
+				r.Source(s => s.Index("twitter"))
 				 .Destination(d => d.Index("new_twitter").VersionType(VersionType.External))
 				 .Script(@"if (ctx._source.foo == 'bar') {ctx._version++; ctx._source.remove('foo')}")
 			);
@@ -525,14 +526,14 @@ namespace Examples.Docs
 		}
 
 		[U]
-		[Description("docs/reindex.asciidoc:888")]
-		public void Line888()
+		[Description("docs/reindex.asciidoc:905")]
+		public void Line905()
 		{
 			// tag::36b2778f23d0955255f52c075c4d213d[]
-			var reindexResponse = client.ReindexOnServer(d =>
-				d.Source(s => s
+			var reindexResponse = client.ReindexOnServer(r =>
+				r.Source(s => s
 						.Index("source")
-						.Remote(r => r
+						.Remote(rr => rr
 							.Host(new Uri("http://otherhost:9200"))
 							.Username("user")
 							.Password("pass"))
@@ -566,13 +567,13 @@ namespace Examples.Docs
 		}
 
 		[U]
-		[Description("docs/reindex.asciidoc:955")]
-		public void Line955()
+		[Description("docs/reindex.asciidoc:971")]
+		public void Line971()
 		{
 			// tag::64b9baa6d7556b960b29698f3383aa31[]
-			var reindexResponse = client.ReindexOnServer(d =>
-				d.Source(s => s
-						.Remote(r => r.Host(new Uri("http://otherhost:9200")))
+			var reindexResponse = client.ReindexOnServer(r =>
+				r.Source(s => s
+						.Remote(rr => rr.Host(new Uri("http://otherhost:9200")))
 						.Index("source")
 						.Size(10)
 						.Query<object>(q => q.Match(m => m.Field("test").Query("data"))))
@@ -604,14 +605,14 @@ namespace Examples.Docs
 		}
 
 		[U]
-		[Description("docs/reindex.asciidoc:986")]
-		public void Line986()
+		[Description("docs/reindex.asciidoc:1002")]
+		public void Line1002()
 		{
 			// tag::7f697eb436dfa3c30dfe610d8c32d132[]
-			var reindexResponse = client.ReindexOnServer(d =>
-				d.Source(s => s
+			var reindexResponse = client.ReindexOnServer(r =>
+				r.Source(s => s
 						.Index("source")
-						.Remote(r => r
+						.Remote(rr => rr
 							.Host(new Uri("http://otherhost:9200"))
 							.SocketTimeout("1m")
 							.ConnectTimeout("10s"))

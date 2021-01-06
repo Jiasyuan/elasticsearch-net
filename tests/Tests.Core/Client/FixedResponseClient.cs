@@ -2,9 +2,10 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Text;
-using Elasticsearch.Net;
+using Elastic.Transport;
+using Elastic.Transport.Extensions;
 using Nest;
 
 namespace Tests.Core.Client
@@ -28,10 +29,11 @@ namespace Tests.Core.Client
 			int statusCode = 200,
 			Func<ConnectionSettings, ConnectionSettings> modifySettings = null,
 			string contentType = RequestData.MimeType,
-			Exception exception = null
+			Exception exception = null,
+			ITransportSerializer serializer = null
 		)
 		{
-			var serializer = TestClient.Default.RequestResponseSerializer;
+			serializer ??= TestClient.Default.RequestResponseSerializer;
 			byte[] responseBytes;
 			switch (response)
 			{

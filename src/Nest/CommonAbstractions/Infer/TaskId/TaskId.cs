@@ -2,11 +2,11 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Globalization;
-using Elasticsearch.Net;
-using Elasticsearch.Net.Utf8Json;
+using Elastic.Transport;
+using Nest.Utf8Json;
 
 namespace Nest
 {
@@ -44,7 +44,7 @@ namespace Nest
 
 		public bool Equals(TaskId other) => EqualsString(other?.FullyQualifiedId);
 
-		public string GetString(IConnectionConfigurationValues settings) => FullyQualifiedId;
+		public string GetString(ITransportConfigurationValues settings) => FullyQualifiedId;
 
 		public override string ToString() => FullyQualifiedId;
 

@@ -2,8 +2,8 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-using Elasticsearch.Net;
-using Elasticsearch.Net.Utf8Json;
+using Elastic.Transport;
+using Nest.Utf8Json;
 
 namespace Nest
 {
@@ -19,7 +19,7 @@ namespace Nest
 		/// <summary>
 		/// If SourceSerializer exposes a formatter we can use it directly
 		/// </summary>
-		private static bool AttemptFastPath(IElasticsearchSerializer serializer, out IJsonFormatterResolver formatter)
+		private static bool AttemptFastPath(ITransportSerializer serializer, out IJsonFormatterResolver formatter)
 		{
 			formatter = null;
 			return serializer is IInternalSerializer s && s.TryGetJsonFormatter(out formatter);

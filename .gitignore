@@ -55,7 +55,10 @@ build/tools/*
 !build/*.nuspec
 !build/*.png
 !build/*.targets
+!build/*.sh
 !build/scripts
+
+.ci/output
 
 
 /dep/Newtonsoft.Json.4.0.2

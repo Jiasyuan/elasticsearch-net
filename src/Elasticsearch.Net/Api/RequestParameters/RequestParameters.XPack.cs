@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Linq.Expressions;
+using Elastic.Transport;
 
 // ReSharper disable once CheckNamespace
 namespace Elasticsearch.Net.Specification.XPackApi
@@ -29,6 +30,14 @@ namespace Elasticsearch.Net.Specification.XPackApi
 	{
 		public override HttpMethod DefaultHttpMethod => HttpMethod.GET;
 		public override bool SupportsBody => false;
+		///<summary>If this param is used it must be set to true</summary>
+		[Obsolete("Scheduled to be removed in 8.0, Deprecated as of: 8.0.0, reason: Supported for backwards compatibility with 7.x")]
+		public bool? AcceptEnterprise
+		{
+			get => Q<bool? >("accept_enterprise");
+			set => Q("accept_enterprise", value);
+		}
+
 		///<summary>Comma-separated list of info categories. Can be any of: build, license, features</summary>
 		public string[] Categories
 		{

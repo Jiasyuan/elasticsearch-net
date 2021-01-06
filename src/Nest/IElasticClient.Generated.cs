@@ -25,6 +25,7 @@ using Nest.Specification.AsyncSearchApi;
 using Nest.Specification.CatApi;
 using Nest.Specification.ClusterApi;
 using Nest.Specification.CrossClusterReplicationApi;
+using Nest.Specification.DanglingIndicesApi;
 using Nest.Specification.EnrichApi;
 using Nest.Specification.GraphApi;
 using Nest.Specification.IndexLifecycleManagementApi;
@@ -71,6 +72,12 @@ namespace Nest
 
 		///<summary>Cross Cluster Replication APIs</summary>
 		CrossClusterReplicationNamespace CrossClusterReplication
+		{
+			get;
+		}
+
+		///<summary>Dangling Indices APIs</summary>
+		DanglingIndicesNamespace DanglingIndices
 		{
 			get;
 		}
@@ -156,27 +163,51 @@ namespace Nest
 		/// <summary>
 		/// <c>DELETE</c> request to the <c>clear_scroll</c> API, read more about this API online:
 		/// <para></para>
-		/// <a href = "https://www.elastic.co/guide/en/elasticsearch/reference/master/search-request-body.html#_clear_scroll_api">https://www.elastic.co/guide/en/elasticsearch/reference/master/search-request-body.html#_clear_scroll_api</a>
+		/// <a href = "https://www.elastic.co/guide/en/elasticsearch/reference/current/clear-scroll-api.html">https://www.elastic.co/guide/en/elasticsearch/reference/current/clear-scroll-api.html</a>
 		/// </summary>
 		ClearScrollResponse ClearScroll(Func<ClearScrollDescriptor, IClearScrollRequest> selector = null);
 		/// <summary>
 		/// <c>DELETE</c> request to the <c>clear_scroll</c> API, read more about this API online:
 		/// <para></para>
-		/// <a href = "https://www.elastic.co/guide/en/elasticsearch/reference/master/search-request-body.html#_clear_scroll_api">https://www.elastic.co/guide/en/elasticsearch/reference/master/search-request-body.html#_clear_scroll_api</a>
+		/// <a href = "https://www.elastic.co/guide/en/elasticsearch/reference/current/clear-scroll-api.html">https://www.elastic.co/guide/en/elasticsearch/reference/current/clear-scroll-api.html</a>
 		/// </summary>
 		Task<ClearScrollResponse> ClearScrollAsync(Func<ClearScrollDescriptor, IClearScrollRequest> selector = null, CancellationToken ct = default);
 		/// <summary>
 		/// <c>DELETE</c> request to the <c>clear_scroll</c> API, read more about this API online:
 		/// <para></para>
-		/// <a href = "https://www.elastic.co/guide/en/elasticsearch/reference/master/search-request-body.html#_clear_scroll_api">https://www.elastic.co/guide/en/elasticsearch/reference/master/search-request-body.html#_clear_scroll_api</a>
+		/// <a href = "https://www.elastic.co/guide/en/elasticsearch/reference/current/clear-scroll-api.html">https://www.elastic.co/guide/en/elasticsearch/reference/current/clear-scroll-api.html</a>
 		/// </summary>
 		ClearScrollResponse ClearScroll(IClearScrollRequest request);
 		/// <summary>
 		/// <c>DELETE</c> request to the <c>clear_scroll</c> API, read more about this API online:
 		/// <para></para>
-		/// <a href = "https://www.elastic.co/guide/en/elasticsearch/reference/master/search-request-body.html#_clear_scroll_api">https://www.elastic.co/guide/en/elasticsearch/reference/master/search-request-body.html#_clear_scroll_api</a>
+		/// <a href = "https://www.elastic.co/guide/en/elasticsearch/reference/current/clear-scroll-api.html">https://www.elastic.co/guide/en/elasticsearch/reference/current/clear-scroll-api.html</a>
 		/// </summary>
 		Task<ClearScrollResponse> ClearScrollAsync(IClearScrollRequest request, CancellationToken ct = default);
+		/// <summary>
+		/// <c>DELETE</c> request to the <c>close_point_in_time</c> API, read more about this API online:
+		/// <para></para>
+		/// <a href = "https://www.elastic.co/guide/en/elasticsearch/reference/master/point-in-time-api.html">https://www.elastic.co/guide/en/elasticsearch/reference/master/point-in-time-api.html</a>
+		/// </summary>
+		ClosePointInTimeResponse ClosePointInTime(Func<ClosePointInTimeDescriptor, IClosePointInTimeRequest> selector = null);
+		/// <summary>
+		/// <c>DELETE</c> request to the <c>close_point_in_time</c> API, read more about this API online:
+		/// <para></para>
+		/// <a href = "https://www.elastic.co/guide/en/elasticsearch/reference/master/point-in-time-api.html">https://www.elastic.co/guide/en/elasticsearch/reference/master/point-in-time-api.html</a>
+		/// </summary>
+		Task<ClosePointInTimeResponse> ClosePointInTimeAsync(Func<ClosePointInTimeDescriptor, IClosePointInTimeRequest> selector = null, CancellationToken ct = default);
+		/// <summary>
+		/// <c>DELETE</c> request to the <c>close_point_in_time</c> API, read more about this API online:
+		/// <para></para>
+		/// <a href = "https://www.elastic.co/guide/en/elasticsearch/reference/master/point-in-time-api.html">https://www.elastic.co/guide/en/elasticsearch/reference/master/point-in-time-api.html</a>
+		/// </summary>
+		ClosePointInTimeResponse ClosePointInTime(IClosePointInTimeRequest request);
+		/// <summary>
+		/// <c>DELETE</c> request to the <c>close_point_in_time</c> API, read more about this API online:
+		/// <para></para>
+		/// <a href = "https://www.elastic.co/guide/en/elasticsearch/reference/master/point-in-time-api.html">https://www.elastic.co/guide/en/elasticsearch/reference/master/point-in-time-api.html</a>
+		/// </summary>
+		Task<ClosePointInTimeResponse> ClosePointInTimeAsync(IClosePointInTimeRequest request, CancellationToken ct = default);
 		/// <summary>
 		/// <c>POST</c> request to the <c>count</c> API, read more about this API online:
 		/// <para></para>
@@ -663,6 +694,30 @@ namespace Nest
 		/// <a href = "https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-multi-termvectors.html">https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-multi-termvectors.html</a>
 		/// </summary>
 		Task<MultiTermVectorsResponse> MultiTermVectorsAsync(IMultiTermVectorsRequest request, CancellationToken ct = default);
+		/// <summary>
+		/// <c>POST</c> request to the <c>open_point_in_time</c> API, read more about this API online:
+		/// <para></para>
+		/// <a href = "https://www.elastic.co/guide/en/elasticsearch/reference/master/point-in-time-api.html">https://www.elastic.co/guide/en/elasticsearch/reference/master/point-in-time-api.html</a>
+		/// </summary>
+		OpenPointInTimeResponse OpenPointInTime(Indices index = null, Func<OpenPointInTimeDescriptor, IOpenPointInTimeRequest> selector = null);
+		/// <summary>
+		/// <c>POST</c> request to the <c>open_point_in_time</c> API, read more about this API online:
+		/// <para></para>
+		/// <a href = "https://www.elastic.co/guide/en/elasticsearch/reference/master/point-in-time-api.html">https://www.elastic.co/guide/en/elasticsearch/reference/master/point-in-time-api.html</a>
+		/// </summary>
+		Task<OpenPointInTimeResponse> OpenPointInTimeAsync(Indices index = null, Func<OpenPointInTimeDescriptor, IOpenPointInTimeRequest> selector = null, CancellationToken ct = default);
+		/// <summary>
+		/// <c>POST</c> request to the <c>open_point_in_time</c> API, read more about this API online:
+		/// <para></para>
+		/// <a href = "https://www.elastic.co/guide/en/elasticsearch/reference/master/point-in-time-api.html">https://www.elastic.co/guide/en/elasticsearch/reference/master/point-in-time-api.html</a>
+		/// </summary>
+		OpenPointInTimeResponse OpenPointInTime(IOpenPointInTimeRequest request);
+		/// <summary>
+		/// <c>POST</c> request to the <c>open_point_in_time</c> API, read more about this API online:
+		/// <para></para>
+		/// <a href = "https://www.elastic.co/guide/en/elasticsearch/reference/master/point-in-time-api.html">https://www.elastic.co/guide/en/elasticsearch/reference/master/point-in-time-api.html</a>
+		/// </summary>
+		Task<OpenPointInTimeResponse> OpenPointInTimeAsync(IOpenPointInTimeRequest request, CancellationToken ct = default);
 		/// <summary>
 		/// <c>HEAD</c> request to the <c>ping</c> API, read more about this API online:
 		/// <para></para>

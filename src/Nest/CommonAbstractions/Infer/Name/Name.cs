@@ -2,9 +2,9 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Diagnostics;
-using Elasticsearch.Net;
+using Elastic.Transport;
 
 namespace Nest
 {
@@ -23,7 +23,7 @@ namespace Nest
 
 		public bool Equals(Name other) => EqualsString(other?.Value);
 
-		string IUrlParameter.GetString(IConnectionConfigurationValues settings) => Value;
+		string IUrlParameter.GetString(ITransportConfigurationValues settings) => Value;
 
 		public static implicit operator Name(string name) => name.IsNullOrEmpty() ? null : new Name(name);
 

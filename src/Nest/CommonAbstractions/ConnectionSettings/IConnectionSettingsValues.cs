@@ -2,9 +2,10 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Elastic.Transport;
 using Elasticsearch.Net;
 
 namespace Nest
@@ -86,6 +87,6 @@ namespace Nest
 		/// <summary>
 		/// The serializer use to serialize CLR types representing documents and other types related to documents.
 		/// </summary>
-		IElasticsearchSerializer SourceSerializer { get; }
+		ITransportSerializer SourceSerializer { get; }
 	}
 }

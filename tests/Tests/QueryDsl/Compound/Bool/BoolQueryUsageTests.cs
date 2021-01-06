@@ -2,7 +2,7 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Linq;
 using Elastic.Elasticsearch.Xunit.XunitPlumbing;
 using FluentAssertions;
@@ -13,6 +13,7 @@ using Tests.Framework.EndpointTests.TestState;
 
 namespace Tests.QueryDsl.Compound.Bool
 {
+	// ReSharper disable InvalidXmlDocComment
 	/**
 	 * A query that matches documents matching boolean combinations of other queries.
 	 * It is built using one or more boolean clauses, each clause with a typed occurrence.
@@ -36,6 +37,7 @@ namespace Tests.QueryDsl.Compound.Bool
 	 *
 	 * See the Elasticsearch documentation on {ref_current}/query-dsl-bool-query.html[bool query] for more details.
 	 */
+	// ReSharper restore InvalidXmlDocComment
 	public class BoolQueryUsageTests : QueryDslUsageTestsBase
 	{
 		public BoolQueryUsageTests(ReadOnlyCluster cluster, EndpointUsage usage) : base(cluster, usage) { }

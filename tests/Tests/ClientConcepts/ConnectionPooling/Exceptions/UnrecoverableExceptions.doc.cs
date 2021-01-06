@@ -2,20 +2,23 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Elastic.Elasticsearch.Xunit.XunitPlumbing;
-using Elasticsearch.Net;
-using Elasticsearch.Net.VirtualizedCluster;
-using Elasticsearch.Net.VirtualizedCluster.Audit;
+using Elastic.Transport;
+using Elastic.Transport.Extensions;
+using Elasticsearch.Net.Extensions;
+using Elastic.Transport.VirtualizedCluster;
+using Elastic.Transport.VirtualizedCluster.Audit;
 using FluentAssertions;
 using Nest;
 using Tests.Domain;
 using Tests.Framework;
 using Tests.Framework.SerializationTests;
+using static Elastic.Transport.Diagnostics.Auditing.AuditEvent;
 
 namespace Tests.ClientConcepts.ConnectionPooling.Exceptions
 {
@@ -38,7 +41,7 @@ namespace Tests.ClientConcepts.ConnectionPooling.Exceptions
 		* but by exiting the pipeline.
 		* --
 		*
-		* By default, the client won't throw on any `ElasticsearchClientException` but instead return an invalid response
+		* By default, the client won't throw on any `TransportException` but instead return an invalid response
 		* that can be detected by checking the `.IsValid` property on the response. You can change this behaviour with
 		* by using `ThrowExceptions()` on <<configuration-options, `ConnectionSettings`>>.
 		*
@@ -81,8 +84,8 @@ namespace Tests.ClientConcepts.ConnectionPooling.Exceptions
 		 */
 		[U] public async Task BadAuthenticationIsUnrecoverable()
 		{
-			var audit = new Auditor(() => VirtualClusterWith
-				.Nodes(10)
+			var audit = new Auditor(() => Virtual.Elasticsearch
+				.Bootstrap(10)
 				.Ping(r => r.SucceedAlways()) // <1> Always succeed on ping
 				.ClientCalls(r => r.FailAlways(401)) // <2> ...but always fail on calls with a 401 Bad Authentication response
 				.StaticConnectionPool()
@@ -95,8 +98,8 @@ namespace Tests.ClientConcepts.ConnectionPooling.Exceptions
 			*/
 			audit = await audit.TraceElasticsearchException(
 				new ClientCall {
-					{ AuditEvent.PingSuccess, 9200 }, // <1> First call results in a successful ping
-					{ AuditEvent.BadResponse, 9200 }, // <2> Second call results in a bad response
+					{ PingSuccess, 9200 }, // <1> First call results in a successful ping
+					{ BadResponse, 9200 }, // <2> Second call results in a bad response
 				},
 				exception =>
 				{
@@ -118,8 +121,8 @@ namespace Tests.ClientConcepts.ConnectionPooling.Exceptions
 		 */
 		[U] public async Task BadAuthenticationHtmlResponseIsIgnored()
 		{
-			var audit = new Auditor(() => VirtualClusterWith
-				.Nodes(10)
+			var audit = new Auditor(() => Virtual.Elasticsearch
+				.Bootstrap(10)
 				.Ping(r => r.SucceedAlways())
 				.ClientCalls(r => r.FailAlways(401).ReturnByteResponse(HtmlNginx401Response, "application/json")) // <1> Always return a 401 bad response with a HTML response on client calls
 				.StaticConnectionPool()
@@ -128,8 +131,8 @@ namespace Tests.ClientConcepts.ConnectionPooling.Exceptions
 
 			audit = await audit.TraceElasticsearchException(
 				new ClientCall {
-					{ AuditEvent.PingSuccess, 9200 },
-					{ AuditEvent.BadResponse, 9201 },
+					{ PingSuccess, 9200 },
+					{ BadResponse, 9201 },
 				},
 				(e) =>
 				{
@@ -148,8 +151,8 @@ namespace Tests.ClientConcepts.ConnectionPooling.Exceptions
 		 */
 		[U] public async Task BadAuthenticationHtmlResponseStillExposedWhenUsingDisableDirectStreaming()
 		{
-			var audit = new Auditor(() => VirtualClusterWith
-				.Nodes(10)
+			var audit = new Auditor(() => Virtual.Elasticsearch
+				.Bootstrap(10)
 				.Ping(r => r.SucceedAlways())
 				.ClientCalls(r => r.FailAlways(401).ReturnByteResponse(HtmlNginx401Response, "text/html"))
 				.StaticConnectionPool()
@@ -158,8 +161,8 @@ namespace Tests.ClientConcepts.ConnectionPooling.Exceptions
 
 			audit = await audit.TraceElasticsearchException(
 				new ClientCall {
-					{ AuditEvent.PingSuccess, 9200 },
-					{ AuditEvent.BadResponse, 9200 },
+					{ PingSuccess, 9200 },
+					{ BadResponse, 9200 },
 				},
 				(e) =>
 				{
@@ -176,22 +179,18 @@ namespace Tests.ClientConcepts.ConnectionPooling.Exceptions
 		// hide
 		[U] public async Task BadAuthOnGetClientCallDoesNotThrowSerializationException()
 		{
-			var audit = new Auditor(() => VirtualClusterWith
-				.Nodes(10)
+			var audit = new Auditor(() => Virtual.Elasticsearch
+				.Bootstrap(10)
 				.Ping(r => r.SucceedAlways())
 				.ClientCalls(r => r.FailAlways(401).ReturnByteResponse(HtmlNginx401Response))
 				.StaticConnectionPool()
 				.Settings(s => s.DisableDirectStreaming().SkipDeserializationForStatusCodes(401))
-				.ClientProxiesTo(
-					(c, r) => c.Get<GetResponse<Project>>("default", "1"),
-					async (c, r) => await c.GetAsync<GetResponse<Project>>("default-index", "1") as IResponse
-				)
 			);
 
 			audit = await audit.TraceElasticsearchException(
 				new ClientCall {
-					{ AuditEvent.PingSuccess, 9200 },
-					{ AuditEvent.BadResponse, 9200 },
+					{ PingSuccess, 9200 },
+					{ BadResponse, 9200 },
 				},
 				(e) =>
 				{

@@ -5,7 +5,7 @@
 using System;
 using System.Linq.Expressions;
 using System.Runtime.Serialization;
-using Elasticsearch.Net.Utf8Json;
+using Nest.Utf8Json;
 
 namespace Nest
 {
@@ -37,6 +37,7 @@ namespace Nest
 	}
 
 	/// <inheritdoc />
+	// ReSharper disable once InconsistentNaming
 	public class TTestPopulation : ITTestPopulation
 	{
 		/// <inheritdoc />
@@ -48,6 +49,7 @@ namespace Nest
 	}
 
 	/// <inheritdoc cref="ITTestPopulation"/>
+	// ReSharper disable once InconsistentNaming
 	public class TTestPopulationDescriptor<T> : DescriptorBase<TTestPopulationDescriptor<T>, ITTestPopulation>, ITTestPopulation where T : class
 	{
 		Field ITTestPopulation.Field { get; set; }

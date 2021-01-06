@@ -1,17 +1,15 @@
-﻿// Licensed to Elasticsearch B.V under one or more agreements.
+// Licensed to Elasticsearch B.V under one or more agreements.
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
 namespace Scripts
 
 open System
-open System.Reflection
-open System.Diagnostics
 open System.IO
-open Commandline
 open Fake.Core
 open Fake.IO
 open Fake.IO.Globbing.Operators
+open Fake.Tools.Git
 open Newtonsoft.Json
 
 module Versioning = 
@@ -22,7 +20,7 @@ module Versioning =
     let parse (v:string) = SemVer.parse(v)
 
     //Versions in form of e.g 6.1.0 is inferred as datetime so we bake the json shape into the provider like this
-    type SdkVersion = { version:string;  }
+    type SdkVersion = { version:string; rollForward:string; allowPrerelease:bool }
     type GlobalJson = { sdk: SdkVersion; version:string; doc_current:string; doc_branch: string; }
         
     let private globalJson () =
@@ -58,14 +56,14 @@ module Versioning =
                 doc_current = doc_current
                 doc_branch = doc_branch
         }
-        File.WriteAllText("global.json", JsonConvert.SerializeObject(newGlobalJson, Newtonsoft.Json.Formatting.Indented))
+        File.WriteAllText("global.json", JsonConvert.SerializeObject(newGlobalJson, Formatting.Indented))
         printfn "Written (%s) to global.json as the current version will use this version from now on as current in the build" (version.ToString()) 
 
     let GlobalJsonVersion = parse <| globalJson().version
     
     let private getVersion (args:Commandline.PassedArguments) =
         match (args.Target, args.CommandArguments) with
-        | (_, SetVersion v) ->
+        | (_, Commandline.SetVersion v) ->
             match v.Version with
             | v when String.IsNullOrEmpty v -> None
             | v -> Some <| parse v
@@ -99,12 +97,16 @@ module Versioning =
         | ("release", version) ->
             match version with
             | NoChange _ -> failwithf "cannot run release because no explicit version number was passed on the command line"
-            | Update (newVersion, currentVersion) -> 
-                // fail if current is greater than the new version
-                if (currentVersion > newVersion) then
-                    failwithf "Can not release %O as it's lower then current %O" newVersion.Full currentVersion.Full
-                writeVersionIntoGlobalJson newVersion.Full
-                writeVersionIntoAutoLabel (currentVersion.Full.ToString()) (newVersion.Full.ToString())
+            | Update (newVersion, currentVersion) ->
+                match newVersion.Full.PreRelease with
+                | Some v when v.Name.StartsWith("SNAPSHOT", StringComparison.OrdinalIgnoreCase) ->
+                    printfn "Building snapshot, foregoing persisting version information"
+                | _ ->
+                    // fail if current is greater than the new version
+                    if (currentVersion > newVersion) then
+                        failwithf "Can not release %O as it's lower then current %O" newVersion.Full currentVersion.Full
+                    writeVersionIntoGlobalJson newVersion.Full
+                    writeVersionIntoAutoLabel (currentVersion.Full.ToString()) (newVersion.Full.ToString())
         | _ -> ignore()
     
     let ArtifactsVersion buildVersions =
@@ -112,64 +114,11 @@ module Versioning =
         | NoChange n -> n
         | Update (newVersion, _) -> newVersion
     
-    let private sn () =
-            match notWindows with 
-            | true -> "sn"
-            | false ->
-                let programFiles = Environment.environVar "PROGRAMFILES(X86)"
-                if not (Directory.Exists programFiles) then failwith "Can not locate 64 bit program files"
-                let windowsSdks =  ["v10.0A"; "v8.1A"; "v8.1"; "v8.0"; "v7.0A";]
-                let dotNetVersion = ["4.7.2"; "4.7.1"; "4.7"; "4.6.2"; "4.6.1"; "4.0"]
-                let combinations = List.allPairs windowsSdks dotNetVersion
-                let winFolder w = Path.Combine(programFiles, "Microsoft SDKs", "Windows", w, "bin")
-                let sdkFolder w d = 
-                    let folder = sprintf "NETFX %s Tools" d
-                    Path.Combine(winFolder w, folder)
-                let snExe w d = Path.Combine(sdkFolder w d, "sn.exe")
-                let sn = combinations |> List.map (fun (w, d) -> snExe w d) |> List.tryFind File.exists
-                match sn with
-                | Some sn -> sn
-                | None -> failwithf "Could not locate sn.exe"
-
     let private officialToken = "96c599bbe3e70f5d"
-    let private keyFile = Paths.Keys "keypair.snk"
-
-    let private validate dll name =
-        let sn = sn ()
-        let out = Tooling.readQuiet sn ["-v"; dll;]
-        
-        // Mono StrongName - version 5.18.1.0
-        // returns `is strongnamed` 
-        let valid = (out.ExitCode, out.Output |> Seq.tryFindIndex(fun s -> s.Line.Contains("is valid") || s.Line.Contains("is strongnamed")))
-        match valid with
-        | (0, Some i) when i >= 0 -> printfn "%s is strongnamed" name 
-        | (_, _) -> failwithf "%s is NOT strongnamed" dll
-        
-        let out = Tooling.readQuiet sn ["-T"; dll;]
-        
-        let tokenMessage = (out.Output |> Seq.tryFind(fun s -> s.Line.Contains("Public key token", StringComparison.OrdinalIgnoreCase)));
-        
-        // Mono StrongName - version 5.18.1.0
-        // returns `Key Token:` 
-        let token =
-            match tokenMessage with
-            | Some s -> Some <| (s.Line.Replace("Public Key Token:", "").Replace("Public key token is", "")).Trim()
-            | None -> None
-    
-        let valid = (out.ExitCode, token)
-        match valid with
-        | (0, Some t) when t = officialToken  -> printfn "%s was signed with official key token %s" name t
-        | (_, Some t) -> printfn "%s was not signed with the official token: %s but %s" name officialToken t
-        | (_, None) -> printfn "%s was not signed at all" name 
-        
-    let private validateDllStrongName dll name =
-        match File.Exists dll with
-        | true -> validate dll name 
-        | _ -> failwithf "Attempted to verify signature of %s but it was not found!" dll
 
     let BuiltArtifacts (version: AnchoredVersion) = 
         let packages =
-            let allPackages = !! "build/output/_packages/*.nupkg" |> Seq.toList
+            let allPackages = !! "build/output/*.nupkg" |> Seq.toList
             let toProject (package: string) =
                 let id = Path.GetFileName(package) |> String.replace (version.Full.ToString()) "" |> String.replace "..nupkg" ""
                 let assembly = id |> String.replace "NEST" "Nest"
@@ -179,14 +128,25 @@ module Versioning =
         packages
     
     let ValidateArtifacts version =
-        let fileVersion = version.AssemblyFile
-        let tmp = "build/output/_packages/tmp"
+        let tmp = "build/output/tmp"
         
         let packages = BuiltArtifacts version
         printf "%O" packages
         
         packages
+        // do not validate versioned packages for now
+        |> Seq.filter(fun f -> not <| f.NugetId.EndsWith(sprintf ".v%i" version.Assembly.Major))
         |> Seq.iter(fun p ->
+            let v = sprintf "%O+%s" version.Full (Information.getCurrentSHA1("."))
+            // loading dlls is locked down on APPVEYOR so we can not assert release mode
+            let ciArgs =
+                let appVeyor = Environment.hasEnvironVar "APPVEYOR"
+                let azDevops = Environment.hasEnvironVar "TF_BUILD"
+                if  appVeyor || azDevops then ["-r"; "true"] else []
+            ReposTooling.PackageValidator
+                <| [p.Package; "-v"; v; "-a"; p.AssemblyName; "-k"; officialToken] @ ciArgs
+                |> ignore 
+            
             Zip.unzip tmp p.Package
             let nugetId = p.NugetId
 
@@ -200,22 +160,9 @@ module Versioning =
                 
                 let command = [ sprintf "previous-nuget|%s|%s|%s" nugetId (version.Full.ToString()) tfm;
                                 sprintf "directory|%s" fullPath
-                                "-a"; "-f"; "github-comment";]
+                                "-a"; "-f"; "github-comment"; "--output"; Paths.BuildOutput]
                 
                 ReposTooling.Differ command
-            )
-           
-            !! (sprintf "%s/**/*.dll" tmp)
-            |> Seq.iter(fun f -> 
-                let fv = FileVersionInfo.GetVersionInfo(f)
-                let name = AssemblyName.GetAssemblyName(f)
-                let a = name.Version
-                printfn "Assembly: %A File: %s Product: %s => %s" a fv.FileVersion fv.ProductVersion f
-                if (a.Minor > 0 || a.Revision > 0 || a.Build > 0) then failwith (sprintf "%s assembly version is not sticky to its major component" f)
-                if (parse (fv.ProductVersion) <> version.Full) then
-                    failwith (sprintf "Expected product info %s to match new version %O " fv.ProductVersion fileVersion)
-
-                validateDllStrongName f f
             )
             Directory.delete tmp
         )

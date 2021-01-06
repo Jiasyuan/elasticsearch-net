@@ -2,30 +2,48 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
+using Elastic.Transport;
+using Elastic.Transport.Extensions;
 using Elasticsearch.Net;
 
 namespace Nest
 {
 	public class Metrics : IEquatable<Metrics>, IUrlParameter
 	{
-		internal Metrics(IndicesStatsMetric metric) => Value = metric;
+		private IndicesStatsMetric? _indicesStat;
+		private NodesStatsMetric? _nodesStats;
+		private NodesInfoMetric? _nodesInfo;
+		private ClusterStateMetric? _clusterStateMetric;
+		private WatcherStatsMetric? _watcherStatsMetric;
+		private NodesUsageMetric? _nodesUsageMetric;
 
-		internal Metrics(NodesStatsMetric metric) => Value = metric;
+		internal Metrics(IndicesStatsMetric metric) => (Value, _indicesStat) = (metric, metric);
 
-		internal Metrics(NodesInfoMetric metric) => Value = metric;
+		internal Metrics(NodesStatsMetric metric) => (Value, _nodesStats) = (metric, metric);
 
-		internal Metrics(ClusterStateMetric metric) => Value = metric;
+		internal Metrics(NodesInfoMetric metric) => (Value, _nodesInfo) = (metric, metric);
 
-		internal Metrics(WatcherStatsMetric metric) => Value = metric;
+		internal Metrics(ClusterStateMetric metric) => (Value, _clusterStateMetric) = (metric, metric);
 
-		internal Metrics(NodesUsageMetric metric) => Value = metric;
+		internal Metrics(WatcherStatsMetric metric) => (Value, _watcherStatsMetric) = (metric, metric);
+
+		internal Metrics(NodesUsageMetric metric) => (Value, _nodesUsageMetric) = (metric, metric);
 
 		internal Enum Value { get; }
 
-		public bool Equals(Metrics other) => Value.Equals(other.Value);
+		public bool Equals(Metrics other) => Value.Equals(other?.Value);
 
-		public string GetString(IConnectionConfigurationValues settings) => Value.GetStringValue();
+		public string GetString(ITransportConfigurationValues settings)
+		{
+			if (_indicesStat != null) return _indicesStat.Value.GetStringValue();
+			else if (_nodesStats != null) return _nodesStats.Value.GetStringValue();
+			else if (_nodesInfo != null) return _nodesInfo.Value.GetStringValue();
+			else if (_clusterStateMetric != null) return _clusterStateMetric.Value.GetStringValue();
+			else if (_watcherStatsMetric != null) return _watcherStatsMetric.Value.GetStringValue();
+			else if (_nodesUsageMetric != null) return _nodesUsageMetric.Value.GetStringValue();
+			return Value.GetStringValue();
+		}
 
 		public static implicit operator Metrics(IndicesStatsMetric metric) => new Metrics(metric);
 

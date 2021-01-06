@@ -4,7 +4,8 @@
 
 using System;
 using Elastic.Elasticsearch.Xunit.XunitPlumbing;
-using Elasticsearch.Net;
+using Elastic.Transport;
+using Elastic.Transport.Extensions;
 using FluentAssertions;
 using Nest;
 
@@ -12,7 +13,7 @@ namespace Tests.CodeStandards.Serialization
 {
 	public class FractionalNumbers
 	{
-		private readonly IElasticsearchSerializer _serializer;
+		private readonly ITransportSerializer _serializer;
 
 		public FractionalNumbers()
 		{

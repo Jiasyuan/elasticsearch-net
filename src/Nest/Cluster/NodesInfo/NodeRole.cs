@@ -2,7 +2,7 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System.Runtime.Serialization;
+using System.Runtime.Serialization;
 using Elasticsearch.Net;
 
 namespace Nest
@@ -16,6 +16,18 @@ namespace Nest
 
 		[EnumMember(Value = "data")]
 		Data,
+
+		[EnumMember(Value = "data_cold")]
+		DataCold,
+
+		[EnumMember(Value = "data_content")]
+		DataContent,
+
+		[EnumMember(Value = "data_hot")]
+		DataHot,
+
+		[EnumMember(Value = "data_warm")]
+		DataWarm,
 
 		[EnumMember(Value = "client")]
 		Client,

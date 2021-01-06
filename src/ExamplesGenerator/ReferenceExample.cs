@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace ExamplesGenerator
 {
@@ -15,7 +14,8 @@ namespace ExamplesGenerator
 	{
 		public static readonly ReferenceExampleComparer Instance = new ReferenceExampleComparer();
 
-		public bool Equals(ReferenceExample x, ReferenceExample y) => x.Hash == y.Hash;
+		public bool Equals(ReferenceExample x, ReferenceExample y) =>
+			(x == null && y == null) || (y != null && x != null && x.Hash == y.Hash);
 
 		public int GetHashCode(ReferenceExample obj) => HashCode.Combine(obj.Hash);
 	}

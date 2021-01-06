@@ -2,7 +2,7 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Bogus;
@@ -196,8 +196,10 @@ namespace Tests.Domain
 	public class ProjectTransform
 	{
 		public double? AverageCommits { get; set; }
+		
+		public long WeekStartedOnMillis { get; set; }
 
-		public long WeekStartedOn { get; set; }
+		public DateTime WeekStartedOnDate { get; set; }
 
 		public long SumIntoMaster { get; set; }
 	}

@@ -2,8 +2,7 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System.Linq;
-using System.Reflection;
+using System.Linq;
 using Elastic.Elasticsearch.Xunit.XunitPlumbing;
 using FluentAssertions;
 using Nest;
@@ -28,7 +27,7 @@ namespace Tests.Aggregations
 				select t).ToList();
 
 			var visitorMethodParameters =
-				(from m in typeof(IAggregationVisitor).GetTypeInfo().DeclaredMethods
+				(from m in typeof(IAggregationVisitor).GetMethods()
 				where m.Name == "Visit"
 				let aggregationInterface = m.GetParameters().First().ParameterType
 				where aggregationInterface != typeof(IAggregationContainer)

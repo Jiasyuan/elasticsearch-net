@@ -85,6 +85,54 @@ namespace Nest.Specification.SecurityApi
 		/// </summary>
 		public Task<ChangePasswordResponse> ChangePasswordAsync(IChangePasswordRequest request, CancellationToken ct = default) => DoRequestAsync<IChangePasswordRequest, ChangePasswordResponse>(request, request.RequestParameters, ct);
 		/// <summary>
+		/// <c>POST</c> request to the <c>security.clear_api_key_cache</c> API, read more about this API online:
+		/// <para></para>
+		/// <a href = "https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-clear-api-key-cache.html">https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-clear-api-key-cache.html</a>
+		/// </summary>
+		public ClearApiKeyCacheResponse ClearApiKeyCache(Func<ClearApiKeyCacheDescriptor, IClearApiKeyCacheRequest> selector = null) => ClearApiKeyCache(selector.InvokeOrDefault(new ClearApiKeyCacheDescriptor()));
+		/// <summary>
+		/// <c>POST</c> request to the <c>security.clear_api_key_cache</c> API, read more about this API online:
+		/// <para></para>
+		/// <a href = "https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-clear-api-key-cache.html">https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-clear-api-key-cache.html</a>
+		/// </summary>
+		public Task<ClearApiKeyCacheResponse> ClearApiKeyCacheAsync(Func<ClearApiKeyCacheDescriptor, IClearApiKeyCacheRequest> selector = null, CancellationToken ct = default) => ClearApiKeyCacheAsync(selector.InvokeOrDefault(new ClearApiKeyCacheDescriptor()), ct);
+		/// <summary>
+		/// <c>POST</c> request to the <c>security.clear_api_key_cache</c> API, read more about this API online:
+		/// <para></para>
+		/// <a href = "https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-clear-api-key-cache.html">https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-clear-api-key-cache.html</a>
+		/// </summary>
+		public ClearApiKeyCacheResponse ClearApiKeyCache(IClearApiKeyCacheRequest request) => DoRequest<IClearApiKeyCacheRequest, ClearApiKeyCacheResponse>(request, request.RequestParameters);
+		/// <summary>
+		/// <c>POST</c> request to the <c>security.clear_api_key_cache</c> API, read more about this API online:
+		/// <para></para>
+		/// <a href = "https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-clear-api-key-cache.html">https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-clear-api-key-cache.html</a>
+		/// </summary>
+		public Task<ClearApiKeyCacheResponse> ClearApiKeyCacheAsync(IClearApiKeyCacheRequest request, CancellationToken ct = default) => DoRequestAsync<IClearApiKeyCacheRequest, ClearApiKeyCacheResponse>(request, request.RequestParameters, ct);
+		/// <summary>
+		/// <c>POST</c> request to the <c>security.clear_cached_privileges</c> API, read more about this API online:
+		/// <para></para>
+		/// <a href = "https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-clear-privilege-cache.html">https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-clear-privilege-cache.html</a>
+		/// </summary>
+		public ClearCachedPrivilegesResponse ClearCachedPrivileges(Names application, Func<ClearCachedPrivilegesDescriptor, IClearCachedPrivilegesRequest> selector = null) => ClearCachedPrivileges(selector.InvokeOrDefault(new ClearCachedPrivilegesDescriptor(application: application)));
+		/// <summary>
+		/// <c>POST</c> request to the <c>security.clear_cached_privileges</c> API, read more about this API online:
+		/// <para></para>
+		/// <a href = "https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-clear-privilege-cache.html">https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-clear-privilege-cache.html</a>
+		/// </summary>
+		public Task<ClearCachedPrivilegesResponse> ClearCachedPrivilegesAsync(Names application, Func<ClearCachedPrivilegesDescriptor, IClearCachedPrivilegesRequest> selector = null, CancellationToken ct = default) => ClearCachedPrivilegesAsync(selector.InvokeOrDefault(new ClearCachedPrivilegesDescriptor(application: application)), ct);
+		/// <summary>
+		/// <c>POST</c> request to the <c>security.clear_cached_privileges</c> API, read more about this API online:
+		/// <para></para>
+		/// <a href = "https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-clear-privilege-cache.html">https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-clear-privilege-cache.html</a>
+		/// </summary>
+		public ClearCachedPrivilegesResponse ClearCachedPrivileges(IClearCachedPrivilegesRequest request) => DoRequest<IClearCachedPrivilegesRequest, ClearCachedPrivilegesResponse>(request, request.RequestParameters);
+		/// <summary>
+		/// <c>POST</c> request to the <c>security.clear_cached_privileges</c> API, read more about this API online:
+		/// <para></para>
+		/// <a href = "https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-clear-privilege-cache.html">https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-clear-privilege-cache.html</a>
+		/// </summary>
+		public Task<ClearCachedPrivilegesResponse> ClearCachedPrivilegesAsync(IClearCachedPrivilegesRequest request, CancellationToken ct = default) => DoRequestAsync<IClearCachedPrivilegesRequest, ClearCachedPrivilegesResponse>(request, request.RequestParameters, ct);
+		/// <summary>
 		/// <c>POST</c> request to the <c>security.clear_cached_realms</c> API, read more about this API online:
 		/// <para></para>
 		/// <a href = "https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-clear-cache.html">https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-clear-cache.html</a>
@@ -377,13 +425,13 @@ namespace Nest.Specification.SecurityApi
 		/// <para></para>
 		/// <a href = "https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-get-role.html">https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-get-role.html</a>
 		/// </summary>
-		public GetRoleResponse GetRole(Name name = null, Func<GetRoleDescriptor, IGetRoleRequest> selector = null) => GetRole(selector.InvokeOrDefault(new GetRoleDescriptor().Name(name: name)));
+		public GetRoleResponse GetRole(Names name = null, Func<GetRoleDescriptor, IGetRoleRequest> selector = null) => GetRole(selector.InvokeOrDefault(new GetRoleDescriptor().Name(name: name)));
 		/// <summary>
 		/// <c>GET</c> request to the <c>security.get_role</c> API, read more about this API online:
 		/// <para></para>
 		/// <a href = "https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-get-role.html">https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-get-role.html</a>
 		/// </summary>
-		public Task<GetRoleResponse> GetRoleAsync(Name name = null, Func<GetRoleDescriptor, IGetRoleRequest> selector = null, CancellationToken ct = default) => GetRoleAsync(selector.InvokeOrDefault(new GetRoleDescriptor().Name(name: name)), ct);
+		public Task<GetRoleResponse> GetRoleAsync(Names name = null, Func<GetRoleDescriptor, IGetRoleRequest> selector = null, CancellationToken ct = default) => GetRoleAsync(selector.InvokeOrDefault(new GetRoleDescriptor().Name(name: name)), ct);
 		/// <summary>
 		/// <c>GET</c> request to the <c>security.get_role</c> API, read more about this API online:
 		/// <para></para>
@@ -401,13 +449,13 @@ namespace Nest.Specification.SecurityApi
 		/// <para></para>
 		/// <a href = "https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-get-role-mapping.html">https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-get-role-mapping.html</a>
 		/// </summary>
-		public GetRoleMappingResponse GetRoleMapping(Name name = null, Func<GetRoleMappingDescriptor, IGetRoleMappingRequest> selector = null) => GetRoleMapping(selector.InvokeOrDefault(new GetRoleMappingDescriptor().Name(name: name)));
+		public GetRoleMappingResponse GetRoleMapping(Names name = null, Func<GetRoleMappingDescriptor, IGetRoleMappingRequest> selector = null) => GetRoleMapping(selector.InvokeOrDefault(new GetRoleMappingDescriptor().Name(name: name)));
 		/// <summary>
 		/// <c>GET</c> request to the <c>security.get_role_mapping</c> API, read more about this API online:
 		/// <para></para>
 		/// <a href = "https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-get-role-mapping.html">https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-get-role-mapping.html</a>
 		/// </summary>
-		public Task<GetRoleMappingResponse> GetRoleMappingAsync(Name name = null, Func<GetRoleMappingDescriptor, IGetRoleMappingRequest> selector = null, CancellationToken ct = default) => GetRoleMappingAsync(selector.InvokeOrDefault(new GetRoleMappingDescriptor().Name(name: name)), ct);
+		public Task<GetRoleMappingResponse> GetRoleMappingAsync(Names name = null, Func<GetRoleMappingDescriptor, IGetRoleMappingRequest> selector = null, CancellationToken ct = default) => GetRoleMappingAsync(selector.InvokeOrDefault(new GetRoleMappingDescriptor().Name(name: name)), ct);
 		/// <summary>
 		/// <c>GET</c> request to the <c>security.get_role_mapping</c> API, read more about this API online:
 		/// <para></para>
@@ -492,6 +540,30 @@ namespace Nest.Specification.SecurityApi
 		/// <a href = "https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-get-privileges.html">https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-get-privileges.html</a>
 		/// </summary>
 		public Task<GetUserPrivilegesResponse> GetUserPrivilegesAsync(IGetUserPrivilegesRequest request, CancellationToken ct = default) => DoRequestAsync<IGetUserPrivilegesRequest, GetUserPrivilegesResponse>(request, request.RequestParameters, ct);
+		/// <summary>
+		/// <c>POST</c> request to the <c>security.grant_api_key</c> API, read more about this API online:
+		/// <para></para>
+		/// <a href = "https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-grant-api-key.html">https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-grant-api-key.html</a>
+		/// </summary>
+		public GrantApiKeyResponse GrantApiKey(Func<GrantApiKeyDescriptor, IGrantApiKeyRequest> selector) => GrantApiKey(selector.InvokeOrDefault(new GrantApiKeyDescriptor()));
+		/// <summary>
+		/// <c>POST</c> request to the <c>security.grant_api_key</c> API, read more about this API online:
+		/// <para></para>
+		/// <a href = "https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-grant-api-key.html">https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-grant-api-key.html</a>
+		/// </summary>
+		public Task<GrantApiKeyResponse> GrantApiKeyAsync(Func<GrantApiKeyDescriptor, IGrantApiKeyRequest> selector, CancellationToken ct = default) => GrantApiKeyAsync(selector.InvokeOrDefault(new GrantApiKeyDescriptor()), ct);
+		/// <summary>
+		/// <c>POST</c> request to the <c>security.grant_api_key</c> API, read more about this API online:
+		/// <para></para>
+		/// <a href = "https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-grant-api-key.html">https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-grant-api-key.html</a>
+		/// </summary>
+		public GrantApiKeyResponse GrantApiKey(IGrantApiKeyRequest request) => DoRequest<IGrantApiKeyRequest, GrantApiKeyResponse>(request, request.RequestParameters);
+		/// <summary>
+		/// <c>POST</c> request to the <c>security.grant_api_key</c> API, read more about this API online:
+		/// <para></para>
+		/// <a href = "https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-grant-api-key.html">https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-grant-api-key.html</a>
+		/// </summary>
+		public Task<GrantApiKeyResponse> GrantApiKeyAsync(IGrantApiKeyRequest request, CancellationToken ct = default) => DoRequestAsync<IGrantApiKeyRequest, GrantApiKeyResponse>(request, request.RequestParameters, ct);
 		/// <summary>
 		/// <c>POST</c> request to the <c>security.has_privileges</c> API, read more about this API online:
 		/// <para></para>

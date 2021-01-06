@@ -2,7 +2,7 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿namespace Nest
+namespace Nest
 {
 	public interface IMappingVisitor
 	{
@@ -33,6 +33,8 @@
 		void Visit(IGeoShapeProperty property);
 
 		void Visit(IShapeProperty property);
+
+		void Visit(IPointProperty property);
 
 		void Visit(INumberProperty property);
 
@@ -88,6 +90,8 @@
 		public virtual void Visit(IBooleanProperty property) { }
 
 		public virtual void Visit(IBinaryProperty property) { }
+
+		public virtual void Visit(IPointProperty property) { }
 
 		public virtual void Visit(INumberProperty property) { }
 

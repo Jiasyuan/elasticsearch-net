@@ -2,9 +2,9 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Globalization;
-using Elasticsearch.Net;
+using Elastic.Transport;
 
 namespace Nest
 {
@@ -17,7 +17,7 @@ namespace Nest
 		public bool Equals(Timestamp other) => Value == other.Value;
 
 		// ReSharper disable once ImpureMethodCallOnReadonlyValueField
-		public string GetString(IConnectionConfigurationValues settings) => Value.ToString(CultureInfo.InvariantCulture);
+		public string GetString(ITransportConfigurationValues settings) => Value.ToString(CultureInfo.InvariantCulture);
 
 		public static implicit operator Timestamp(DateTimeOffset categoryId) => new Timestamp(categoryId.ToUnixTimeMilliseconds());
 

@@ -7,6 +7,7 @@ using Elasticsearch.Net;
 using Examples.Models;
 using Newtonsoft.Json.Linq;
 using System.ComponentModel;
+using Elastic.Transport;
 
 namespace Examples.Search
 {
@@ -39,8 +40,8 @@ namespace Examples.Search
 		}
 
 		[U]
-		[Description("search/request-body.asciidoc:59")]
-		public void Line59()
+		[Description("search/request-body.asciidoc:65")]
+		public void Line65()
 		{
 			// tag::bfcd65ab85d684d36a8550080032958d[]
 			var searchResponse = client.Search<object>(s => s

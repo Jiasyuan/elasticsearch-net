@@ -61,6 +61,7 @@ namespace Nest
 		internal static ApiUrls CrossClusterReplicationStats = new ApiUrls(new[]{"_ccr/stats"});
 		internal static ApiUrls CrossClusterReplicationUnfollowIndex = new ApiUrls(new[]{"{index}/_ccr/unfollow"});
 		internal static ApiUrls NoNamespaceClearScroll = new ApiUrls(new[]{"_search/scroll"});
+		internal static ApiUrls NoNamespaceClosePointInTime = new ApiUrls(new[]{"_pit"});
 		internal static ApiUrls ClusterAllocationExplain = new ApiUrls(new[]{"_cluster/allocation/explain"});
 		internal static ApiUrls ClusterDeleteVotingConfigExclusions = new ApiUrls(new[]{"_cluster/voting_config_exclusions"});
 		internal static ApiUrls ClusterGetSettings = new ApiUrls(new[]{"_cluster/settings"});
@@ -74,6 +75,9 @@ namespace Nest
 		internal static ApiUrls ClusterStats = new ApiUrls(new[]{"_cluster/stats", "_cluster/stats/nodes/{node_id}"});
 		internal static ApiUrls NoNamespaceCount = new ApiUrls(new[]{"_count", "{index}/_count"});
 		internal static ApiUrls NoNamespaceCreate = new ApiUrls(new[]{"{index}/_create/{id}"});
+		internal static ApiUrls DanglingIndicesDeleteDanglingIndex = new ApiUrls(new[]{"_dangling/{index_uuid}"});
+		internal static ApiUrls DanglingIndicesImportDanglingIndex = new ApiUrls(new[]{"_dangling/{index_uuid}"});
+		internal static ApiUrls DanglingIndicesList = new ApiUrls(new[]{"_dangling"});
 		internal static ApiUrls NoNamespaceDelete = new ApiUrls(new[]{"{index}/_doc/{id}"});
 		internal static ApiUrls NoNamespaceDeleteByQuery = new ApiUrls(new[]{"{index}/_delete_by_query"});
 		internal static ApiUrls NoNamespaceDeleteByQueryRethrottle = new ApiUrls(new[]{"_delete_by_query/{task_id}/_rethrottle"});
@@ -102,13 +106,17 @@ namespace Nest
 		internal static ApiUrls IndexLifecycleManagementStart = new ApiUrls(new[]{"_ilm/start"});
 		internal static ApiUrls IndexLifecycleManagementStop = new ApiUrls(new[]{"_ilm/stop"});
 		internal static ApiUrls NoNamespaceIndex = new ApiUrls(new[]{"{index}/_doc/{id}", "{index}/_doc"});
+		internal static ApiUrls IndicesAddBlock = new ApiUrls(new[]{"{index}/_block/{block}"});
 		internal static ApiUrls IndicesAnalyze = new ApiUrls(new[]{"_analyze", "{index}/_analyze"});
 		internal static ApiUrls IndicesClearCache = new ApiUrls(new[]{"_cache/clear", "{index}/_cache/clear"});
 		internal static ApiUrls IndicesClone = new ApiUrls(new[]{"{index}/_clone/{target}"});
 		internal static ApiUrls IndicesClose = new ApiUrls(new[]{"{index}/_close"});
 		internal static ApiUrls IndicesCreate = new ApiUrls(new[]{"{index}"});
+		internal static ApiUrls IndicesCreateDataStream = new ApiUrls(new[]{"_data_stream/{name}"});
+		internal static ApiUrls IndicesDataStreamsStats = new ApiUrls(new[]{"_data_stream/_stats", "_data_stream/{name}/_stats"});
 		internal static ApiUrls IndicesDelete = new ApiUrls(new[]{"{index}"});
 		internal static ApiUrls IndicesDeleteAlias = new ApiUrls(new[]{"{index}/_alias/{name}"});
+		internal static ApiUrls IndicesDeleteDataStream = new ApiUrls(new[]{"_data_stream/{name}"});
 		internal static ApiUrls IndicesDeleteTemplate = new ApiUrls(new[]{"_template/{name}"});
 		internal static ApiUrls IndicesExists = new ApiUrls(new[]{"{index}"});
 		internal static ApiUrls IndicesAliasExists = new ApiUrls(new[]{"_alias/{name}", "{index}/_alias/{name}"});
@@ -131,12 +139,11 @@ namespace Nest
 		internal static ApiUrls IndicesRecoveryStatus = new ApiUrls(new[]{"_recovery", "{index}/_recovery"});
 		internal static ApiUrls IndicesRefresh = new ApiUrls(new[]{"_refresh", "{index}/_refresh"});
 		internal static ApiUrls IndicesReloadSearchAnalyzers = new ApiUrls(new[]{"{index}/_reload_search_analyzers"});
+		internal static ApiUrls IndicesResolve = new ApiUrls(new[]{"_resolve/index/{name}"});
 		internal static ApiUrls IndicesRollover = new ApiUrls(new[]{"{alias}/_rollover", "{alias}/_rollover/{new_index}"});
 		internal static ApiUrls IndicesSegments = new ApiUrls(new[]{"_segments", "{index}/_segments"});
 		internal static ApiUrls IndicesShardStores = new ApiUrls(new[]{"_shard_stores", "{index}/_shard_stores"});
 		internal static ApiUrls IndicesShrink = new ApiUrls(new[]{"{index}/_shrink/{target}"});
-		internal static ApiUrls IndicesSimulateIndexTemplate = new ApiUrls(new[]{"_index_template/_simulate_index/{name}"});
-		internal static ApiUrls IndicesSimulateTemplate = new ApiUrls(new[]{"_index_template/_simulate", "_index_template/_simulate/{name}"});
 		internal static ApiUrls IndicesSplit = new ApiUrls(new[]{"{index}/_split/{target}"});
 		internal static ApiUrls IndicesStats = new ApiUrls(new[]{"_stats", "_stats/{metric}", "{index}/_stats", "{index}/_stats/{metric}"});
 		internal static ApiUrls IndicesUnfreeze = new ApiUrls(new[]{"{index}/_unfreeze"});
@@ -162,7 +169,7 @@ namespace Nest
 		internal static ApiUrls MachineLearningDeleteCalendarEvent = new ApiUrls(new[]{"_ml/calendars/{calendar_id}/events/{event_id}"});
 		internal static ApiUrls MachineLearningDeleteCalendarJob = new ApiUrls(new[]{"_ml/calendars/{calendar_id}/jobs/{job_id}"});
 		internal static ApiUrls MachineLearningDeleteDatafeed = new ApiUrls(new[]{"_ml/datafeeds/{datafeed_id}"});
-		internal static ApiUrls MachineLearningDeleteExpiredData = new ApiUrls(new[]{"_ml/_delete_expired_data"});
+		internal static ApiUrls MachineLearningDeleteExpiredData = new ApiUrls(new[]{"_ml/_delete_expired_data/{job_id}", "_ml/_delete_expired_data"});
 		internal static ApiUrls MachineLearningDeleteFilter = new ApiUrls(new[]{"_ml/filters/{filter_id}"});
 		internal static ApiUrls MachineLearningDeleteForecast = new ApiUrls(new[]{"_ml/anomaly_detectors/{job_id}/_forecast/{forecast_id}"});
 		internal static ApiUrls MachineLearningDeleteJob = new ApiUrls(new[]{"_ml/anomaly_detectors/{job_id}"});
@@ -211,6 +218,7 @@ namespace Nest
 		internal static ApiUrls NodesReloadSecureSettings = new ApiUrls(new[]{"_nodes/reload_secure_settings", "_nodes/{node_id}/reload_secure_settings"});
 		internal static ApiUrls NodesStats = new ApiUrls(new[]{"_nodes/stats", "_nodes/{node_id}/stats", "_nodes/stats/{metric}", "_nodes/{node_id}/stats/{metric}", "_nodes/stats/{metric}/{index_metric}", "_nodes/{node_id}/stats/{metric}/{index_metric}"});
 		internal static ApiUrls NodesUsage = new ApiUrls(new[]{"_nodes/usage", "_nodes/{node_id}/usage", "_nodes/usage/{metric}", "_nodes/{node_id}/usage/{metric}"});
+		internal static ApiUrls NoNamespaceOpenPointInTime = new ApiUrls(new[]{"_pit", "{index}/_pit"});
 		internal static ApiUrls NoNamespacePing = new ApiUrls(new[]{""});
 		internal static ApiUrls NoNamespacePutScript = new ApiUrls(new[]{"_scripts/{id}", "_scripts/{id}/{context}"});
 		internal static ApiUrls NoNamespaceReindexOnServer = new ApiUrls(new[]{"_reindex"});
@@ -231,6 +239,8 @@ namespace Nest
 		internal static ApiUrls NoNamespaceSearchTemplate = new ApiUrls(new[]{"_search/template", "{index}/_search/template"});
 		internal static ApiUrls SecurityAuthenticate = new ApiUrls(new[]{"_security/_authenticate"});
 		internal static ApiUrls SecurityChangePassword = new ApiUrls(new[]{"_security/user/{username}/_password", "_security/user/_password"});
+		internal static ApiUrls SecurityClearApiKeyCache = new ApiUrls(new[]{"_security/api_key/{ids}/_clear_cache", "_security/api_key/*/_clear_cache"});
+		internal static ApiUrls SecurityClearCachedPrivileges = new ApiUrls(new[]{"_security/privilege/{application}/_clear_cache"});
 		internal static ApiUrls SecurityClearCachedRealms = new ApiUrls(new[]{"_security/realm/{realms}/_clear_cache"});
 		internal static ApiUrls SecurityClearCachedRoles = new ApiUrls(new[]{"_security/role/{name}/_clear_cache"});
 		internal static ApiUrls SecurityCreateApiKey = new ApiUrls(new[]{"_security/api_key"});
@@ -248,6 +258,7 @@ namespace Nest
 		internal static ApiUrls SecurityGetUserAccessToken = new ApiUrls(new[]{"_security/oauth2/token"});
 		internal static ApiUrls SecurityGetUser = new ApiUrls(new[]{"_security/user/{username}", "_security/user"});
 		internal static ApiUrls SecurityGetUserPrivileges = new ApiUrls(new[]{"_security/user/_privileges"});
+		internal static ApiUrls SecurityGrantApiKey = new ApiUrls(new[]{"_security/api_key/grant"});
 		internal static ApiUrls SecurityHasPrivileges = new ApiUrls(new[]{"_security/user/_has_privileges", "_security/user/{user}/_has_privileges"});
 		internal static ApiUrls SecurityInvalidateApiKey = new ApiUrls(new[]{"_security/api_key"});
 		internal static ApiUrls SecurityInvalidateUserAccessToken = new ApiUrls(new[]{"_security/oauth2/token"});

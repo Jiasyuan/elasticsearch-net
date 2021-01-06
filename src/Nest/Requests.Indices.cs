@@ -22,8 +22,8 @@ using System.Text;
 using System.Linq.Expressions;
 using System.Runtime.Serialization;
 using Elasticsearch.Net;
-using Elasticsearch.Net.Utf8Json;
 using Elasticsearch.Net.Specification.IndicesApi;
+using Nest.Utf8Json;
 
 // ReSharper disable RedundantBaseConstructorCall
 // ReSharper disable UnusedTypeParameter
@@ -31,6 +31,85 @@ using Elasticsearch.Net.Specification.IndicesApi;
 // ReSharper disable RedundantNameQualifier
 namespace Nest
 {
+	[InterfaceDataContract]
+	public partial interface IAddIndexBlockRequest : IRequest<AddIndexBlockRequestParameters>
+	{
+		[IgnoreDataMember]
+		Indices Index
+		{
+			get;
+		}
+
+		[IgnoreDataMember]
+		IndexBlock Block
+		{
+			get;
+		}
+	}
+
+	///<summary>Request for AddBlock <para>https://www.elastic.co/guide/en/elasticsearch/reference/master/index-modules-blocks.html</para></summary>
+	public partial class AddIndexBlockRequest : PlainRequestBase<AddIndexBlockRequestParameters>, IAddIndexBlockRequest
+	{
+		protected IAddIndexBlockRequest Self => this;
+		internal override ApiUrls ApiUrls => ApiUrlsLookups.IndicesAddBlock;
+		///<summary>/{index}/_block/{block}</summary>
+		///<param name = "index">this parameter is required</param>
+		///<param name = "block">this parameter is required</param>
+		public AddIndexBlockRequest(Indices index, IndexBlock block): base(r => r.Required("index", index).Required("block", block))
+		{
+		}
+
+		///<summary>Used for serialization purposes, making sure we have a parameterless constructor</summary>
+		[SerializationConstructor]
+		protected AddIndexBlockRequest(): base()
+		{
+		}
+
+		// values part of the url path
+		[IgnoreDataMember]
+		Indices IAddIndexBlockRequest.Index => Self.RouteValues.Get<Indices>("index");
+		[IgnoreDataMember]
+		IndexBlock IAddIndexBlockRequest.Block => Self.RouteValues.Get<IndexBlock>("block");
+		// Request parameters
+		///<summary>
+		/// Whether to ignore if a wildcard indices expression resolves into no concrete indices. (This includes `_all` string or when no indices have
+		/// been specified)
+		///</summary>
+		public bool? AllowNoIndices
+		{
+			get => Q<bool? >("allow_no_indices");
+			set => Q("allow_no_indices", value);
+		}
+
+		///<summary>Whether to expand wildcard expression to concrete indices that are open, closed or both.</summary>
+		public ExpandWildcards? ExpandWildcards
+		{
+			get => Q<ExpandWildcards? >("expand_wildcards");
+			set => Q("expand_wildcards", value);
+		}
+
+		///<summary>Whether specified concrete indices should be ignored when unavailable (missing or closed)</summary>
+		public bool? IgnoreUnavailable
+		{
+			get => Q<bool? >("ignore_unavailable");
+			set => Q("ignore_unavailable", value);
+		}
+
+		///<summary>Specify timeout for connection to master</summary>
+		public Time MasterTimeout
+		{
+			get => Q<Time>("master_timeout");
+			set => Q("master_timeout", value);
+		}
+
+		///<summary>Explicit operation timeout</summary>
+		public Time Timeout
+		{
+			get => Q<Time>("timeout");
+			set => Q("timeout", value);
+		}
+	}
+
 	[InterfaceDataContract]
 	public partial interface IAnalyzeRequest : IRequest<AnalyzeRequestParameters>
 	{
@@ -339,6 +418,71 @@ namespace Nest
 	}
 
 	[InterfaceDataContract]
+	public partial interface ICreateDataStreamRequest : IRequest<CreateDataStreamRequestParameters>
+	{
+		[IgnoreDataMember]
+		Name Name
+		{
+			get;
+		}
+	}
+
+	///<summary>Request for CreateDataStream <para>https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html</para></summary>
+	public partial class CreateDataStreamRequest : PlainRequestBase<CreateDataStreamRequestParameters>, ICreateDataStreamRequest
+	{
+		protected ICreateDataStreamRequest Self => this;
+		internal override ApiUrls ApiUrls => ApiUrlsLookups.IndicesCreateDataStream;
+		///<summary>/_data_stream/{name}</summary>
+		///<param name = "name">this parameter is required</param>
+		public CreateDataStreamRequest(Name name): base(r => r.Required("name", name))
+		{
+		}
+
+		///<summary>Used for serialization purposes, making sure we have a parameterless constructor</summary>
+		[SerializationConstructor]
+		protected CreateDataStreamRequest(): base()
+		{
+		}
+
+		// values part of the url path
+		[IgnoreDataMember]
+		Name ICreateDataStreamRequest.Name => Self.RouteValues.Get<Name>("name");
+	// Request parameters
+	}
+
+	[InterfaceDataContract]
+	public partial interface IDataStreamsStatsRequest : IRequest<DataStreamsStatsRequestParameters>
+	{
+		[IgnoreDataMember]
+		Names Name
+		{
+			get;
+		}
+	}
+
+	///<summary>Request for DataStreamsStats <para>https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html</para></summary>
+	public partial class DataStreamsStatsRequest : PlainRequestBase<DataStreamsStatsRequestParameters>, IDataStreamsStatsRequest
+	{
+		protected IDataStreamsStatsRequest Self => this;
+		internal override ApiUrls ApiUrls => ApiUrlsLookups.IndicesDataStreamsStats;
+		///<summary>/_data_stream/_stats</summary>
+		public DataStreamsStatsRequest(): base()
+		{
+		}
+
+		///<summary>/_data_stream/{name}/_stats</summary>
+		///<param name = "name">Optional, accepts null</param>
+		public DataStreamsStatsRequest(Names name): base(r => r.Optional("name", name))
+		{
+		}
+
+		// values part of the url path
+		[IgnoreDataMember]
+		Names IDataStreamsStatsRequest.Name => Self.RouteValues.Get<Names>("name");
+	// Request parameters
+	}
+
+	[InterfaceDataContract]
 	public partial interface IDeleteIndexRequest : IRequest<DeleteIndexRequestParameters>
 	{
 		[IgnoreDataMember]
@@ -458,6 +602,39 @@ namespace Nest
 			get => Q<Time>("timeout");
 			set => Q("timeout", value);
 		}
+	}
+
+	[InterfaceDataContract]
+	public partial interface IDeleteDataStreamRequest : IRequest<DeleteDataStreamRequestParameters>
+	{
+		[IgnoreDataMember]
+		Names Name
+		{
+			get;
+		}
+	}
+
+	///<summary>Request for DeleteDataStream <para>https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html</para></summary>
+	public partial class DeleteDataStreamRequest : PlainRequestBase<DeleteDataStreamRequestParameters>, IDeleteDataStreamRequest
+	{
+		protected IDeleteDataStreamRequest Self => this;
+		internal override ApiUrls ApiUrls => ApiUrlsLookups.IndicesDeleteDataStream;
+		///<summary>/_data_stream/{name}</summary>
+		///<param name = "name">this parameter is required</param>
+		public DeleteDataStreamRequest(Names name): base(r => r.Required("name", name))
+		{
+		}
+
+		///<summary>Used for serialization purposes, making sure we have a parameterless constructor</summary>
+		[SerializationConstructor]
+		protected DeleteDataStreamRequest(): base()
+		{
+		}
+
+		// values part of the url path
+		[IgnoreDataMember]
+		Names IDeleteDataStreamRequest.Name => Self.RouteValues.Get<Names>("name");
+	// Request parameters
 	}
 
 	[InterfaceDataContract]
@@ -1104,6 +1281,38 @@ namespace Nest
 	}
 
 	[InterfaceDataContract]
+	public partial interface IGetDataStreamRequest : IRequest<GetDataStreamRequestParameters>
+	{
+		[IgnoreDataMember]
+		Names Name
+		{
+			get;
+		}
+	}
+
+	///<summary>Request for GetDataStream <para>https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html</para></summary>
+	public partial class GetDataStreamRequest : PlainRequestBase<GetDataStreamRequestParameters>, IGetDataStreamRequest
+	{
+		protected IGetDataStreamRequest Self => this;
+		internal override ApiUrls ApiUrls => ApiUrlsLookups.IndicesGetDataStream;
+		///<summary>/_data_stream</summary>
+		public GetDataStreamRequest(): base()
+		{
+		}
+
+		///<summary>/_data_stream/{name}</summary>
+		///<param name = "name">Optional, accepts null</param>
+		public GetDataStreamRequest(Names name): base(r => r.Optional("name", name))
+		{
+		}
+
+		// values part of the url path
+		[IgnoreDataMember]
+		Names IGetDataStreamRequest.Name => Self.RouteValues.Get<Names>("name");
+	// Request parameters
+	}
+
+	[InterfaceDataContract]
 	public partial interface IGetFieldMappingRequest : IRequest<GetFieldMappingRequestParameters>
 	{
 		[IgnoreDataMember]
@@ -1243,6 +1452,7 @@ namespace Nest
 		}
 
 		///<summary>Return local information, do not retrieve the state from master node (default: false)</summary>
+		[Obsolete("Scheduled to be removed in 8.0, Deprecated as of: 7.8.0, reason: This parameter is a no-op and field mappings are always retrieved locally.")]
 		public bool? Local
 		{
 			get => Q<bool? >("local");
@@ -1617,6 +1827,13 @@ namespace Nest
 			get => Q<Time>("timeout");
 			set => Q("timeout", value);
 		}
+
+		///<summary>When true, applies mappings only to the write index of an alias or data stream</summary>
+		public bool? WriteIndexOnly
+		{
+			get => Q<bool? >("write_index_only");
+			set => Q("write_index_only", value);
+		}
 	}
 
 	public partial class PutMappingRequest<TDocument> : PutMappingRequest, IPutMappingRequest<TDocument>
@@ -1916,6 +2133,46 @@ namespace Nest
 		{
 			get => Q<bool? >("ignore_unavailable");
 			set => Q("ignore_unavailable", value);
+		}
+	}
+
+	[InterfaceDataContract]
+	public partial interface IResolveIndexRequest : IRequest<ResolveIndexRequestParameters>
+	{
+		[IgnoreDataMember]
+		Names Name
+		{
+			get;
+		}
+	}
+
+	///<summary>Request for Resolve <para>https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-resolve-index-api.html</para></summary>
+	///<remarks>Note: Experimental within the Elasticsearch server, this functionality is experimental and may be changed or removed completely in a future release. Elastic will take a best effort approach to fix any issues, but experimental features are not subject to the support SLA of official GA features.</remarks>
+	public partial class ResolveIndexRequest : PlainRequestBase<ResolveIndexRequestParameters>, IResolveIndexRequest
+	{
+		protected IResolveIndexRequest Self => this;
+		internal override ApiUrls ApiUrls => ApiUrlsLookups.IndicesResolve;
+		///<summary>/_resolve/index/{name}</summary>
+		///<param name = "name">this parameter is required</param>
+		public ResolveIndexRequest(Names name): base(r => r.Required("name", name))
+		{
+		}
+
+		///<summary>Used for serialization purposes, making sure we have a parameterless constructor</summary>
+		[SerializationConstructor]
+		protected ResolveIndexRequest(): base()
+		{
+		}
+
+		// values part of the url path
+		[IgnoreDataMember]
+		Names IResolveIndexRequest.Name => Self.RouteValues.Get<Names>("name");
+		// Request parameters
+		///<summary>Whether wildcard expressions should get expanded to open or closed indices (default: open)</summary>
+		public ExpandWildcards? ExpandWildcards
+		{
+			get => Q<ExpandWildcards? >("expand_wildcards");
+			set => Q("expand_wildcards", value);
 		}
 	}
 

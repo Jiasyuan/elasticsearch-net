@@ -2,11 +2,10 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Elasticsearch.Net;
-using Elasticsearch.Net.Utf8Json;
+using Nest.Utf8Json;
 
 namespace Nest
 {
@@ -98,6 +97,8 @@ namespace Nest
 
 		public PercentilesAggregate PercentilesBucket(string key) => TryGet<PercentilesAggregate>(key);
 
+		public PercentilesAggregate MovingPercentiles(string key) => TryGet<PercentilesAggregate>(key);
+
 		public PercentilesAggregate PercentileRanks(string key) => TryGet<PercentilesAggregate>(key);
 
 		public TopHitsAggregate TopHits(string key) => TryGet<TopHitsAggregate>(key);
@@ -122,6 +123,8 @@ namespace Nest
 
 		public SingleBucketAggregate Nested(string key) => TryGet<SingleBucketAggregate>(key);
 
+		public ValueAggregate Normalize(string key) => TryGet<ValueAggregate>(key);
+
 		public SingleBucketAggregate ReverseNested(string key) => TryGet<SingleBucketAggregate>(key);
 
 		public SingleBucketAggregate Children(string key) => TryGet<SingleBucketAggregate>(key);
@@ -129,6 +132,8 @@ namespace Nest
 		public SingleBucketAggregate Parent(string key) => TryGet<SingleBucketAggregate>(key);
 
 		public SingleBucketAggregate Sampler(string key) => TryGet<SingleBucketAggregate>(key);
+
+		public SingleBucketAggregate DiversifiedSampler(string key) => TryGet<SingleBucketAggregate>(key);
 
 		public GeoCentroidAggregate GeoCentroid(string key) => TryGet<GeoCentroidAggregate>(key);
 
@@ -244,6 +249,7 @@ namespace Nest
 
 		public BoxplotAggregate Boxplot(string key) => TryGet<BoxplotAggregate>(key);
 
+		// ReSharper disable once InconsistentNaming
 		public ValueAggregate TTest(string key) => TryGet<ValueAggregate>(key);
 
 		private TAggregate TryGet<TAggregate>(string key) where TAggregate : class, IAggregate =>

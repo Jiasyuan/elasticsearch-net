@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using Elasticsearch.Net.Utf8Json;
+using Nest.Utf8Json;
 
 namespace Nest
 {
@@ -135,6 +135,9 @@ namespace Nest
 		[DataMember(Name = "derivative")]
 		IDerivativeAggregation Derivative { get; set; }
 
+		[DataMember(Name = "diversified_sampler")]
+		IDiversifiedSamplerAggregation DiversifiedSampler { get; set; }
+
 		[DataMember(Name = "extended_stats")]
 		IExtendedStatsAggregation ExtendedStats { get; set; }
 
@@ -199,8 +202,16 @@ namespace Nest
 		[DataMember(Name = "moving_fn")]
 		IMovingFunctionAggregation MovingFunction { get; set; }
 
+		/// <inheritdoc cref="IMovingPercentilesAggregation"/>
+		[DataMember(Name = "moving_percentiles")]
+		IMovingPercentilesAggregation MovingPercentiles { get; set; }
+
 		[DataMember(Name = "nested")]
 		INestedAggregation Nested { get; set; }
+
+		/// <inheritdoc cref="INormalizeAggregation"/>
+		[DataMember(Name = "normalize")]
+		INormalizeAggregation Normalize { get; set; }
 
 		/// <inheritdoc cref="IParentAggregation"/>
 		[DataMember(Name = "parent")]
@@ -259,6 +270,7 @@ namespace Nest
 
 		/// <inheritdoc cref="ITTestAggregation"/>
 		[DataMember(Name = "t_test")]
+		// ReSharper disable once InconsistentNaming
 		ITTestAggregation TTest { get; set; }
 
 		[DataMember(Name = "value_count")]
@@ -315,6 +327,8 @@ namespace Nest
 
 		public IDerivativeAggregation Derivative { get; set; }
 
+		public IDiversifiedSamplerAggregation DiversifiedSampler { get; set; }
+
 		public IExtendedStatsAggregation ExtendedStats { get; set; }
 
 		public IExtendedStatsBucketAggregation ExtendedStatsBucket { get; set; }
@@ -354,7 +368,13 @@ namespace Nest
 
 		public IMovingFunctionAggregation MovingFunction { get; set; }
 
+		/// <inheritdoc cref="IMovingPercentilesAggregation"/>
+		public IMovingPercentilesAggregation MovingPercentiles { get; set; }
+
 		public INestedAggregation Nested { get; set; }
+
+		/// <inheritdoc cref="INormalizeAggregation"/>
+		public INormalizeAggregation Normalize { get; set; }
 
 		/// <inheritdoc cref="IParentAggregation"/>
 		public IParentAggregation Parent { get; set; }
@@ -470,6 +490,8 @@ namespace Nest
 
 		IDerivativeAggregation IAggregationContainer.Derivative { get; set; }
 
+		IDiversifiedSamplerAggregation IAggregationContainer.DiversifiedSampler { get; set; }
+
 		IExtendedStatsAggregation IAggregationContainer.ExtendedStats { get; set; }
 
 		IExtendedStatsBucketAggregation IAggregationContainer.ExtendedStatsBucket { get; set; }
@@ -511,7 +533,11 @@ namespace Nest
 
 		IMovingFunctionAggregation IAggregationContainer.MovingFunction { get; set; }
 
+		IMovingPercentilesAggregation IAggregationContainer.MovingPercentiles { get; set; }
+
 		INestedAggregation IAggregationContainer.Nested { get; set; }
+
+		INormalizeAggregation IAggregationContainer.Normalize { get; set; }
 
 		IParentAggregation IAggregationContainer.Parent { get; set; }
 
@@ -672,6 +698,12 @@ namespace Nest
 		) =>
 			_SetInnerAggregation(name, selector, (a, d) => a.Nested = d);
 
+		/// <inheritdoc cref="INormalizeAggregation"/>
+		public AggregationContainerDescriptor<T> Normalize(string name,
+			Func<NormalizeAggregationDescriptor, INormalizeAggregation> selector
+		) =>
+			_SetInnerAggregation(name, selector, (a, d) => a.Normalize = d);
+
 		/// <inheritdoc cref="IParentAggregation"/>
 		public AggregationContainerDescriptor<T> Parent<TParent>(string name,
 			Func<ParentAggregationDescriptor<T, TParent>, IParentAggregation> selector
@@ -729,6 +761,7 @@ namespace Nest
 			_SetInnerAggregation(name, selector, (a, d) => a.TopHits = d);
 
 		/// <inheritdoc cref="ITTestAggregation"/>
+		// ReSharper disable once InconsistentNaming
 		public AggregationContainerDescriptor<T> TTest(string name,
 			Func<TTestAggregationDescriptor<T>, ITTestAggregation> selector
 		) =>
@@ -794,6 +827,11 @@ namespace Nest
 		) =>
 			_SetInnerAggregation(name, selector, (a, d) => a.MovingFunction = d);
 
+		public AggregationContainerDescriptor<T> MovingPercentiles(string name,
+			Func<MovingPercentilesAggregationDescriptor, IMovingPercentilesAggregation> selector
+		) =>
+			_SetInnerAggregation(name, selector, (a, d) => a.MovingPercentiles = d);
+
 		public AggregationContainerDescriptor<T> CumulativeSum(string name,
 			Func<CumulativeSumAggregationDescriptor, ICumulativeSumAggregation> selector
 		) =>
@@ -828,6 +866,11 @@ namespace Nest
 			Func<SamplerAggregationDescriptor<T>, ISamplerAggregation> selector
 		) =>
 			_SetInnerAggregation(name, selector, (a, d) => a.Sampler = d);
+
+		public AggregationContainerDescriptor<T> DiversifiedSampler(string name,
+			Func<DiversifiedSamplerAggregationDescriptor<T>, IDiversifiedSamplerAggregation> selector
+		) =>
+			_SetInnerAggregation(name, selector, (a, d) => a.DiversifiedSampler = d);
 
 		public AggregationContainerDescriptor<T> GeoCentroid(string name,
 			Func<GeoCentroidAggregationDescriptor<T>, IGeoCentroidAggregation> selector

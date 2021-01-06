@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Elasticsearch.Net;
+using Elastic.Transport;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -22,13 +22,14 @@ namespace Nest.JsonNetSerializer.Converters
 			typeof(ILazyDocument),
 			typeof(LazyDocument),
 			typeof(GeoCoordinate),
-			typeof(GeoLocation)
+			typeof(GeoLocation),
+			typeof(CartesianPoint),
 		};
 
-		private readonly IElasticsearchSerializer _builtInSerializer;
+		private readonly ITransportSerializer _builtInSerializer;
 		private IMemoryStreamFactory _memoryStreamFactory;
 
-		public HandleNestTypesOnSourceJsonConverter(IElasticsearchSerializer builtInSerializer, IMemoryStreamFactory memoryStreamFactory
+		public HandleNestTypesOnSourceJsonConverter(ITransportSerializer builtInSerializer, IMemoryStreamFactory memoryStreamFactory
 		)
 		{
 			_builtInSerializer = builtInSerializer;

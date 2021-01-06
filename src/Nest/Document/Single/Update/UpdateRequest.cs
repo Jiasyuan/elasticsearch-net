@@ -2,13 +2,14 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Runtime.Serialization;
-using Elasticsearch.Net.Utf8Json;
+using Nest.Utf8Json;
 
 namespace Nest
 {
-	public partial interface IUpdateRequest<TDocument, TPartialDocument> 
+	[MapsApi("update.json")]
+	public partial interface IUpdateRequest<TDocument, TPartialDocument>
 		where TDocument : class
 		where TPartialDocument : class
 	{

@@ -2,11 +2,11 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using FluentAssertions;
+using FluentAssertions;
 using Nest;
 using System;
 using Elastic.Elasticsearch.Xunit.XunitPlumbing;
-using Elasticsearch.Net;
+using Elastic.Transport;
 using Tests.Core.Client;
 using Tests.Core.Client.Settings;
 using Tests.Domain;

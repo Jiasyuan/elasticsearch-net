@@ -2,11 +2,8 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
-using Elasticsearch.Net.Utf8Json;
-using Elasticsearch.Net.Utf8Json.Internal;
-
-
+using System;
+using Nest.Utf8Json;
 namespace Nest
 {
 	internal class PropertyFormatter : IJsonFormatter<IProperty>
@@ -81,6 +78,7 @@ namespace Nest
 				case FieldType.GeoPoint: return Deserialize<GeoPointProperty>(ref segmentReader, formatterResolver);
 				case FieldType.GeoShape: return Deserialize<GeoShapeProperty>(ref segmentReader, formatterResolver);
 				case FieldType.Shape: return Deserialize<ShapeProperty>(ref segmentReader, formatterResolver);
+				case FieldType.Point: return Deserialize<PointProperty>(ref segmentReader, formatterResolver);
 				case FieldType.Completion: return Deserialize<CompletionProperty>(ref segmentReader, formatterResolver);
 				case FieldType.TokenCount: return Deserialize<TokenCountProperty>(ref segmentReader, formatterResolver);
 				case FieldType.Murmur3Hash: return Deserialize<Murmur3HashProperty>(ref segmentReader, formatterResolver);
@@ -98,6 +96,7 @@ namespace Nest
 				case FieldType.Flattened: return Deserialize<FlattenedProperty>(ref segmentReader, formatterResolver);
 				case FieldType.Histogram: return Deserialize<HistogramProperty>(ref segmentReader, formatterResolver);
 				case FieldType.ConstantKeyword: return Deserialize<ConstantKeywordProperty>(ref segmentReader, formatterResolver);
+				case FieldType.Wildcard: return Deserialize<WildcardProperty>(ref segmentReader, formatterResolver);
 				case FieldType.None:
 					// no "type" field in the property mapping, or FieldType enum could not be parsed from typeString
 					return Deserialize<ObjectProperty>(ref segmentReader, formatterResolver);
@@ -158,6 +157,9 @@ namespace Nest
 				case IShapeProperty shapeProperty:
 					Serialize(ref writer, shapeProperty, formatterResolver);
 					break;
+				case IPointProperty pointProperty:
+					Serialize(ref writer, pointProperty, formatterResolver);
+					break;
 				case ICompletionProperty completionProperty:
 					Serialize(ref writer, completionProperty, formatterResolver);
 					break;
@@ -208,6 +210,9 @@ namespace Nest
 					break;
 				case IConstantKeywordProperty constantKeywordProperty:
 					Serialize(ref writer, constantKeywordProperty, formatterResolver);
+					break;
+				case IWildcardProperty wildcardProperty:
+					Serialize(ref writer, wildcardProperty, formatterResolver);
 					break;
 				case IGenericProperty genericProperty:
 					Serialize(ref writer, genericProperty, formatterResolver);

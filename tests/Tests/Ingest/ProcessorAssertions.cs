@@ -2,14 +2,13 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Elastic.Elasticsearch.Xunit.XunitPlumbing;
 using Nest;
 using Tests.Core.Client;
-using Tests.Core.Xunit;
 using Tests.Domain;
 
 namespace Tests.Ingest
@@ -75,7 +74,7 @@ namespace Tests.Ingest
 			public override string Key => "append";
 		}
 
-		[SkipVersion("<7.8.0", "Empty Value bug in versions less than Elasticsearch 7.8.0")]
+		[SkipVersion("<7.9.0", "Description added in 7.9.0")]
 		public class Csv : ProcessorAssertion
 		{
 			public override Func<ProcessorsDescriptor, IPromise<IList<IProcessor>>> Fluent => d => d
@@ -84,6 +83,7 @@ namespace Tests.Ingest
 					.TargetFields(new[] { "targetField1", "targetField2" })
 					.EmptyValue("empty")
 					.Trim()
+					.Description("parses CSV")
 				);
 
 			public override IProcessor Initializer => new CsvProcessor
@@ -91,7 +91,8 @@ namespace Tests.Ingest
 				Field = "name",
 				TargetFields = new[] { "targetField1", "targetField2" },
 				EmptyValue = "empty",
-				Trim = true
+				Trim = true,
+				Description = "parses CSV"
 			};
 
 			public override object Json => new
@@ -99,7 +100,8 @@ namespace Tests.Ingest
 				field = "name",
 				target_fields = new[] { "targetField1", "targetField2" },
 				empty_value = "empty",
-				trim = true
+				trim = true,
+				description = "parses CSV"
 			};
 
 			public override string Key => "csv";
@@ -165,7 +167,7 @@ namespace Tests.Ingest
 		{
 			public static string PolicyName = "enrich_processor_policy";
 
-			public override Func<ProcessorsDescriptor, IPromise<IList<IProcessor>>> Fluent => d => d.Enrich<Project>(f => f
+			public override Func<ProcessorsDescriptor, IPromise<IList<IProcessor>>> Fluent => d => d.Enrich<Project>(e => e
 				.PolicyName(PolicyName)
 				.Field(f => f.Name)
 				.TargetField("target_field")

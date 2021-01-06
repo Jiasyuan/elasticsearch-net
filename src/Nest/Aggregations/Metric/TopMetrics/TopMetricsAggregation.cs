@@ -2,10 +2,10 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using Elasticsearch.Net.Utf8Json;
+using Nest.Utf8Json;
 
 namespace Nest
 {
@@ -71,8 +71,8 @@ namespace Nest
 				a.Sort = v?.Invoke(new SortDescriptor<T>())?.Value);
 
 		/// <inheritdoc cref="ITopMetricsAggregation.Metrics" />
-		public TopMetricsAggregationDescriptor<T> Metrics(Func<TopMetricsValuesDescriptor<T>, IPromise<IList<ITopMetricsValue>>> TopMetricsValueSelector) =>
-			Assign(TopMetricsValueSelector, (a, v) =>
+		public TopMetricsAggregationDescriptor<T> Metrics(Func<TopMetricsValuesDescriptor<T>, IPromise<IList<ITopMetricsValue>>> topMetricsValueSelector) =>
+			Assign(topMetricsValueSelector, (a, v) =>
 				a.Metrics = v?.Invoke(new TopMetricsValuesDescriptor<T>())?.Value);
 	}
 }

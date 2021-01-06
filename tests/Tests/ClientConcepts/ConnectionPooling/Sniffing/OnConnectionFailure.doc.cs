@@ -2,17 +2,18 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Elastic.Elasticsearch.Xunit.XunitPlumbing;
-using Elasticsearch.Net;
-using Elasticsearch.Net.VirtualizedCluster;
-using Elasticsearch.Net.VirtualizedCluster.Audit;
+using Elastic.Transport;
+using Elastic.Transport.Diagnostics.Auditing;
+using Elastic.Transport.VirtualizedCluster;
+using Elastic.Transport.VirtualizedCluster.Audit;
 using FluentAssertions;
 using Tests.Framework;
 using Tests.Framework.Extensions;
-using static Elasticsearch.Net.VirtualizedCluster.Rules.TimesHelper;
-using static Elasticsearch.Net.AuditEvent;
+using static Elastic.Transport.VirtualizedCluster.Rules.TimesHelper;
+using static Elastic.Transport.Diagnostics.Auditing.AuditEvent;
 
 namespace Tests.ClientConcepts.ConnectionPooling.Sniffing
 {
@@ -34,17 +35,18 @@ namespace Tests.ClientConcepts.ConnectionPooling.Sniffing
 			* 9202, 9203, 9204 are master eligible nodes. Our virtualized cluster will throw once when doing
 			* a search on 9201. This should cause a sniff to be kicked off.
 			*/
-			var audit = new Auditor(() => VirtualClusterWith
-				.Nodes(5)
+			var audit = new Auditor(() => Virtual.Elasticsearch
+				.Bootstrap(5)
 				.MasterEligible(9202, 9203, 9204)
 				.ClientCalls(r => r.SucceedAlways())
 				.ClientCalls(r => r.OnPort(9201).Fails(Once)) // <1> When the call fails on 9201, the following sniff succeeds and returns a new cluster state of healthy nodes. This cluster only has 3 nodes and the known masters are 9200 and 9202. A search on 9201 is setup to still fail once
-				.Sniff(p => p.SucceedAlways(VirtualClusterWith
-					.Nodes(3)
+				.Sniff(p => p.SucceedAlways(Virtual.Elasticsearch
+					.Bootstrap(3)
 					.MasterEligible(9200, 9202)
 					.ClientCalls(r => r.OnPort(9201).Fails(Once))
-					.Sniff(s => s.SucceedAlways(VirtualClusterWith // <2> After this second failure on 9201, another sniff will happen which returns a cluster state that no longer fails but looks completely different; It's now three nodes on ports 9210 - 9212, with 9210 and 9212 being master eligible.
-						.Nodes(3, 9210)
+					.ClientCalls(r => r.SucceedAlways())
+					.Sniff(s => s.SucceedAlways(Virtual.Elasticsearch // <2> After this second failure on 9201, another sniff will happen which returns a cluster state that no longer fails but looks completely different; It's now three nodes on ports 9210 - 9212, with 9210 and 9212 being master eligible.
+						.Bootstrap(3, 9210)
 						.MasterEligible(9210, 9212)
 						.ClientCalls(r => r.SucceedAlways())
 						.Sniff(r => r.SucceedAlways())
@@ -94,19 +96,24 @@ namespace Tests.ClientConcepts.ConnectionPooling.Sniffing
 			/** Here we set up our cluster exactly the same as the previous setup
 			* Only we enable pinging (default is `true`) and make the ping fail
 			*/
-			var audit = new Auditor(() => VirtualClusterWith
-				.Nodes(5)
+			var audit = new Auditor(() => Virtual.Elasticsearch
+				.Bootstrap(5)
 				.MasterEligible(9202, 9203, 9204)
 				.Ping(r => r.OnPort(9201).Fails(Once))
-				.Sniff(p => p.SucceedAlways(VirtualClusterWith
-					.Nodes(3)
+				.Ping(r => r.SucceedAlways())
+				.ClientCalls(c=>c.SucceedAlways())
+				.Sniff(p => p.SucceedAlways(Virtual.Elasticsearch
+					.Bootstrap(3)
 					.MasterEligible(9200, 9202)
 					.Ping(r => r.OnPort(9201).Fails(Once))
-					.Sniff(s => s.SucceedAlways(VirtualClusterWith
-						.Nodes(3, 9210)
+					.Ping(r => r.SucceedAlways())
+					.ClientCalls(c=>c.SucceedAlways())
+					.Sniff(s => s.SucceedAlways(Virtual.Elasticsearch
+						.Bootstrap(3, 9210)
 						.MasterEligible(9210, 9211)
 						.Ping(r => r.SucceedAlways())
 						.Sniff(r => r.SucceedAlways())
+						.ClientCalls(c=>c.SucceedAlways())
 					))
 				))
 				.SniffingConnectionPool()
@@ -155,14 +162,18 @@ namespace Tests.ClientConcepts.ConnectionPooling.Sniffing
 		 */
 		[U] public async Task UsesPublishAddress()
 		{
-			var audit = new Auditor(() => VirtualClusterWith
-					.Nodes(2)
+			var audit = new Auditor(() => Virtual.Elasticsearch
+					.Bootstrap(2)
 					.MasterEligible(9200)
+					.ClientCalls(c=>c.SucceedAlways())
 					.Ping(r => r.OnPort(9200).Fails(Once))
-					.Sniff(p => p.SucceedAlways(VirtualClusterWith
-							.Nodes(10)
-							.MasterEligible(9200, 9202, 9201)
-							.PublishAddress("10.0.12.1")
+					.Ping(c=>c.SucceedAlways())
+					.Sniff(p => p.SucceedAlways(Virtual.Elasticsearch
+						.Bootstrap(10)
+						.MasterEligible(9200, 9202, 9201)
+						.PublishAddress("10.0.12.1")
+						.ClientCalls(c=>c.SucceedAlways())
+						.Ping(c=>c.SucceedAlways())
 					))
 					.SniffingConnectionPool()
 					.Settings(s => s.SniffOnStartup(false))

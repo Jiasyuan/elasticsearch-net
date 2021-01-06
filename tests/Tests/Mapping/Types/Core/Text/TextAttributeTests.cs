@@ -2,7 +2,7 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using Nest;
+using Nest;
 
 namespace Tests.Mapping.Types.Core.Text
 {
@@ -10,7 +10,6 @@ namespace Tests.Mapping.Types.Core.Text
 	{
 		[Text(
 			Analyzer = "myanalyzer",
-			Boost = 1.2,
 			EagerGlobalOrdinals = true,
 			Fielddata = true,
 			Index = true,
@@ -40,7 +39,6 @@ namespace Tests.Mapping.Types.Core.Text
 				{
 					type = "text",
 					analyzer = "myanalyzer",
-					boost = 1.2,
 					eager_global_ordinals = true,
 					fielddata = true,
 					index = true,

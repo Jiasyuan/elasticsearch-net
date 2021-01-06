@@ -2,11 +2,11 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Elasticsearch.Net;
+using Elastic.Transport;
 
 namespace Nest
 {
@@ -37,7 +37,7 @@ namespace Nest
 				_ids.OrderBy(id => id).SequenceEqual(other._ids.OrderBy(id => id));
 		}
 
-		string IUrlParameter.GetString(IConnectionConfigurationValues settings) =>
+		string IUrlParameter.GetString(ITransportConfigurationValues settings) =>
 			string.Join(",", _ids ?? Enumerable.Empty<string>());
 
 		public static implicit operator Ids(string value) =>

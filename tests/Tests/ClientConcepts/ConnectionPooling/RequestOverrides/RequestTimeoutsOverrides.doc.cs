@@ -2,13 +2,13 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Elastic.Elasticsearch.Xunit.XunitPlumbing;
-using Elasticsearch.Net.VirtualizedCluster;
-using Elasticsearch.Net.VirtualizedCluster.Audit;
+using Elastic.Transport.VirtualizedCluster;
+using Elastic.Transport.VirtualizedCluster.Audit;
 using Tests.Framework;
-using static Elasticsearch.Net.AuditEvent;
+using static Elastic.Transport.Diagnostics.Auditing.AuditEvent;
 
 namespace Tests.ClientConcepts.ConnectionPooling.RequestOverrides
 {
@@ -28,8 +28,8 @@ namespace Tests.ClientConcepts.ConnectionPooling.RequestOverrides
 			* Each call on a node takes 10 seconds. So we can only try this call on 2 nodes
 			* before the max request time out kills the client call.
 			*/
-			var audit = new Auditor(() => VirtualClusterWith
-				.Nodes(10)
+			var audit = new Auditor(() => Virtual.Elasticsearch
+				.Bootstrap(10)
 				.ClientCalls(r => r.FailAlways().Takes(TimeSpan.FromSeconds(10)))
 				.ClientCalls(r => r.OnPort(9209).SucceedAlways())
 				.StaticConnectionPool()
@@ -77,8 +77,8 @@ namespace Tests.ClientConcepts.ConnectionPooling.RequestOverrides
 			* Each call on a node takes 10 seconds. So we can only try this call on 2 nodes
 			* before the max request time out kills the client call.
 			*/
-			var audit = new Auditor(() => VirtualClusterWith
-				.Nodes(10)
+			var audit = new Auditor(() => Virtual.Elasticsearch
+				.Bootstrap(10)
 				.Ping(p => p.SucceedAlways().Takes(TimeSpan.FromSeconds(20)))
 				.ClientCalls(r => r.SucceedAlways())
 				.StaticConnectionPool()

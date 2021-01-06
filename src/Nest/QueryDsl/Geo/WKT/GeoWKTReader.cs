@@ -2,7 +2,7 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -279,7 +279,7 @@ namespace Nest
 				$"Expected number but found: {tokenizer.TokenString()}", tokenizer.LineNumber, tokenizer.Position);
 		}
 
-		private static bool IsNumberNext(WellKnownTextTokenizer tokenizer)
+		internal static bool IsNumberNext(WellKnownTextTokenizer tokenizer)
 		{
 			var token = tokenizer.PeekToken();
 			return token == TokenType.Word;

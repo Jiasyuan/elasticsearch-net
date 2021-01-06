@@ -1,4 +1,4 @@
-﻿// Licensed to Elasticsearch B.V under one or more agreements.
+// Licensed to Elasticsearch B.V under one or more agreements.
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
@@ -41,7 +41,7 @@ module Tests =
         let runSettings =
             // force the logger section to be cleared so that azure devops can work its magic.
             // relies heavily on the original console logger
-            let prefix = if Commandline.runningOnAzureDevops then ".ci" else ""
+            let prefix = if runningOnAzureDevops then ".ci" else ""
             sprintf "tests/%s.runsettings" prefix
         
         Directory.CreateDirectory Paths.BuildOutput |> ignore
@@ -61,7 +61,7 @@ module Tests =
 
     let RunReleaseUnitTests version args =
         //xUnit always does its own build, this env var is picked up by Tests.csproj
-        //if its set it will include the local package source (build/output/_packages)
+        //if its set it will include the local package source (build/output/)
         //and references NEST and NEST.JsonNetSerializer by the current version
         //this works by not including the local package cache (nay source) 
         //in the project file via:

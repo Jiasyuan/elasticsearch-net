@@ -2,9 +2,8 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
-using Elastic.Elasticsearch.Xunit.XunitPlumbing;
-using Elasticsearch.Net;
+using System;
+using Elastic.Transport;
 using FluentAssertions;
 using Nest;
 using Tests.Core.ManagedElasticsearch.Clusters;
@@ -15,8 +14,6 @@ using Tests.Framework.EndpointTests.TestState;
 
 namespace Tests.XPack.Sql.TranslateSql
 {
-	//[SkipVersion("<6.4.0", "")]
-	[SkipVersion(">=8.0.0-SNAPSHOT", "TODO investigate")]
 	public class TranslateSqlApiTests
 		: ApiIntegrationTestBase<XPackCluster, TranslateSqlResponse, ITranslateSqlRequest, TranslateSqlDescriptor, TranslateSqlRequest>
 	{
@@ -65,18 +62,9 @@ ORDER BY numberOfContributors DESC";
 			search.Should().NotBeNull();
 			search.Size.Should().HaveValue().And.Be(5);
 			search.Source.Should().NotBeNull();
-			search.Source.Match(b => b.Should().BeFalse(), f => f.Should().BeNull());
-			// TODO DocValueFields is gone after code gen rework on 7.x
-			// We used to generate these documented in the spec as params to be implemented on the body
-//			search.DocValueFields.Should()
-//				.NotBeNullOrEmpty()
-//				.And.HaveCount(4)
-//				.And.Contain("type")
-//				.And.Contain("name")
-//				.And.Contain("startedOn")
-//				.And.Contain("numberOfCommits");
-
 			search.Query.Should().NotBeNull();
+			search.Sort.Should().NotBeNull().And.HaveCount(1);
+
 			IQueryContainer q = search.Query;
 			q.Term.Should().NotBeNull();
 			q.Term.Value.Should().Be(TestValueHelper.ProjectsIndex);

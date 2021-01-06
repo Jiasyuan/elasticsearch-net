@@ -2,7 +2,7 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Reflection;
 
@@ -55,7 +55,7 @@ namespace Nest
 			var idProperty = GetInferredId(type);
 			if (idProperty == null) return null;
 
-			var getMethod = idProperty.GetGetMethod();
+			var getMethod = idProperty.GetMethod;
 			var generic = MakeDelegateMethodInfo.MakeGenericMethod(type, getMethod.ReturnType);
 			var func = (Func<object, object>)generic.Invoke(null, new object[] { getMethod });
 			cachedLookup = o =>

@@ -2,9 +2,9 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System.IO;
-using Elasticsearch.Net;
-using Elasticsearch.Net.Utf8Json;
+using System.IO;
+using Elastic.Transport;
+using Nest.Utf8Json;
 
 namespace Nest
 {
@@ -19,7 +19,7 @@ namespace Nest
 	{
 		public TDocument Document { get; set; }
 
-		void IProxyRequest.WriteJson(IElasticsearchSerializer sourceSerializer, Stream stream, SerializationFormatting formatting) =>
+		void IProxyRequest.WriteJson(ITransportSerializer sourceSerializer, Stream stream, SerializationFormatting formatting) =>
 			sourceSerializer.Serialize(Document, stream, formatting);
 
 		partial void DocumentFromPath(TDocument document) => Document = document;
@@ -29,7 +29,7 @@ namespace Nest
 	{
 		TDocument ICreateRequest<TDocument>.Document { get; set; }
 
-		void IProxyRequest.WriteJson(IElasticsearchSerializer sourceSerializer, Stream stream, SerializationFormatting formatting) =>
+		void IProxyRequest.WriteJson(ITransportSerializer sourceSerializer, Stream stream, SerializationFormatting formatting) =>
 			sourceSerializer.Serialize(Self.Document, stream, formatting);
 
 		partial void DocumentFromPath(TDocument document) => Assign(document, (a, v) => a.Document = v);

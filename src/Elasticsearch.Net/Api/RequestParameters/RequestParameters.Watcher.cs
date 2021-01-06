@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Linq.Expressions;
+using Elastic.Transport;
 
 // ReSharper disable once CheckNamespace
 namespace Elasticsearch.Net.Specification.WatcherApi
@@ -104,6 +105,13 @@ namespace Elasticsearch.Net.Specification.WatcherApi
 			get => Q<long? >("version");
 			set => Q("version", value);
 		}
+	}
+
+	///<summary>Request options for QueryWatches <para>https://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-query-watches.html</para></summary>
+	public class QueryWatchesRequestParameters : RequestParameters<QueryWatchesRequestParameters>
+	{
+		public override HttpMethod DefaultHttpMethod => HttpMethod.POST;
+		public override bool SupportsBody => true;
 	}
 
 	///<summary>Request options for Start <para>https://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-start.html</para></summary>

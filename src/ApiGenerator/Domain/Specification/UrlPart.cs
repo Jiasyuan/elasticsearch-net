@@ -2,7 +2,7 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace ApiGenerator.Domain.Specification
 {
@@ -69,6 +69,7 @@ namespace ApiGenerator.Domain.Specification
 
 					case "forecast_id":
 					case "action_id":
+					case "ids" when Type == "list":
 						return "Ids";
 
 					case "index":
@@ -104,6 +105,11 @@ namespace ApiGenerator.Domain.Specification
 					case "type":
 						return Type == "string" ? "Name" : "Names";
 
+					case "block":
+						return "IndexBlock";
+
+					case "index_uuid":
+						return "IndexUuid";
 
 					//This forces a compilation error post code generation as intended
 					default: return Type + "_";

@@ -2,7 +2,8 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
+using Elastic.Transport;
 using Elasticsearch.Net;
 using Nest;
 using Tests.Domain;
@@ -25,7 +26,7 @@ namespace Tests.ClientConcepts.Connection
 		 * `ConnectionSettings` derives from `ConnectionConfiguration`, these options are available for both
 		 * the low level and high level client:
 		 *
-		 * :xml-docs: Elasticsearch.Net:ConnectionConfiguration`1
+		 * :xml-docs: Elastic.Transport:TransportConfigurationBase`1
 		 *
 		 * ==== ConnectionConfiguration with ElasticLowLevelClient
 		 *

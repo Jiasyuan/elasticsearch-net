@@ -2,7 +2,7 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using Nest;
 using Tests.IndexModules;
 
@@ -141,6 +141,7 @@ namespace Tests.Analysis.TokenFilters
 						.CatenateWords()
 						.GenerateNumberParts()
 						.GenerateWordParts()
+						.IgnoreKeywords()
 						.PreserveOriginal()
 						.ProtectedWords("x", "y", "z")
 						.SplitOnCaseChange()
@@ -301,6 +302,7 @@ namespace Tests.Analysis.TokenFilters
 								CatenateWords = true,
 								GenerateNumberParts = true,
 								GenerateWordParts = true,
+								IgnoreKeywords = true,
 								PreserveOriginal = true,
 								ProtectedWords = new[] { "x", "y", "z" },
 								SplitOnCaseChange = true,
@@ -624,6 +626,7 @@ namespace Tests.Analysis.TokenFilters
 						type = "word_delimiter_graph",
 						generate_word_parts = true,
 						generate_number_parts = true,
+						ignore_keywords = true,
 						catenate_words = true,
 						catenate_numbers = true,
 						catenate_all = true,

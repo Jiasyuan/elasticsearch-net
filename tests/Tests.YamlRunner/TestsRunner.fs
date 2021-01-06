@@ -5,6 +5,7 @@
 namespace Tests.YamlRunner
 
 open System.Diagnostics
+open Elastic.Transport
 open ShellProgressBar
 open Tests.YamlRunner.Models
 open Tests.YamlRunner.TestsReader
@@ -95,7 +96,6 @@ type TestRunner(client:IElasticLowLevelClient, version: string, suite: TestSuite
                         | Succeeded _context -> Some (r, tl)
                         | NotSkipped _context -> Some (r, tl)
                         | Skipped (_context, _reason) ->
-                            subProgressbar.WriteLine <| sprintf "%s: %s " r.Name (r.Context.Operation.Log())
                             Some (r, [])
                         | Failed _context -> Some (r, [])
                     | [] -> None
@@ -123,7 +123,7 @@ type TestRunner(client:IElasticLowLevelClient, version: string, suite: TestSuite
                     let fi = file.FileInfo
                     let di = file.FileInfo.Directory
                     sprintf "%s/%s" di.Name fi.Name
-                match Skips.SkipList.TryGetValue <| SkipFile(file) with
+                match SkipList.TryGetValue <| SkipFile(file) with
                 | (true, s) ->
                     let (sectionHeader, _) = suite
                     match s with

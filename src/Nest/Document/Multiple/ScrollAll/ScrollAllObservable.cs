@@ -2,11 +2,11 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Elasticsearch.Net;
+using Elastic.Transport;
 
 namespace Nest
 {
@@ -80,8 +80,8 @@ namespace Nest
 			return true;
 		}
 
-		private static ElasticsearchClientException Throw(string message, IApiCallDetails details) =>
-			new ElasticsearchClientException(PipelineFailure.BadResponse, message, details);
+		private static TransportException Throw(string message, IApiCallDetails details) =>
+			new TransportException(PipelineFailure.BadResponse, message, details);
 
 		private void ThrowOnBadSearchResult(ISearchResponse<T> result, int slice, int page)
 		{

@@ -31,54 +31,62 @@ namespace ApiGenerator.Configuration
 			// To be removed
 			"indices.upgrade.json",
 			"indices.get_upgrade.json",
-			"indices.exists_type.json",
+
+			// already removed in the client.
+			"indices.exists_type.json"
+
 		};
 
-		public static string[] IgnoredApisHighLevel { get; } =
+		private static string[] IgnoredApisHighLevel { get; } =
 		{
-			"autoscaling.delete_autoscaling_decision.json",
-			"autoscaling.get_autoscaling_policy.json",
-			"autoscaling.put_autoscaling_policy.json",
-			"autoscaling.delete_autoscaling_policy.json",
+			"autoscaling.get_autoscaling_decision.json", // 7.7 experimental
+			"autoscaling.delete_autoscaling_decision.json", // experimental
+			"autoscaling.get_autoscaling_policy.json", // experimental
+			"autoscaling.put_autoscaling_policy.json", // experimental
+			"autoscaling.delete_autoscaling_policy.json", // experimental
+
 			"indices.delete_index_template.json",
 			"indices.exists_index_template.json",
 			"indices.get_index_template.json",
 			"indices.put_index_template.json",
+			"indices.simulate_index_template.json",
+			"indices.simulate_template.json",
+
 			"searchable_snapshots.stats.json",
 			"searchable_snapshots.clear_cache.json",
 			"searchable_snapshots.mount.json",
 			"searchable_snapshots.repository_stats.json",
 
-			"autoscaling.get_autoscaling_decision.json", // 7.7 experimental
-			"eql.search.json", // 7.7 beta
 			"get_script_context.json", // 7.7 experimental
 			"get_script_languages.json", // 7.7 experimental
-			// already removed on client
-			"indices.exist_type.json",
-			"indices.create_data_stream.json", // 7.7 experimental
-			"indices.delete_data_stream.json", // 7.7 experimental
-			"indices.get_data_streams.json", // 7.7 experimental
-			"ml.delete_data_frame_analytics.json", // 7.7 experimental
+
+			"indices.exist_type.json", // already removed on client
+
 			"ml.delete_trained_model.json", // 7.7 experimental
 			"ml.evaluate_data_frame.json", // 7.7 experimental
 			"ml.explain_data_frame_analytics.json", // 7.7 experimental
 			"ml.find_file_structure.json", // 7.7 experimental
 			"ml.get_data_frame_analytics.json", // 7.7 experimental
 			"ml.get_data_frame_analytics_stats.json", // 7.7 experimental
+			"ml.delete_data_frame_analytics.json", // 7.7 experimental
 			"ml.get_trained_models.json", // 7.7 experimental
 			"ml.get_trained_models_stats.json", // 7.7 experimental
 			"ml.put_data_frame_analytics.json", // 7.7 experimental
 			"ml.put_trained_model.json", // 7.7 experimental
 			"ml.start_data_frame_analytics.json", // 7.7 experimental
 			"ml.stop_data_frame_analytics.json", // 7.7 experimental
+			"ml.update_data_frame_analytics.json", // 7.7 experimental
+
 			"rank_eval.json", // 7.7 experimental
 			"scripts_painless_context.json", // 7.7 experimental
+			"cluster.delete_component_template.json", // 7.8 experimental
+			"cluster.get_component_template.json", // 7.8 experimental
+			"cluster.put_component_template.json", // 7.8 experimental
+			"cluster.exists_component_template.json", // 7.8 experimental
 
-			// 7.7 - to be implemented
-			"cluster.delete_component_template.json",
-			"cluster.get_component_template.json",
-			"cluster.put_component_template.json",
-			"cluster.exists_component_template.json",
+			"eql.search.json", // 7.9 beta
+			"eql.get.json", // 7.9 beta
+			"eql.delete.json", // 7.9 beta
 		};
 
 		/// <summary>
@@ -104,6 +112,27 @@ namespace ApiGenerator.Configuration
 			.DistinctBy(v => v.Key)
 			.ToDictionary(k => k.Key, v => v.Value.Replace(".cs", ""));
 
+		public static readonly HashSet<string> EnableHighLevelCodeGen = new HashSet<string>();
+
+		public static bool IsNewHighLevelApi(string apiFileName) =>
+			// if its explicitly ignored we know about it.
+			!IgnoredApis.Contains(apiFileName)
+			&& !IgnoredApisHighLevel.Contains(apiFileName)
+			// no requests with [MapsApi("filename.json")] found
+			&& !HighLevelApiNameMapping.ContainsKey(apiFileName.Replace(".json", ""));
+
+		public static bool IgnoreHighLevelApi(string apiFileName)
+		{
+			//explicitly ignored
+			if (IgnoredApis.Contains(apiFileName) || IgnoredApisHighLevel.Contains(apiFileName)) return true;
+
+			//always generate already mapped requests
+
+			if (HighLevelApiNameMapping.ContainsKey(apiFileName.Replace(".json", ""))) return false;
+
+			return !EnableHighLevelCodeGen.Contains(apiFileName);
+		}
+
 		private static Dictionary<string, string> _apiNameMapping;
 
 		public static Dictionary<string, string> ApiNameMapping
@@ -113,12 +142,13 @@ namespace ApiGenerator.Configuration
 				if (_apiNameMapping != null) return _apiNameMapping;
 				lock (LowLevelApiNameMapping)
 				{
-					if (_apiNameMapping != null) return _apiNameMapping;
-
-					var mapping = new Dictionary<string,string>(HighLevelApiNameMapping);
-					foreach (var (k, v) in LowLevelApiNameMapping)
-						mapping[k] = v;
-					_apiNameMapping = mapping;
+					if (_apiNameMapping == null)
+					{
+						var mapping = new Dictionary<string, string>(HighLevelApiNameMapping);
+						foreach (var (k, v) in LowLevelApiNameMapping)
+							mapping[k] = v;
+						_apiNameMapping = mapping;
+					}
 					return _apiNameMapping;
 				}
 			}

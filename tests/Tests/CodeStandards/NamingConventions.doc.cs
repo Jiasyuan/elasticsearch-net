@@ -2,12 +2,13 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using Elastic.Elasticsearch.Xunit.XunitPlumbing;
+using Elastic.Transport;
 using Elasticsearch.Net;
 using FluentAssertions;
 using Nest;
@@ -176,6 +177,7 @@ namespace Tests.CodeStandards
 				.Where(t => !string.IsNullOrWhiteSpace(t.Namespace) && !t.Namespace.StartsWith("Nest.Json"))
 				.Where(t => !string.IsNullOrWhiteSpace(t.Namespace) && !t.Namespace.StartsWith("Elastic.Internal"))
 				.Where(t => !string.IsNullOrWhiteSpace(t.Namespace) && !t.Namespace.StartsWith("Nest.Specification"))
+				.Where(t => !string.IsNullOrWhiteSpace(t.Namespace) && !t.Namespace.StartsWith("Nest.Utf8Json"))
 				.Where(t => !t.Name.StartsWith("<"))
 				.Where(t => IsValidTypeNameOrIdentifier(t.Name, true))
 				.ToList();
@@ -196,6 +198,7 @@ namespace Tests.CodeStandards
 				elasticsearchNetAssembly.GetType("System.FormattableString"),
 				elasticsearchNetAssembly.GetType("System.Runtime.CompilerServices.FormattableStringFactory"),
 				elasticsearchNetAssembly.GetType("System.Runtime.CompilerServices.FormattableStringFactory"),
+				elasticsearchNetAssembly.GetType("System.Runtime.CompilerServices.FormattableStringFactory"),
 				elasticsearchNetAssembly.GetType("Purify.Purifier"),
 				elasticsearchNetAssembly.GetType("Purify.Purifier+IPurifier"),
 				elasticsearchNetAssembly.GetType("Purify.Purifier+PurifierDotNet"),
@@ -212,7 +215,7 @@ namespace Tests.CodeStandards
 				.Where(t => !t.Namespace.StartsWith("Elasticsearch.Net.Utf8Json"))
 				.Where(t => !t.Namespace.StartsWith("Elasticsearch.Net.Extensions"))
 				.Where(t => !t.Namespace.StartsWith("Elasticsearch.Net.Diagnostics"))
-				.Where(t => !t.Namespace.StartsWith("Elasticsearch.Net.CrossPlatform"))
+				.Where(t => !t.Namespace.StartsWith("System.Runtime.CompilerServices"))
 				.Where(t => !t.Name.StartsWith("<"))
 				.Where(t => IsValidTypeNameOrIdentifier(t.Name, true))
 				.ToList();

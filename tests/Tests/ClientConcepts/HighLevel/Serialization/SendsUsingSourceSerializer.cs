@@ -2,12 +2,12 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using Elastic.Elasticsearch.Xunit.XunitPlumbing;
-using Elasticsearch.Net;
+using Elastic.Transport;
 using Nest;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -186,7 +186,7 @@ namespace Tests.ClientConcepts.HighLevel.Serialization
 
 		private class CustomSettingsSerializerBase : TestSourceSerializerBase
 		{
-			public CustomSettingsSerializerBase(IElasticsearchSerializer builtinSerializer, IConnectionSettingsValues connectionSettings)
+			public CustomSettingsSerializerBase(ITransportSerializer builtinSerializer, IConnectionSettingsValues connectionSettings)
 				: base(builtinSerializer, connectionSettings) { }
 
 			protected override JsonSerializerSettings CreateJsonSerializerSettings() => new JsonSerializerSettings

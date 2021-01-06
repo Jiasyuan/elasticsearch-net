@@ -2,9 +2,9 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Linq;
-using Elasticsearch.Net;
+using Elastic.Transport;
 using FluentAssertions;
 using Nest;
 using Tests.Core.Extensions;
@@ -22,10 +22,15 @@ namespace Tests.XPack.MachineLearning.GetInfluencers
 		protected override int ExpectStatusCode => 200;
 		protected override Func<GetInfluencersDescriptor, IGetInfluencersRequest> Fluent => f => f;
 		protected override HttpMethod HttpMethod => HttpMethod.POST;
-		protected override GetInfluencersRequest Initializer => new GetInfluencersRequest(CallIsolatedValue);
+		protected override GetInfluencersRequest Initializer => new GetInfluencersRequest(CallIsolatedValue)
+		{
+			End = new DateTimeOffset(2016, 6, 2, 01, 00, 00, TimeSpan.Zero)
+		};
+
 		protected override string UrlPath => $"/_ml/anomaly_detectors/{CallIsolatedValue}/results/influencers";
 
-		protected override GetInfluencersDescriptor NewDescriptor() => new GetInfluencersDescriptor(CallIsolatedValue);
+		protected override GetInfluencersDescriptor NewDescriptor() => new GetInfluencersDescriptor(CallIsolatedValue)
+			.End(new DateTimeOffset(2016, 6, 2, 01, 00, 00, TimeSpan.Zero));
 
 		protected override void IntegrationSetup(IElasticClient client, CallUniqueValues values)
 		{

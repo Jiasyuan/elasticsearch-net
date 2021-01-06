@@ -1,4 +1,4 @@
-﻿// Licensed to Elasticsearch B.V under one or more agreements.
+// Licensed to Elasticsearch B.V under one or more agreements.
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
@@ -18,13 +18,15 @@ module Paths =
     
     let InplaceBuildOutput project tfm = 
         sprintf "src/%s/bin/Release/%s" project tfm
+    let InplaceTestOutput project tfm = 
+        sprintf "tests/%s/bin/Release/%s" project tfm
     let MagicDocumentationFile  = 
         "src/Elasticsearch.Net/obj/Release/netstandard2.1/Elasticsearch.Net.csprojAssemblyReference.cache" 
   
     let Tool tool = sprintf "packages/build/%s" tool
     let CheckedInToolsFolder = "build/tools"
     let KeysFolder = sprintf "%s/keys" BuildFolder
-    let NugetOutput = sprintf "%s/_packages" BuildOutput
+    let NugetOutput = sprintf "%s" BuildOutput
     let SourceFolder = "src"
     
     let Solution = "Elasticsearch.sln"

@@ -2,13 +2,13 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
- using System;
+using System;
 using System.Diagnostics;
 using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
- using Elastic.Elasticsearch.Ephemeral;
- using Elastic.Elasticsearch.Xunit.XunitPlumbing;
-using Elasticsearch.Net;
+using Elastic.Elasticsearch.Ephemeral;
+using Elastic.Elasticsearch.Xunit.XunitPlumbing;
+using Elastic.Transport;
 using FluentAssertions;
 using Nest;
 using Tests.Core.Client;
@@ -56,7 +56,7 @@ namespace Tests.Framework.EndpointTests
 			base.AssertOnAllResponses((r) =>
 			{
 				if (TestClient.Configuration.RunIntegrationTests && !r.IsValid && r.ApiCall.OriginalException != null
-					&& !(r.ApiCall.OriginalException is ElasticsearchClientException))
+					&& !(r.ApiCall.OriginalException is TransportException))
 				{
 					var e = ExceptionDispatchInfo.Capture(r.ApiCall.OriginalException.Demystify());
 					throw new ResponseAssertionException(e.SourceException, r).Demystify();
@@ -76,7 +76,6 @@ namespace Tests.Framework.EndpointTests
 
 	public class ResponseAssertionException : Exception
 	{
-
 		public ResponseAssertionException(Exception innerException, IResponse response)
 			: base(ResponseInMessage(innerException.Message, response), innerException) { }
 

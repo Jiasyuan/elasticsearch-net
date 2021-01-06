@@ -2,29 +2,36 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using Elasticsearch.Net.Utf8Json;
+using Nest.Utf8Json;
 
 namespace Nest
 {
 	[JsonFormatter(typeof(BulkRequestFormatter))]
+	[MapsApi("bulk.json")]
 	public partial interface IBulkRequest
 	{
 		[IgnoreDataMember]
-		BulkOperationsCollection<IBulkOperation> Operations { get; set; }
+		IList<IBulkOperation> Operations { get; set; }
 	}
 
 	public partial class BulkRequest
 	{
-		public BulkOperationsCollection<IBulkOperation> Operations { get; set; }
+		public IList<IBulkOperation> Operations { get; set; }
 	}
 
 	public partial class BulkDescriptor
 	{
-		BulkOperationsCollection<IBulkOperation> IBulkRequest.Operations { get; set; } = new BulkOperationsCollection<IBulkOperation>();
+		private readonly BulkOperationsCollection<IBulkOperation> _operations = new BulkOperationsCollection<IBulkOperation>();
+
+		IList<IBulkOperation> IBulkRequest.Operations
+		{
+			get => _operations;
+			set => throw new NotImplementedException($"{nameof(BulkDescriptor)} does not allow {nameof(IBulkRequest)}.{nameof(IBulkRequest.Operations)} to be set directly");
+		}
 
 		public BulkDescriptor Create<T>(Func<BulkCreateDescriptor<T>, IBulkCreateOperation<T>> bulkCreateSelector)
 			where T : class =>
@@ -152,7 +159,8 @@ namespace Nest
 				var op = bulkIndexSelector.InvokeOrDefault(defaultSelector(o), o);
 				if (op != null) operations.Add(op);
 			}
-			return Assign(operations, (a, v) => a.Operations.AddRange(v));
+			_operations.AddRange(operations);
+			return this;
 		}
 
 	}

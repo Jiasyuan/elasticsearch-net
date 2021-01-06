@@ -2,7 +2,7 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿namespace Nest
+namespace Nest
 {
 	/// <summary>
 	/// Maps a property as a number type. If no type is specified,
@@ -13,12 +13,6 @@
 		public NumberAttribute() : base(FieldType.Float) { }
 
 		public NumberAttribute(NumberType type) : base(type.ToFieldType()) { }
-
-		public double Boost
-		{
-			get => Self.Boost.GetValueOrDefault();
-			set => Self.Boost = value;
-		}
 
 		public bool Coerce
 		{
@@ -50,7 +44,6 @@
 			set => Self.ScalingFactor = value;
 		}
 
-		double? INumberProperty.Boost { get; set; }
 		bool? INumberProperty.Coerce { get; set; }
 		INumericFielddata INumberProperty.Fielddata { get; set; }
 		bool? INumberProperty.IgnoreMalformed { get; set; }

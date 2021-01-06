@@ -2,9 +2,9 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 using System.Linq;
-using Elasticsearch.Net;
+using Elastic.Transport;
 using FluentAssertions;
 using Nest;
 using Tests.Core.Client;
@@ -66,9 +66,8 @@ namespace Tests.Cluster.NodesUsage
 			firstNode.Value.RestActions.Should().NotBeNull();
 
 			if (TestClient.Configuration.InRange(">=7.8.0"))
-			{
 				firstNode.Value.Aggregations.Should().NotBeNull().And.ContainKey("avg");
-			}
+
 		}
 	}
 }

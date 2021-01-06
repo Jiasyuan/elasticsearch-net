@@ -2,10 +2,12 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
-using Elasticsearch.Net;
+using System;
+using Elastic.Transport;
 using FluentAssertions;
 using Nest;
+using Tests.Core.Client;
+using Tests.Core.Extensions;
 using Tests.Framework.EndpointTests.TestState;
 
 namespace Tests.XPack.MachineLearning.StartDatafeed
@@ -15,12 +17,23 @@ namespace Tests.XPack.MachineLearning.StartDatafeed
 	{
 		public StartDatafeedApiTests(MachineLearningCluster cluster, EndpointUsage usage) : base(cluster, usage) { }
 
+		private DateTimeOffset Now => DateTimeOffset.Now;
+
 		protected override bool ExpectIsValid => true;
 		protected override object ExpectJson => null;
 		protected override int ExpectStatusCode => 200;
-		protected override Func<StartDatafeedDescriptor, IStartDatafeedRequest> Fluent => f => f;
+
+		protected override Func<StartDatafeedDescriptor, IStartDatafeedRequest> Fluent => f => f
+			.Start(Now)
+			.End(Now.AddSeconds(10));
+
 		protected override HttpMethod HttpMethod => HttpMethod.POST;
-		protected override StartDatafeedRequest Initializer => new StartDatafeedRequest(CallIsolatedValue + "-datafeed");
+		protected override StartDatafeedRequest Initializer => new StartDatafeedRequest(CallIsolatedValue + "-datafeed")
+		{
+			Start = Now,
+			End = Now.AddSeconds(10)
+		};
+
 		protected override string UrlPath => $"_ml/datafeeds/{CallIsolatedValue}-datafeed/_start";
 
 		protected override void IntegrationSetup(IElasticClient client, CallUniqueValues values)
@@ -51,6 +64,12 @@ namespace Tests.XPack.MachineLearning.StartDatafeed
 
 		protected override StartDatafeedDescriptor NewDescriptor() => new StartDatafeedDescriptor(CallIsolatedValue + "-datafeed");
 
-		protected override void ExpectResponse(StartDatafeedResponse response) => response.Started.Should().BeTrue();
+		protected override void ExpectResponse(StartDatafeedResponse response)
+		{
+			response.Started.Should().BeTrue();
+
+			if (TestClient.Configuration.InRange(">=7.8.0"))
+				response.Node.Should().NotBeNullOrEmpty();
+		}
 	}
 }

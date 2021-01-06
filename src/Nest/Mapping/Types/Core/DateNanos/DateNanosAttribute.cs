@@ -2,19 +2,13 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 
 namespace Nest
 {
 	public class DateNanosAttribute : ElasticsearchDocValuesPropertyAttributeBase, IDateNanosProperty
 	{
 		public DateNanosAttribute() : base(FieldType.DateNanos) { }
-
-		public double Boost
-		{
-			get => Self.Boost.GetValueOrDefault();
-			set => Self.Boost = value;
-		}
 
 		public string Format
 		{
@@ -40,7 +34,6 @@ namespace Nest
 			set => Self.NullValue = value;
 		}
 
-		double? IDateNanosProperty.Boost { get; set; }
 		string IDateNanosProperty.Format { get; set; }
 		bool? IDateNanosProperty.IgnoreMalformed { get; set; }
 

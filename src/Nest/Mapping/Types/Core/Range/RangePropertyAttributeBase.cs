@@ -2,17 +2,11 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿namespace Nest
+namespace Nest
 {
 	public abstract class RangePropertyAttributeBase : ElasticsearchDocValuesPropertyAttributeBase, IRangeProperty
 	{
 		protected RangePropertyAttributeBase(RangeType type) : base(type.ToFieldType()) { }
-
-		public double Boost
-		{
-			get => Self.Boost.GetValueOrDefault();
-			set => Self.Boost = value;
-		}
 
 		public bool Coerce
 		{
@@ -25,8 +19,6 @@
 			get => Self.Index.GetValueOrDefault();
 			set => Self.Index = value;
 		}
-
-		double? IRangeProperty.Boost { get; set; }
 
 		bool? IRangeProperty.Coerce { get; set; }
 		bool? IRangeProperty.Index { get; set; }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.Serialization;
 
 namespace Nest
@@ -56,6 +56,6 @@ namespace Nest
 		/// The creation time
 		/// </summary>
 		[IgnoreDataMember]
-		public DateTimeOffset CreateTimeDateTime => DateTimeUtil.Epoch.AddMilliseconds(CreateTime);
+		public DateTimeOffset CreateTimeDateTime => DateTimeUtil.UnixEpoch.AddMilliseconds(CreateTime);
 	}
 }

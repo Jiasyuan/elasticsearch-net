@@ -2,10 +2,12 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using Elasticsearch.Net;
+using Elastic.Transport;
+using Elasticsearch.Net.Extensions;
 using FluentAssertions;
 using Nest;
 using System.Runtime.Serialization;
+using Elastic.Transport.Extensions;
 using Tests.Core.Client;
 using Tests.Framework;
 
@@ -27,7 +29,7 @@ namespace Tests.CommonOptions.Union
 	 */
 	public class Union
 	{
-		private IElasticsearchSerializer serializer = TestClient.DefaultInMemoryClient.RequestResponseSerializer;
+		private ITransportSerializer serializer = TestClient.DefaultInMemoryClient.RequestResponseSerializer;
 
 		/**
 		 * ==== Implicit conversion

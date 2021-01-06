@@ -2,7 +2,7 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿using System;
+using System;
 
 namespace Nest
 {
@@ -117,10 +117,15 @@ namespace Nest
 				Accept(v, d.Aggregations);
 			});
 			AcceptAggregation(aggregation.MovingAverage, visitor, (v, d) => v.Visit(d));
+			AcceptAggregation(aggregation.MovingPercentiles, visitor, (v, d) => v.Visit(d));
 			AcceptAggregation(aggregation.Nested, visitor, (v, d) =>
 			{
 				v.Visit(d);
 				Accept(v, d.Aggregations);
+			});
+			AcceptAggregation(aggregation.Normalize, visitor, (v, d) =>
+			{
+				v.Visit(d);
 			});
 			AcceptAggregation(aggregation.Parent, visitor, (v, d) =>
 			{

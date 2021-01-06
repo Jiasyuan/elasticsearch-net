@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Linq.Expressions;
+using Elastic.Transport;
 
 // ReSharper disable once CheckNamespace
 namespace Elasticsearch.Net.Specification.NodesApi
@@ -110,14 +111,14 @@ namespace Elasticsearch.Net.Specification.NodesApi
 	{
 		public override HttpMethod DefaultHttpMethod => HttpMethod.GET;
 		public override bool SupportsBody => false;
-		///<summary>A comma-separated list of fields for `fielddata` and `suggest` index metric (supports wildcards)</summary>
+		///<summary>A comma-separated list of fields for the `completion` index metric (supports wildcards)</summary>
 		public string[] CompletionFields
 		{
 			get => Q<string[]>("completion_fields");
 			set => Q("completion_fields", value);
 		}
 
-		///<summary>A comma-separated list of fields for `fielddata` index metric (supports wildcards)</summary>
+		///<summary>A comma-separated list of fields for the `fielddata` index metric (supports wildcards)</summary>
 		public string[] FielddataFields
 		{
 			get => Q<string[]>("fielddata_fields");

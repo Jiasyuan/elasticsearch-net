@@ -2,7 +2,7 @@
 // Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information
 
-﻿namespace Nest
+namespace Nest
 {
 	/// <inheritdoc cref="IFlattenedProperty" />
 	public class FlattenedAttribute : ElasticsearchPropertyAttributeBase, IFlattenedProperty
@@ -11,7 +11,6 @@
 
 		private IFlattenedProperty Self => this;
 
-		double? IFlattenedProperty.Boost { get; set; }
 		int? IFlattenedProperty.DepthLimit { get; set; }
 		bool? IFlattenedProperty.DocValues { get; set; }
 		bool? IFlattenedProperty.EagerGlobalOrdinals { get; set; }
@@ -19,13 +18,6 @@
 		bool? IFlattenedProperty.Index { get; set; }
 		IndexOptions? IFlattenedProperty.IndexOptions { get; set; }
 		bool? IFlattenedProperty.SplitQueriesOnWhitespace { get; set; }
-
-		/// <inheritdoc cref="IFlattenedProperty.Boost" />
-		public double Boost
-		{
-			get => Self.Boost.GetValueOrDefault(1);
-			set => Self.Boost = value;
-		}
 
 		/// <inheritdoc cref="IFlattenedProperty.DepthLimit" />
 		public int DepthLimit
