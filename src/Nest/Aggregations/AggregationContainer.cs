@@ -232,6 +232,9 @@ namespace Nest
 		[DataMember(Name = "rare_terms")]
 		IRareTermsAggregation RareTerms { get; set; }
 
+		[DataMember(Name = "rate")]
+		IRateAggregation Rate { get; set; }
+
 		[DataMember(Name = "reverse_nested")]
 		IReverseNestedAggregation ReverseNested { get; set; }
 
@@ -295,7 +298,15 @@ namespace Nest
 	{
 		public IAdjacencyMatrixAggregation AdjacencyMatrix { get; set; }
 
-		public AggregationDictionary Aggregations { get; set; }
+		// This is currently used to support deserializing the response from SQL Translate,
+		// which forms a response which uses "aggregations", rather than "aggs". Longer term
+		// it would be preferred to address that in Elasticsearch itself.
+		[DataMember(Name = "aggregations")]
+		private AggregationDictionary _aggs;
+		
+		// ReSharper disable once ConvertToAutoProperty
+		public AggregationDictionary Aggregations { get => _aggs; set => _aggs = value; }
+		
 		public IAverageAggregation Average { get; set; }
 
 		public IAverageBucketAggregation AverageBucket { get; set; }
@@ -388,6 +399,8 @@ namespace Nest
 		public IRangeAggregation Range { get; set; }
 
 		public IRareTermsAggregation RareTerms { get; set; }
+
+		public IRateAggregation Rate { get; set; }
 
 		public IReverseNestedAggregation ReverseNested { get; set; }
 
@@ -550,6 +563,8 @@ namespace Nest
 		IRangeAggregation IAggregationContainer.Range { get; set; }
 
 		IRareTermsAggregation IAggregationContainer.RareTerms { get; set; }
+
+		IRateAggregation IAggregationContainer.Rate { get; set; }
 
 		IReverseNestedAggregation IAggregationContainer.ReverseNested { get; set; }
 
@@ -724,6 +739,10 @@ namespace Nest
 			Func<RareTermsAggregationDescriptor<T>, IRareTermsAggregation> selector
 		) =>
 			_SetInnerAggregation(name, selector, (a, d) => a.RareTerms = d);
+
+		public AggregationContainerDescriptor<T> Rate(string name,
+			Func<RateAggregationDescriptor<T>, IRateAggregation> selector) =>
+			_SetInnerAggregation(name, selector, (a, d) => a.Rate = d);
 
 		public AggregationContainerDescriptor<T> Stats(string name,
 			Func<StatsAggregationDescriptor<T>, IStatsAggregation> selector
